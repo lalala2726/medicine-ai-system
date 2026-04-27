@@ -1,0 +1,314 @@
+.page {
+  min-height: var(--app-viewport-height);
+  background: rgb(246, 248, 246);
+  padding-bottom: 80px;
+}
+
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding-top: 100px;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 16px;
+  background: rgb(246, 248, 246);
+  border-bottom: 1px solid #eee;
+}
+
+.navLeft,
+.navRight {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.navTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+}
+
+.card {
+  background: #fff;
+  margin: 12px;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.warningText {
+  color: #f97316;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.deadlineText {
+  font-size: 13px;
+  color: #999;
+}
+
+.sectionTitle {
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.productItem {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.productImage {
+  width: 72px;
+  height: 72px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #f5f5f5;
+}
+
+.productInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.productName {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.productPrice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.productHint {
+  font-size: 12px;
+  color: #999;
+  font-weight: 400;
+}
+
+.productWarning {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #f97316;
+}
+
+.formItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 14px;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    color: #333;
+    width: 90px;
+  }
+
+  .content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: #333;
+
+    input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 14px;
+
+      &::placeholder {
+        color: #ccc;
+      }
+    }
+  }
+
+  .arrow {
+    margin-left: 4px;
+    color: #ccc;
+  }
+}
+
+.valueText {
+  color: #333;
+}
+
+.placeholderText {
+  color: #ccc;
+}
+
+.amountContent {
+  min-width: 0;
+}
+
+.amountValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ff4d4f;
+}
+
+.amountInputWrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 100%;
+}
+
+.amountField {
+  width: clamp(6ch, 24vw, 12ch);
+  padding: 0;
+  text-align: right;
+  color: #333;
+  font-weight: 500;
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+  }
+}
+
+.currencySymbol {
+  flex-shrink: 0;
+  color: #666;
+  font-weight: 500;
+}
+
+.formItemBlock {
+  display: block;
+  border-bottom: none;
+}
+
+.textareaWrapper {
+  margin-top: 12px;
+  border-radius: 8px;
+  padding: 0;
+
+  textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    resize: none;
+    min-height: 80px;
+  }
+}
+
+.uploadWrapper {
+  margin-top: 12px;
+
+  :global {
+    .nut-uploader-upload {
+      background: #fff !important;
+      border: 1px dashed #ddd !important;
+    }
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px calc(env(safe-area-inset-bottom) + 12px);
+  z-index: 99;
+}
+
+.submitButton {
+  --nutui-button-primary-disabled: #afdcb9;
+  --nutui-color-primary-disabled-special: #afdcb9;
+
+  height: 44px !important;
+  border: none !important;
+  border-radius: 24px !important;
+  background: var(--nutui-color-primary) !important;
+  border-color: var(--nutui-color-primary) !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 8px 18px rgba(var(--nutui-color-primary-rgb), 0.18);
+
+  :global(.nut-button-wrap) {
+    background: transparent !important;
+  }
+
+  &:global(.nut-button-primary-disabled),
+  &:global(.nut-button-primary-solid-disabled),
+  &:global(.nut-button-disabled) {
+    background: var(--nutui-button-primary-disabled) !important;
+    border-color: var(--nutui-button-primary-disabled) !important;
+    color: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: none;
+    opacity: 1;
+  }
+}
+
+.popupContent {
+  padding: 16px 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.popupItem {
+  padding: 16px;
+  text-align: center;
+  font-size: 15px;
+  border-bottom: 1px solid #f5f5f5;
+
+  &:active {
+    background: #f9f9f9;
+  }
+
+  &.active {
+    color: var(--nutui-color-primary);
+    font-weight: 500;
+  }
+}

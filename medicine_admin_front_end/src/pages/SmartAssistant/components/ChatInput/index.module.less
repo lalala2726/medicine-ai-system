@@ -1,0 +1,429 @@
+/**
+ * ChatInput 自定义聊天输入框样式
+ *
+ * 布局：
+ * ┌─────────────────────────────────────────────────┐
+ * │  [img1 ×] [img2 ×]                              │  ← 图片预览
+ * │───────────────────────────────────────────────── │
+ * │  textarea                            [+] [btn]  │  ← 输入 + 操作
+ * └─────────────────────────────────────────────────┘
+ */
+
+/* ---- 容器 ---- */
+.chatInputWrapper {
+  width: 100%;
+  min-width: 300px;
+  border-radius: 24px;
+  background: var(--assistant-sender-bg);
+  border: 1px solid var(--assistant-sender-border);
+  box-shadow: none;
+  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &:focus-within {
+    background: var(--assistant-sender-bg);
+    border-color: var(--assistant-sender-border);
+    box-shadow: none;
+  }
+}
+
+.centeredMode {
+  max-width: var(--assistant-centered-content-max-width, 620px);
+}
+
+.dockedMode {
+  max-width: var(--assistant-content-max-width, 760px);
+  background: var(--assistant-sender-solid-bg, #fff);
+  backdrop-filter: none;
+
+  &:focus-within {
+    background: var(--assistant-sender-solid-bg, #fff);
+  }
+}
+
+/* ---- 图片预览区 ---- */
+.imagePreviewArea {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px 0;
+  max-height: 200px;
+  overflow-y: auto;
+
+  // 隐藏滚动条
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.imagePreviewItem {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: default;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  // 上传中遮罩
+  &.uploading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 10px;
+  }
+}
+
+.imageDeleteBtn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1;
+  padding: 0;
+  z-index: 2;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+.uploadingSpinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  color: #fff;
+  font-size: 18px;
+}
+
+/* ---- 输入区 ---- */
+.inputArea {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 12px 16px;
+  min-height: unset;
+}
+
+.textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--ant-color-text);
+  min-height: 38px;
+  max-height: 200px;
+  padding: 0;
+  margin: 0 0 8px 0;
+  font-family: inherit;
+  overflow-y: auto;
+  display: block;
+
+  /* 细滑滚动条样式 */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--ant-color-border);
+    border-radius: 2px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::placeholder {
+    color: var(--ant-color-text-quaternary);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+/* ---- 底部工具栏 ---- */
+.bottomToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.leftActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- 右侧按钮区 ---- */
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* ---- "+" 按钮 ---- */
+.addBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ant-color-text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s ease;
+  padding: 0;
+
+  &:hover {
+    background: var(--ant-color-fill-tertiary);
+    color: var(--ant-color-text-secondary);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+
+    &:hover {
+      background: transparent;
+    }
+  }
+}
+
+.addBtnDisabledVisual {
+  opacity: 0.45;
+
+  &:hover {
+    background: transparent;
+    color: var(--ant-color-text-tertiary);
+  }
+}
+
+/* ---- Popover 菜单项 ---- */
+.popoverMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 130px;
+}
+
+.popoverMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  color: var(--ant-color-text);
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--ant-color-fill-tertiary);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+
+    &:hover {
+      background: transparent;
+    }
+  }
+
+  .popoverMenuIcon {
+    font-size: 18px;
+    color: var(--ant-color-primary);
+  }
+}
+
+/* ---- 发送按钮 ---- */
+.sendBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: #0f172a;
+  /* 深蓝色，与参考图一致 */
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.sendBtnDisabled {
+  background: #e2e4e9;
+  /* 浅灰色，与参考图不可用状态一致 */
+  color: #fff;
+  cursor: not-allowed;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+/* ---- 语音按钮（空闲态）---- */
+.speechBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: #f7f7f8;
+  color: var(--ant-color-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e5e6eb;
+  }
+}
+
+/* ---- 语音按钮（录音中）---- */
+.speechBtnRecording {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--ant-color-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0;
+  transition: all 0.2s ease;
+  animation: pulse 1.5s ease-in-out infinite;
+
+  &:hover {
+    background: var(--ant-color-primary-hover);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(22, 119, 255, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(22, 119, 255, 0);
+  }
+}
+
+/* ---- 停止按钮 ---- */
+.stopBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--ant-color-fill-tertiary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--ant-color-fill-secondary);
+  }
+}
+
+.stopIconInner {
+  width: 10px;
+  height: 10px;
+  background: var(--ant-color-text);
+  border-radius: 2px;
+}
+
+/* ---- 深度思考按钮（空闲态）---- */
+.deepThinkingBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  height: 28px;
+  border-radius: 14px;
+  border: 1px solid var(--ant-color-border);
+  background: transparent;
+  color: var(--ant-color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+
+  .deepThinkingIcon {
+    font-size: 14px;
+  }
+
+  &:hover {
+    border-color: var(--ant-color-primary);
+    color: var(--ant-color-primary);
+    background: var(--ant-color-primary-bg);
+  }
+}
+
+/* ---- 深度思考按钮（激活态）---- */
+.deepThinkingBtnActive {
+  border-color: var(--ant-color-primary);
+  color: var(--ant-color-primary);
+  background: var(--ant-color-primary-bg);
+  font-weight: 500;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}

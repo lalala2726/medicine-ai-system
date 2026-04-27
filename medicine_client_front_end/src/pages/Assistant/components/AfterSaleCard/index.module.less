@@ -1,0 +1,168 @@
+@text-primary: #0d1b12;
+@text-secondary: #667069;
+@card-bg: #ffffff;
+@card-border: #f0f2f5;
+
+.assistantCardShell {
+  width: fit-content;
+  max-width: min(78vw, 420px);
+  min-width: 0;
+}
+
+.userBubble {
+  padding: 6px;
+  background: transparent !important;
+  border: none !important;
+}
+
+.afterSaleCard {
+  background: @card-bg;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid @card-border;
+  cursor: pointer;
+  min-width: 240px;
+  max-width: min(72vw, 340px);
+  box-sizing: border-box;
+
+  &:active {
+    background-color: #fcfdfc;
+    transform: scale(0.99);
+  }
+}
+
+.afterSaleCardAssistant {
+  box-shadow: none;
+}
+
+.afterSaleCardUser {
+  box-shadow: none;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f8faf9;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.typeTag {
+  font-size: 11px;
+  padding: 2px 6px;
+  background: #f5f6f8;
+  color: @text-secondary;
+  border-radius: 4px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.afterSaleNo {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+  font-family: DINAlternate-Bold, sans-serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.content {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.image {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #fcfdfc;
+  flex-shrink: 0;
+  border: 1px solid #f8faf9;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.name {
+  font-size: 14px;
+  color: @text-primary;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+.orderNo {
+  font-size: 12px;
+  color: @text-secondary;
+  line-height: 1.4;
+}
+
+.metaBox {
+  padding-top: 12px;
+  border-top: 1px dashed #f0f2f5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.metaLabel {
+  color: @text-secondary;
+  flex-shrink: 0;
+}
+
+.metaValue {
+  color: @text-primary;
+  font-weight: 500;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metaAmount {
+  color: #ff4d4f;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.metaTime {
+  color: #9ca3af;
+  font-size: 12px;
+}

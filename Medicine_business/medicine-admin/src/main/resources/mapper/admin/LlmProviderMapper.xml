@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.LlmProviderMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.LlmProvider">
+        <id property="id" column="id"/>
+        <result property="providerName" column="provider_name"/>
+        <result property="providerType" column="provider_type"/>
+        <result property="baseUrl" column="base_url"/>
+        <result property="apiKey" column="api_key"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="sort" column="sort"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="LlmProviderListResultMap" type="com.zhangyichuang.medicine.admin.model.dto.LlmProviderListDto">
+        <id property="id" column="id"/>
+        <result property="providerName" column="provider_name"/>
+        <result property="providerType" column="provider_type"/>
+        <result property="baseUrl" column="base_url"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="sort" column="sort"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="modelCount" column="model_count"/>
+        <result property="chatModelCount" column="chat_model_count"/>
+        <result property="embeddingModelCount" column="embedding_model_count"/>
+        <result property="rerankModelCount" column="rerank_model_count"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,provider_name,provider_type,
+        base_url,api_key,description,status,sort,create_by,update_by,
+        created_at,updated_at
+    </sql>
+
+    <select id="listProviders" resultMap="LlmProviderListResultMap">
+        SELECT
+        p.id,
+        p.provider_name,
+        p.provider_type,
+        p.base_url,
+        p.description,
+        p.status,
+        p.sort,
+        p.create_by,
+        p.update_by,
+        p.created_at,
+        p.updated_at,
+        COALESCE(ms.model_count, 0) AS model_count,
+        COALESCE(ms.chat_model_count, 0) AS chat_model_count,
+        COALESCE(ms.embedding_model_count, 0) AS embedding_model_count,
+        COALESCE(ms.rerank_model_count, 0) AS rerank_model_count
+        FROM llm_provider p
+        LEFT JOIN (
+        SELECT
+        provider_id,
+        COUNT(*) AS model_count,
+        SUM(CASE WHEN model_type = 'CHAT' THEN 1 ELSE 0 END) AS chat_model_count,
+        SUM(CASE WHEN model_type = 'EMBEDDING' THEN 1 ELSE 0 END) AS embedding_model_count,
+        SUM(CASE WHEN model_type = 'RERANK' THEN 1 ELSE 0 END) AS rerank_model_count
+        FROM llm_provider_model
+        GROUP BY provider_id
+        ) ms ON ms.provider_id = p.id
+        <where>
+            <if test="request.providerName != null and request.providerName != ''">
+                AND p.provider_name LIKE CONCAT('%', #{request.providerName}, '%')
+            </if>
+            <if test="request.status != null">
+                AND p.status = #{request.status}
+            </if>
+        </where>
+        ORDER BY p.sort ASC, p.created_at DESC, p.id DESC
+    </select>
+</mapper>

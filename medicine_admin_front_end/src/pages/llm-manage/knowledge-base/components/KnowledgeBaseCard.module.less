@@ -1,0 +1,144 @@
+.card {
+  position: relative;
+  background: var(--ant-color-bg-container);
+  border-radius: 12px;
+  border: 1px solid var(--ant-color-border-secondary);
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+
+  &:hover {
+    border-color: var(--ant-color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cover {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.coverPlaceholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: linear-gradient(
+    135deg,
+    var(--ant-color-primary-bg) 0%,
+    var(--ant-color-primary) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.titleArea {
+  flex: 1;
+  min-width: 0;
+  padding-right: 20px;
+}
+
+.displayName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ant-color-text);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.knowledgeName {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--ant-color-text-description);
+  margin-top: 0;
+}
+
+.knowledgeNameText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.copyIcon {
+  cursor: pointer;
+  font-size: 10px;
+  color: var(--ant-color-text-quaternary);
+  transition: color 0.2s;
+  &:hover {
+    color: var(--ant-color-primary);
+  }
+}
+
+.moreBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--ant-color-text-description);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s;
+  &:hover {
+    color: var(--ant-color-text);
+    background: var(--ant-color-fill-secondary);
+  }
+}
+
+.divider {
+  display: none;
+}
+
+.statsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: transparent;
+  padding: 0 4px;
+  margin-top: 10px;
+}
+
+.statItem {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.statValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ant-color-text);
+}
+
+.statLabel {
+  font-size: 10px;
+  color: var(--ant-color-text-description);
+}

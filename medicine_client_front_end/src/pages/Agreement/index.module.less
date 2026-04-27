@@ -1,0 +1,67 @@
+.page {
+  height: var(--app-viewport-height);
+  min-height: var(--app-viewport-height);
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px 20px;
+  box-sizing: border-box;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 180px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.markdown {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+}
+
+/* 协议页代码块只保留正文，隐藏语言栏、复制、下载等工具按钮。 */
+.markdown :global([data-streamdown='code-block']) {
+  gap: 0;
+  margin: 8px 0;
+  padding: 0;
+  overflow: visible;
+  border: none !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.markdown :global([data-streamdown='code-block-header']),
+.markdown :global([data-streamdown='code-block-actions']) {
+  display: none !important;
+}
+
+.markdown :global([data-streamdown='code-block-body']) {
+  padding: 0;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.markdown :global([data-streamdown='code-block-body'] pre) {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.markdown :global([data-streamdown='code-block-body'] code) {
+  padding: 0;
+  background: transparent;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.7;
+}

@@ -1,0 +1,249 @@
+.orderCard {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+
+  &:active {
+    background-color: #fcfdfc;
+    transform: scale(0.99);
+  }
+}
+
+// 订单头部
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f8faf9;
+}
+
+.orderNo {
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 500;
+  font-family: DINAlternate-Bold, sans-serif;
+}
+
+.orderStatus {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.completedTag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+  margin-right: 6px;
+}
+
+// 地址信息 - 深度优化
+.addressInfo {
+  background-color: #f6f8f6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.addressIcon {
+  width: 28px;
+  height: 28px;
+  background: rgba(21, 190, 81, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--nutui-color-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.addressContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.userInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0d1b12;
+
+  .userPhone {
+    font-size: 12px;
+    color: #667069;
+    font-weight: 500;
+    font-family: DINAlternate-Bold, sans-serif;
+  }
+}
+
+.addressDetail {
+  font-size: 12px;
+  color: #667069;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+// 订单商品列表
+.orderItems {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.orderItem {
+  display: flex;
+  gap: 12px;
+}
+
+.productImage {
+  width: 76px;
+  height: 76px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #fcfdfc;
+  flex-shrink: 0;
+  border: 1px solid #f8faf9;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.productInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.productNameRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.productName {
+  flex: 1;
+  font-size: 14px;
+  color: #0d1b12;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+.itemAfterSaleTag {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.08);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.itemAfterSaleTagCompleted {
+  color: #52c41a;
+  background: #f6ffed;
+  border: 1px solid #b7eb8f;
+  padding: 1px 5px;
+}
+
+.productMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.productPrice {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0d1b12;
+  font-family: DINAlternate-Bold, sans-serif;
+}
+
+.productQuantity {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+// 订单金额
+.orderTotal {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.totalLabel {
+  font-size: 13px;
+  color: #667069;
+  font-weight: 500;
+}
+
+.totalAmount {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ef4444;
+  font-family: DINAlternate-Bold, sans-serif;
+}
+
+// 订单底部
+.orderFooter {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.orderActions {
+  display: flex;
+  gap: 10px;
+}
+
+.actionBtn {
+  min-width: 80px;
+  height: 32px;
+  font-size: 13px;
+  border-radius: 16px;
+  padding: 0 16px;
+  font-weight: 600;
+
+  &:global(.nut-button--default) {
+    border: 1px solid #eef1ee;
+    color: #667069;
+    background: #f6f8f6;
+  }
+
+  &.primaryBtn {
+    box-shadow: none;
+  }
+}

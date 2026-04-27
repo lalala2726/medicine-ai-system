@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.KbDocumentChunkHistoryMapper">
+    <!-- 已废弃：该 Mapper 仅服务于 kb_document_chunk_history 表，后续会随表一起删除。 -->
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.KbDocumentChunkHistory">
+        <id property="id" column="id"/>
+        <result property="documentId" column="document_id"/>
+        <result property="chunkId" column="chunk_id"/>
+        <result property="knowledgeName" column="knowledge_name"/>
+        <result property="vectorId" column="vector_id"/>
+        <result property="oldContent" column="old_content"/>
+        <result property="taskId" column="task_id"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,document_id,chunk_id,knowledge_name,vector_id,old_content,
+        task_id,operator_id,created_at
+    </sql>
+</mapper>

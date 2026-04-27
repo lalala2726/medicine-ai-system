@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.LlmProviderModelMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.LlmProviderModel">
+        <id property="id" column="id"/>
+        <result property="providerId" column="provider_id"/>
+        <result property="modelName" column="model_name"/>
+        <result property="modelType" column="model_type"/>
+        <result property="supportReasoning" column="support_reasoning"/>
+        <result property="supportVision" column="support_vision"/>
+        <result property="description" column="description"/>
+        <result property="enabled" column="enabled"/>
+        <result property="sort" column="sort"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,provider_id,model_name,model_type,support_reasoning,
+        support_vision,description,enabled,sort,create_by,
+        update_by,created_at,updated_at
+    </sql>
+</mapper>

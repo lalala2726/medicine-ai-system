@@ -1,0 +1,37 @@
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+.history/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Java / Maven
+target/
+
+# Node / Vite
+node_modules/
+dist/
+dist-ssr/
+build/
+coverage/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Local environment files. Keep examples publishable.
+**/.env
+**/.env.*
+!**/.env.example

@@ -1,0 +1,135 @@
+@text-primary: #0d1b12;
+@text-secondary: #667069;
+@card-bg: #ffffff;
+@card-border: #f0f2f5;
+
+.assistantCardShell {
+  width: fit-content;
+  max-width: min(78vw, 420px);
+  min-width: 0;
+}
+
+.userBubble {
+  padding: 6px;
+  background: transparent !important;
+  border: none !important;
+}
+
+.consultCard {
+  display: block;
+  background: @card-bg;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid @card-border;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  min-width: 220px;
+  max-width: min(70vw, 320px);
+  box-sizing: border-box;
+  text-align: left;
+  appearance: none;
+
+  &:active {
+    background-color: #fafafa;
+    transform: scale(0.99);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--nutui-color-primary, rgb(3, 194, 146));
+    outline-offset: 2px;
+  }
+}
+
+.consultCardAssistant {
+  box-shadow: none;
+}
+
+.consultCardUser {
+  box-shadow: none;
+}
+
+// 头部标签
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid @card-border;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.headerIcon {
+  color: var(--nutui-color-primary, rgb(3, 194, 146));
+  flex-shrink: 0;
+}
+
+.tagText {
+  font-size: 12px;
+  color: @text-secondary;
+  font-weight: 500;
+}
+
+// 商品信息区域
+.content {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.productImage {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #f8faf8;
+  flex-shrink: 0;
+  border: 1px solid @card-border;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+.productInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.productName {
+  font-size: 13px;
+  color: @text-primary;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.productPrice {
+  display: flex;
+  align-items: baseline;
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.priceSymbol {
+  font-size: 11px;
+  margin-right: 1px;
+}
+
+.priceValue {
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  font-family: DINAlternate-Bold, sans-serif;
+}

@@ -1,0 +1,235 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f9fafb;
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px 24px;
+  background: linear-gradient(180deg, #f9fafb 20%, rgba(249, 250, 251, 0) 100%);
+  pointer-events: none;
+}
+
+.header > * {
+  pointer-events: auto;
+}
+
+.leftAction {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  position: relative;
+}
+
+.titleInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.modelSelector {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  color: #8a8a8e;
+  margin-top: 2px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s;
+  padding: 2px 4px 2px 0;
+}
+
+.modelSelector:active {
+  opacity: 0.6;
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+  color: #c7c7cc;
+}
+
+.chevronUp {
+  transform: rotate(-90deg);
+}
+
+.modelSelectorOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 105;
+}
+
+.modelSelectorDropdown {
+  position: absolute;
+  top: 48px;
+  left: 54px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 0 1px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+  width: 240px;
+  z-index: 110;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top left;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modelOption {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modelOption:active {
+  background: #f9fafb;
+}
+
+.modelOptionCheck {
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+}
+
+.modelOptionText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modelOptionTitle {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1d1d1f;
+}
+
+.modelOptionDesc {
+  font-size: 12px;
+  color: #86868b;
+}
+
+.modelOptionDivider {
+  height: 1px;
+  background: #f2f2f7;
+  margin: 4px 20px;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chevron {
+  color: #9ca3af;
+}
+
+.rightActions {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1f2937;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.iconButton:active {
+  transform: scale(0.92);
+}
+
+.historyStatus,
+.historyError {
+  margin: 0 16px 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.historyStatus {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.historyError {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.chatContainer {
+  position: relative;
+  --assistant-content-inline-gap: 16px;
+  --assistant-composer-space: calc(104px + env(safe-area-inset-bottom));
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuButton {
+  position: relative;
+  z-index: 130;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  color: #1f2937;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.menuButton:active {
+  transform: scale(0.96);
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.Role">
+        <id property="id" column="id"/>
+        <result property="roleCode" column="role_code"/>
+        <result property="roleName" column="role_name"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,role_code,role_name,remark,status,create_time,
+        update_time,create_by,update_by
+    </sql>
+
+    <select id="roleList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from role
+        <where>
+            <if test="query.roleName != null and query.roleName != ''">
+                and role_name like concat('%', #{query.roleName}, '%')
+            </if>
+            <if test="query.roleCode != null and query.roleCode != ''">
+                and role_code like concat('%', #{query.roleCode}, '%')
+            </if>
+            <if test="query.status != null">
+                and status = #{query.status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>

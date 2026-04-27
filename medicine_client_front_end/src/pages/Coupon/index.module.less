@@ -1,0 +1,425 @@
+.couponPage {
+  min-height: var(--app-viewport-height);
+  background: var(--background-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.pageHeader {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  background: rgba(246, 248, 246, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f0f3f1;
+}
+
+.headerLeft,
+.headerRight {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d1b12;
+}
+
+.headerRight {
+  width: auto;
+  min-width: 60px;
+  justify-content: flex-end;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.headerLeft {
+  margin-left: -8px;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.headerTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.activationEntry {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(21, 190, 81, 0.12);
+  color: var(--nutui-color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.statusTabs {
+  margin: 14px 16px 10px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #fff;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.tabItem {
+  text-align: center;
+  height: 34px;
+  line-height: 34px;
+  font-size: 13px;
+  border-radius: 10px;
+  color: #667069;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:active {
+    opacity: 0.75;
+  }
+
+  &.active {
+    background: rgba(21, 190, 81, 0.12);
+    color: var(--nutui-color-primary);
+    font-weight: 700;
+  }
+}
+
+.pageContent {
+  padding: 2px 16px calc(env(safe-area-inset-bottom) + 20px);
+}
+
+.loadingWrapper,
+.emptyWrapper {
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.couponList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.couponSkeletonCard {
+  display: flex;
+  min-height: 126px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.couponSkeletonLeft {
+  min-width: 130px;
+  min-height: 126px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(145deg, #e1f5e7 0%, #d8efe0 100%);
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 0;
+    width: 12px;
+    height: 100%;
+    background: radial-gradient(circle at 0 8px, transparent 6px, #fff 6px);
+    background-size: 12px 18px;
+    background-repeat: repeat-y;
+  }
+}
+
+.couponSkeletonAmount {
+  width: 72px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.couponSkeletonAmountHint {
+  width: 58px;
+  height: 11px;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.couponSkeletonRight {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 14px 12px;
+}
+
+.couponSkeletonHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.couponSkeletonName {
+  width: 60%;
+  height: 15px;
+}
+
+.couponSkeletonStatus {
+  width: 48px;
+  height: 21px;
+}
+
+.couponSkeletonMeta {
+  width: 72%;
+  height: 13px;
+}
+
+.couponSkeletonMetaShort {
+  width: 54%;
+  height: 13px;
+}
+
+.couponSkeletonTime {
+  width: 88%;
+  height: 12px;
+}
+
+.couponItemWrapper {
+  margin-bottom: 0;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  background: #fff;
+  position: relative;
+
+  :global(.nut-swipe) {
+    border-radius: 16px;
+    overflow: hidden;
+    align-items: stretch;
+  }
+
+  :global(.nut-swipe-wrapper) {
+    align-items: stretch;
+  }
+
+  :global(.nut-swipe-right) {
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: stretch;
+  }
+}
+
+.deleteButton {
+  width: 84px;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  background: #ef4444;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  border-radius: 0 16px 16px 0;
+
+  &:active {
+    opacity: 0.8;
+  }
+
+  .deleteIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .deleteText {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+}
+
+.couponCard {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+
+  &.available {
+    .cardLeft {
+      background: linear-gradient(145deg, #1fb86b 0%, #0e9f56 100%);
+      color: #fff;
+    }
+
+    .couponStatus {
+      color: #0f9f57;
+      background: rgba(15, 159, 87, 0.12);
+    }
+  }
+
+  &.disabled {
+    .cardLeft {
+      background: linear-gradient(145deg, #afb7b2 0%, #9ea6a1 100%);
+      color: #f7f8f7;
+    }
+
+    .couponStatus {
+      color: #7b8480;
+      background: #edf0ee;
+    }
+  }
+}
+
+.cardLeft {
+  min-width: 130px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0 12px;
+  min-height: 126px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 0;
+    width: 12px;
+    height: 100%;
+    background: radial-gradient(circle at 0 8px, transparent 6px, #fff 6px);
+    background-size: 12px 18px;
+    background-repeat: repeat-y;
+  }
+}
+
+.amountLine {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  line-height: 1;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.symbol {
+  font-size: 14px;
+  margin-right: 2px;
+}
+
+.amount {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: DINAlternate-Bold, sans-serif;
+  word-break: break-all;
+  text-align: center;
+}
+
+.amountHint {
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.cardRight {
+  flex: 1;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.couponName {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0d1b12;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.couponStatus {
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.cardMeta {
+  font-size: 13px;
+  color: #57625a;
+  line-height: 1.4;
+}
+
+.timeLine {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #8a9490;
+  line-height: 1.35;
+  word-break: break-all;
+}
+
+.loadMoreWrapper {
+  margin-top: 16px;
+  text-align: center;
+}
+
+// 全局覆盖 NutUI 组件样式，确保侧滑正常
+:global {
+  .nut-swipe {
+    background-color: transparent;
+  }
+  .nut-swipe-wrapper {
+    display: flex;
+    align-items: stretch;
+  }
+  .nut-swipe-right {
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,207 @@
+.walletPage {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 100%;
+}
+
+.summaryPanel,
+.sectionPanel {
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.summaryPanel {
+  padding: 24px;
+}
+
+.summaryHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.summaryTitle {
+  margin: 2px 0 0 !important;
+  color: rgba(0, 0, 0, 0.88) !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.statusTag {
+  margin-inline-end: 0;
+  border-radius: 4px;
+}
+
+.balanceBlock {
+  padding-bottom: 22px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.balanceLine {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  margin-top: 6px;
+}
+
+.balanceValue {
+  min-width: 0;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1.1;
+  word-break: break-all;
+}
+
+.balanceUnit {
+  flex: 0 0 auto;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 15px;
+}
+
+.statusDescription {
+  display: block;
+  margin-top: 10px;
+}
+
+.statList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  padding-top: 22px;
+}
+
+.statItem {
+  min-width: 0;
+  padding-right: 20px;
+}
+
+.statItem + .statItem {
+  padding-left: 20px;
+  border-left: 1px solid #f5f5f5;
+}
+
+.metricValue {
+  min-width: 0;
+  margin-top: 8px;
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.sectionPanel {
+  padding: 20px 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  margin: 0 !important;
+  color: rgba(0, 0, 0, 0.88) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.actionBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.actionButton {
+  min-width: 96px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.statusAlert {
+  margin-bottom: 16px;
+  border-radius: 6px;
+}
+
+.detailDescriptions {
+  :global {
+    .ant-descriptions-item-label {
+      width: 112px;
+      background: #fafafa;
+    }
+
+    .ant-descriptions-item-content {
+      word-break: break-all;
+    }
+  }
+}
+
+:global(.app-pro-layout--dark) {
+  .summaryPanel,
+  .sectionPanel {
+    background: #141414;
+    border-color: #303030;
+  }
+
+  .summaryTitle,
+  .balanceValue,
+  .metricValue,
+  .sectionTitle {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  .balanceUnit {
+    color: rgba(255, 255, 255, 0.45);
+  }
+
+  .balanceBlock,
+  .statItem + .statItem {
+    border-color: #303030;
+  }
+
+  .detailDescriptions {
+    :global {
+      .ant-descriptions-item-label {
+        background: rgba(255, 255, 255, 0.04);
+      }
+    }
+  }
+}
+
+@media (max-width: 840px) {
+  .statList {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .statItem,
+  .statItem + .statItem {
+    padding-right: 0;
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .summaryPanel,
+  .sectionPanel {
+    padding: 18px;
+  }
+
+  .summaryHeader {
+    flex-direction: column;
+  }
+
+  .balanceValue {
+    font-size: 34px;
+  }
+}

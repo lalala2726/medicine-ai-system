@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.MallProductTagRelMapper">
+
+    <!-- 基础结果映射。 -->
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallProductTagRel">
+        <id property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="tagId" column="tag_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+    </resultMap>
+
+    <!-- 基础字段列表。 -->
+    <sql id="Base_Column_List">
+        id
+        ,product_id,tag_id,create_time,create_by
+    </sql>
+</mapper>

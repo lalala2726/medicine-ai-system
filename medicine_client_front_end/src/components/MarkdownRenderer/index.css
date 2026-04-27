@@ -1,0 +1,370 @@
+.markdown-body {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  word-break: break-word;
+}
+
+.markdown-body > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body p {
+  margin: 0;
+}
+
+.markdown-body p + p {
+  margin-top: 0.5em;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.2em;
+  margin: 0.3em 0;
+}
+
+.markdown-body li {
+  margin: 0;
+}
+
+.markdown-body li + li {
+  margin-top: 0.2em;
+}
+
+.markdown-body li > p {
+  margin: 0;
+  display: inline;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  margin: 0.6em 0 0.3em;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.markdown-body h1:first-child,
+.markdown-body h2:first-child,
+.markdown-body h3:first-child,
+.markdown-body h4:first-child {
+  margin-top: 0;
+}
+
+.markdown-body code {
+  background-color: #f5f5f5;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.markdown-body pre {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 8px;
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.markdown-body a {
+  color: #1677ff;
+  text-decoration: none;
+}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+/* 链接与脚注引用统一去掉按钮默认黑框，保持文本化的链接外观。 */
+.markdown-body [data-streamdown='link'] {
+  appearance: none;
+  border: none !important;
+  outline: none;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0;
+  margin: 0;
+  color: #1677ff;
+  font: inherit;
+  line-height: inherit;
+  text-decoration: none;
+}
+
+.markdown-body [data-streamdown='link']:hover {
+  color: #4096ff;
+  text-decoration: underline;
+}
+
+/* 脚注编号与回链使用更轻的灰色，避免出现深色边框感。 */
+.markdown-body [data-footnote-ref],
+.markdown-body [data-footnote-backref],
+.markdown-body [data-streamdown='superscript'] [data-streamdown='link'] {
+  color: #6b7280;
+  text-decoration: none;
+}
+
+.markdown-body [data-footnote-ref]:hover,
+.markdown-body [data-footnote-backref]:hover,
+.markdown-body [data-streamdown='superscript'] [data-streamdown='link']:hover {
+  color: #4b5563;
+  text-decoration: none;
+}
+
+.markdown-body blockquote {
+  margin: 0 0 8px;
+  padding: 0 12px;
+  color: #666;
+  border-left: 4px solid #ddd;
+}
+
+.markdown-body hr,
+.markdown-body [data-streamdown='horizontal-rule'] {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid #d1d5db;
+}
+
+/* Markdown 表格在移动端保留可读列宽，并由外层容器负责横向滚动。 */
+.markdown-body [data-streamdown='table-wrapper'] {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 12px 0;
+  padding: 0 0 4px;
+  border: none !important;
+  background: transparent !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Streamdown 表格内部容器需要撑开，否则小屏会强制压缩所有列。 */
+.markdown-body [data-streamdown='table-wrapper'] > div {
+  min-width: 100%;
+  width: max-content;
+  border: none !important;
+  background: transparent !important;
+}
+
+.markdown-body table {
+  width: 100%;
+  min-width: 560px;
+  margin: 0;
+  border: 1px solid #e5e7eb;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  table-layout: auto;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.markdown-body th,
+.markdown-body td {
+  min-width: 96px;
+  padding: 10px 12px;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  line-height: 1.55;
+  text-align: left;
+  vertical-align: top;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.markdown-body th {
+  color: #111827;
+  font-weight: 600;
+  background: #f8fafc;
+}
+
+.markdown-body th:last-child,
+.markdown-body td:last-child {
+  border-right: none;
+}
+
+.markdown-body tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown-body [data-streamdown='mermaid-block'] {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 统一收敛 Mermaid 容器边框，避免图块外围出现深色描边。 */
+.markdown-body [data-streamdown='mermaid-block'] > div:last-child,
+.markdown-body [data-streamdown='mermaid'],
+.markdown-body [data-streamdown='mermaid'] > div,
+.markdown-body [data-streamdown='mermaid'] > div > div:last-child {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.markdown-body [data-streamdown='mermaid-block-actions'] {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.markdown-body [data-streamdown='mermaid'] > div > div:first-child {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.markdown-body [data-streamdown='mermaid-block'] button,
+.markdown-body [data-streamdown='mermaid'] button,
+.markdown-body [data-streamdown='code-block'] button {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: #9ca3af !important;
+}
+
+.markdown-body [data-streamdown='mermaid-block'] button:hover,
+.markdown-body [data-streamdown='mermaid'] button:hover,
+.markdown-body [data-streamdown='code-block'] button:hover {
+  background: rgba(229, 231, 235, 0.35) !important;
+  color: #6b7280 !important;
+}
+
+/*
+ * Streamdown Mermaid / Table fullscreen overlay.
+ * The overlay is portaled to document.body and styled with Tailwind classes
+ * that rely on @theme colors. Provide explicit fallbacks to guarantee visibility.
+ */
+
+/* Full-screen backdrop */
+body > div[class*='fixed'][class*='inset-0'][class*='z-50'] {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* Close button in fullscreen overlay */
+body > div[class*='fixed'][class*='inset-0'][class*='z-50'] > button[class*='absolute'] {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px !important;
+  border: none !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: #6b7280 !important;
+  cursor: pointer !important;
+}
+
+body > div[class*='fixed'][class*='inset-0'][class*='z-50'] > button[class*='absolute']:hover {
+  background: rgba(229, 231, 235, 0.5) !important;
+  color: #374151 !important;
+}
+
+/* Mermaid chart container inside fullscreen overlay */
+body > div[class*='fixed'][class*='inset-0'][class*='z-50'] [data-streamdown='mermaid'] {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Mermaid pan/zoom control buttons — plain gray icons, no borders/backgrounds */
+body > div[class*='fixed'][class*='inset-0'][class*='z-50'] [data-streamdown='mermaid'] button,
+.markdown-body [data-streamdown='mermaid'] button {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+  color: #9ca3af !important;
+}
+
+/* Pan/zoom control button container */
+body > div[class*='fixed'][class*='inset-0'][class*='z-50'] [data-streamdown='mermaid'] div[class*='absolute'] {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.markdown-body [data-streamdown='mermaid'] > div > div:first-child {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Table fullscreen overlay (portaled to body) */
+body > div[data-streamdown='table-fullscreen'] {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #ffffff !important;
+}
+
+/* 图片容器与下载按钮去掉深色描边，保持和代码块/图表一致的浅色工具样式。 */
+.markdown-body [data-streamdown='image-wrapper'],
+.markdown-body [data-streamdown='image'],
+.markdown-body [data-streamdown='image-fallback'] {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.markdown-body [data-streamdown='image-wrapper'] button {
+  border: none !important;
+  box-shadow: none !important;
+  background: rgba(249, 250, 251, 0.96) !important;
+  color: #9ca3af !important;
+}
+
+.markdown-body [data-streamdown='image-wrapper'] button:hover {
+  background: rgba(229, 231, 235, 0.45) !important;
+  color: #6b7280 !important;
+}
+
+.markdown-body [data-streamdown='image-wrapper'] > div {
+  background: rgba(15, 23, 42, 0.04) !important;
+}
+
+.markdown-body [data-streamdown='code-block'] {
+  border: none !important;
+  background: rgba(15, 23, 42, 0.04) !important;
+  box-shadow: none !important;
+}
+
+.markdown-body [data-streamdown='code-block-header'] {
+  border: none !important;
+}
+
+.markdown-body [data-streamdown='code-block-actions'] {
+  border: none !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: none !important;
+}
+
+.markdown-body [data-streamdown='code-block-body'] {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.markdown-body [data-streamdown='code-block'] button {
+  border: none !important;
+  box-shadow: none !important;
+}

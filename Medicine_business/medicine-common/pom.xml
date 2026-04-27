@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.zhangyichuang.medicine</groupId>
+        <artifactId>Medicine</artifactId>
+        <version>1.0-beta</version>
+    </parent>
+    <artifactId>medicine-common</artifactId>
+    <packaging>pom</packaging>
+    <name>medicine-common</name>
+
+    <modules>
+        <module>medicine-common-core</module>
+        <module>medicine-common-mybatis-plus</module>
+        <module>medicine-common-log</module>
+        <module>medicine-common-redis</module>
+        <module>medicine-common-mongodb</module>
+        <module>medicine-common-security</module>
+        <module>medicine-common-system-auth</module>
+        <module>medicine-common-storage</module>
+        <module>medicine-common-captcha</module>
+        <module>medicine-common-excel</module>
+    </modules>
+</project>

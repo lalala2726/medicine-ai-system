@@ -1,0 +1,180 @@
+.passwordChangePage {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #333333;
+}
+
+.navLeft,
+.navRight {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navLeft {
+  cursor: pointer;
+}
+
+.navTitle {
+  font-size: 17px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.pageContent {
+  flex: 1;
+  padding: 24px 24px;
+}
+
+.heroSection {
+  margin-bottom: 40px;
+}
+
+.heroTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.heroSubtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #999999;
+  line-height: 1.5;
+}
+
+.formCard {
+  background: transparent;
+}
+
+.fieldItem {
+  margin-bottom: 20px;
+}
+
+.fieldLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 8px;
+  display: none; /* 极简风格可以隐藏独立label */
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eeeeee;
+  transition: border-color 0.2s ease;
+  gap: 8px;
+
+  &:focus-within {
+    border-bottom-color: #15be51;
+  }
+}
+
+.controlIcon {
+  color: #cccccc;
+  display: flex;
+  align-items: center;
+}
+
+.control:focus-within .controlIcon {
+  color: #15be51;
+}
+
+.nutInput {
+  flex: 1;
+
+  :global(.nut-input) {
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+
+  :global(.nut-input-native) {
+    font-size: 15px;
+    color: #333333;
+
+    &::placeholder {
+      color: #cccccc;
+    }
+  }
+}
+
+.eyeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cccccc;
+  cursor: pointer;
+  padding: 4px;
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.tipCard {
+  margin-top: 40px;
+}
+
+.tipTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 12px;
+}
+
+.tipItem {
+  position: relative;
+  padding-left: 12px;
+  font-size: 13px;
+  color: #999999;
+  line-height: 1.6;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #cccccc;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 8px;
+  }
+}
+
+.footer {
+  padding: 16px 24px calc(env(safe-area-inset-bottom) + 24px);
+}
+
+.submitButton {
+  height: 48px;
+  border-radius: 24px;
+  border: none !important;
+  background: #15be51 !important;
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff !important;
+
+  &:active {
+    opacity: 0.9;
+  }
+}

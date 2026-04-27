@@ -1,0 +1,179 @@
+.pageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  .headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .backBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--ant-color-text);
+      font-size: 16px;
+
+      &:hover {
+        background: var(--ant-color-fill-secondary);
+      }
+    }
+
+    .pageTitle {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ant-color-text);
+      margin: 0;
+    }
+  }
+
+  .headerRight {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.chunkList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chunkCard {
+  background: var(--ant-color-bg-container);
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 12px;
+  padding: 20px 24px;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: var(--ant-color-primary-border-hover);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.chunkHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  .chunkMeta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .chunkIndex {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ant-color-text);
+    }
+
+    .chunkStat {
+      font-size: 13px;
+      color: var(--ant-color-text-tertiary);
+    }
+  }
+
+  .chunkActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+.chunkContent {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ant-color-text-secondary);
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.chunkDetail {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--ant-color-border-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+
+  .detailItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+
+    .detailLabel {
+      color: var(--ant-color-text-tertiary);
+    }
+
+    .detailValue {
+      color: var(--ant-color-text-secondary);
+    }
+  }
+}
+
+.paginationWrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 24px;
+}
+
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 0;
+}
+
+.emptyWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 0;
+}
+
+.drawerBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 24px 24px 16px;
+}
+
+.drawerTextarea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  :global {
+    .ant-input-textarea {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+
+      textarea {
+        flex: 1;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+    }
+  }
+}
+
+.drawerFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

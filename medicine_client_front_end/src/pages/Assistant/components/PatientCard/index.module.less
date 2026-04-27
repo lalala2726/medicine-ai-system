@@ -1,0 +1,112 @@
+@text-primary: #1d2129;
+@text-secondary: #86909c;
+@card-bg: #ffffff;
+@card-border: #f0f2f5;
+
+.assistantCardShell {
+  width: fit-content;
+  max-width: min(78vw, 420px);
+  min-width: 0;
+}
+
+.userBubble {
+  padding: 6px;
+  background: transparent !important;
+  border: none !important;
+}
+
+.patientCard {
+  background: @card-bg;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid @card-border;
+  min-width: 240px;
+  max-width: min(72vw, 340px);
+  box-sizing: border-box;
+}
+
+.patientCardAssistant {
+  box-shadow: none;
+}
+
+.patientCardUser {
+  box-shadow: none;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f8faf9;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.name {
+  font-size: 15px;
+  font-weight: 600;
+  color: @text-primary;
+  line-height: 1.2;
+}
+
+.relationship {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.defaultTag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.gender {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.metaBox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.metaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.metaLabel {
+  color: @text-secondary;
+  flex-shrink: 0;
+}
+
+.metaValue {
+  color: @text-primary;
+  font-weight: 500;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

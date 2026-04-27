@@ -1,0 +1,129 @@
+.securitySettingsPage {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(21, 190, 81, 0.18), transparent 34%),
+    linear-gradient(180deg, #f6faf7 0%, #f3f5f4 48%, #ffffff 100%);
+}
+
+.navbar {
+  height: calc(env(safe-area-inset-top) + 56px);
+  padding: env(safe-area-inset-top) 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #0d1b12;
+}
+
+.navLeft,
+.navRight {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navLeft {
+  cursor: pointer;
+}
+
+.navTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.pageContent {
+  padding: 16px;
+}
+
+.heroCard,
+.menuCard {
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(13, 27, 18, 0.06);
+}
+
+.heroCard {
+  padding: 22px 20px;
+}
+
+.heroIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(21, 190, 81, 0.12);
+  color: #15be51;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroTitle {
+  margin-top: 16px;
+  font-size: 24px;
+  font-weight: 800;
+  color: #0d1b12;
+}
+
+.heroSubtitle {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #667069;
+}
+
+.menuCard {
+  margin-top: 16px;
+  padding: 6px 18px;
+}
+
+.menuItem {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgba(13, 27, 18, 0.06);
+  }
+
+  &:active {
+    opacity: 0.72;
+  }
+}
+
+.menuLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.menuIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: rgba(21, 190, 81, 0.1);
+  color: #15be51;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menuLabel {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.menuDesc {
+  font-size: 12px;
+  color: #667069;
+}

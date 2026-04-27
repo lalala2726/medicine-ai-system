@@ -1,0 +1,112 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+}
+
+.overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(249, 250, 251, 0) 0%,
+    rgba(249, 250, 251, 0.08) 42%,
+    rgba(249, 250, 251, 0.42) 68%,
+    rgba(249, 250, 251, 0.76) 84%,
+    rgba(249, 250, 251, 0.92) 100%
+  );
+}
+
+.dynamicContainer {
+  position: absolute;
+}
+
+.sliderTrack {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #63cb7a 0%, #58be6f 100%);
+  box-shadow: 0 12px 24px rgba(88, 190, 111, 0.16);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sliderTrackCancel {
+  background: linear-gradient(180deg, #f56d6d 0%, #ea4a4a 100%);
+  box-shadow: 0 12px 24px rgba(234, 74, 74, 0.18);
+}
+
+.overlayContent {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  width: 100vw;
+}
+
+.waveContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 16px;
+}
+
+.waveform {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 5px;
+  min-height: 28px;
+}
+
+.waveBar {
+  width: 4px;
+  min-height: 8px;
+  border-radius: 999px;
+  background: #59c46f;
+  opacity: 0.88;
+  transform-origin: center bottom;
+  transition:
+    height 0.05s linear,
+    background-color 0.2s ease;
+}
+
+.waveBarCancel {
+  background: #ef4444;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(89, 196, 111, 0.25);
+  border-top-color: #59c46f;
+  border-radius: 50%;
+  animation: spinnerRotate 0.7s linear infinite;
+}
+
+@keyframes spinnerRotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hintText {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #4b5563;
+  transition: color 0.2s ease;
+}
+
+.hintTextCancel {
+  color: #d14343;
+}

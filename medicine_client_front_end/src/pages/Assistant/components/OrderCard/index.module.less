@@ -1,0 +1,163 @@
+@text-primary: #1d2129;
+@text-secondary: #86909c;
+@card-bg: #ffffff;
+@card-border: #f0f2f5;
+
+.assistantCardShell {
+  width: fit-content;
+  max-width: min(78vw, 420px);
+  min-width: 0;
+}
+
+.userBubble {
+  padding: 6px;
+  background: transparent !important;
+  border: none !important;
+}
+
+.orderCard {
+  background: @card-bg;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid @card-border;
+  cursor: pointer;
+  position: relative;
+  min-width: 220px;
+  max-width: min(70vw, 320px);
+  box-sizing: border-box;
+
+  &:active {
+    background-color: #fafafa;
+  }
+}
+
+.orderCardAssistant {
+  box-shadow: none;
+}
+
+.orderCardUser {
+  box-shadow: none;
+}
+
+// 订单头部
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid @card-border;
+}
+
+.orderNo {
+  font-size: 11px;
+  color: #b0b3b8;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+}
+
+.orderStatus {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+// 订单商品列表
+.orderItems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.orderItem {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.productImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #f8faf8;
+  flex-shrink: 0;
+  border: 1px solid @card-border;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+.productInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.productNameRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.productName {
+  flex: 1;
+  font-size: 13px;
+  color: @text-primary;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.productMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.productPrice {
+  font-size: 13px;
+  font-weight: 600;
+  color: @text-primary;
+}
+
+.productQuantity {
+  font-size: 11px;
+  color: #b0b3b8;
+  font-weight: 400;
+}
+
+// 订单金额
+.orderTotal {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 3px;
+  padding-top: 8px;
+  border-top: 1px solid @card-border;
+}
+
+.totalLabel {
+  font-size: 11px;
+  color: @text-secondary;
+  font-weight: 400;
+}
+
+.totalAmount {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ef4444;
+  font-family: DINAlternate-Bold, sans-serif;
+}

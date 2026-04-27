@@ -1,0 +1,944 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 24px;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+
+  :global(.app-pro-layout--dark) & {
+    background: #1f1f1f;
+    border-color: #303030;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.toolbarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pageTitle {
+  margin: 0 !important;
+  font-size: 20px !important;
+  font-weight: 600;
+  color: #1a1a1a;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.sectionCard {
+  min-width: 0;
+  border-radius: 8px;
+  border: 1px solid #e8edf3;
+  background: #fff;
+  box-shadow: none;
+  padding: 22px 24px;
+  margin-bottom: 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  :global(.app-pro-layout--dark) & {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+
+  :global(.ant-card-body) {
+    padding: 0;
+  }
+}
+
+.sectionCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eef2f6;
+
+  :global(.app-pro-layout--dark) & {
+    border-bottom-color: #303030;
+  }
+}
+
+.sectionCardTitleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionCardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.sectionCardDescription {
+  display: block;
+  max-width: 720px;
+}
+
+.overviewCard {
+  height: 100%;
+  border-radius: 20px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  background: #fff;
+
+  :global(.app-pro-layout--dark) & {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+
+  :global(.ant-card-body) {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  &:hover {
+    border-color: #1677ff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    :global(.app-pro-layout--dark) & {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+.overviewHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.overviewTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  font-size: 22px;
+}
+
+// Category specific colors
+.knowledgeBaseIcon {
+  color: #0d8a72;
+  background: #e6f7f4;
+
+  :global(.app-pro-layout--dark) & {
+    color: #0d8a72;
+    background: rgba(13, 138, 114, 0.15);
+  }
+}
+
+.adminAssistantIcon {
+  color: #1677ff;
+  background: #e6f4ff;
+
+  :global(.app-pro-layout--dark) & {
+    color: #1677ff;
+    background: rgba(22, 119, 255, 0.15);
+  }
+}
+
+.clientAssistantIcon {
+  color: #08979c;
+  background: #e6fffb;
+
+  :global(.app-pro-layout--dark) & {
+    color: #5cdbd3;
+    background: rgba(8, 151, 156, 0.16);
+  }
+}
+
+.speechIcon {
+  color: #13a8a8;
+  background: #e6fffb;
+
+  :global(.app-pro-layout--dark) & {
+    color: #36cfc9;
+    background: rgba(19, 168, 168, 0.15);
+  }
+}
+
+.commonCapabilityIcon {
+  color: #c27c0e;
+  background: #fff7e6;
+
+  :global(.app-pro-layout--dark) & {
+    color: #ffc53d;
+    background: rgba(194, 124, 14, 0.16);
+  }
+}
+
+.imageRecognitionIcon {
+  color: #eb2f96;
+  background: #fff0f6;
+
+  :global(.app-pro-layout--dark) & {
+    color: #eb2f96;
+    background: rgba(235, 47, 150, 0.15);
+  }
+}
+
+.chatHistorySummaryIcon {
+  color: #fa8c16;
+  background: #fff7e6;
+
+  :global(.app-pro-layout--dark) & {
+    color: #fa8c16;
+    background: rgba(250, 140, 22, 0.15);
+  }
+}
+
+.chatTitleIcon {
+  color: #722ed1;
+  background: #f9f0ff;
+
+  :global(.app-pro-layout--dark) & {
+    color: #b37feb;
+    background: rgba(114, 46, 209, 0.18);
+  }
+}
+
+.overviewTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.4;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 16px;
+  border: 1px solid #f5f5f5;
+  // Ensure consistent height even with different item counts
+  min-height: 180px;
+
+  :global(.app-pro-layout--dark) & {
+    background: #141414;
+    border-color: #303030;
+  }
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px dashed #f0f0f0;
+
+    :global(.app-pro-layout--dark) & {
+      border-bottom-color: #303030;
+    }
+  }
+}
+
+.summaryLabel {
+  color: #8c8c8c;
+  font-size: 13px;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+.summaryValue {
+  color: #262626;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+  font-size: 13px;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: stretch;
+
+  button {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+}
+
+.drawerBody {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.drawerFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin: -8px -16px;
+  padding: 16px 24px;
+  background: #fff;
+  border-top: 1px solid #e8edf3;
+
+  :global(.app-pro-layout--dark) & {
+    background: #1f1f1f;
+    border-top: 1px solid #303030;
+  }
+}
+
+.formCluster {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.slotStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+
+  > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+.slotCard {
+  min-width: 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #eef2f6;
+  background: transparent;
+  transition: all 0.2s ease;
+  padding: 0 0 18px;
+  margin-bottom: 18px;
+
+  &:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+
+  :global(.app-pro-layout--dark) & {
+    background: transparent;
+    border-bottom-color: #303030;
+  }
+}
+
+.slotHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.slotTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.slotDescription {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #8c8c8c;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+.compactFormItem {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  :global(.ant-form-item-label) {
+    padding-bottom: 6px;
+
+    label {
+      font-size: 13px;
+      color: #595959;
+
+      :global(.app-pro-layout--dark) & {
+        color: rgba(255, 255, 255, 0.65);
+      }
+    }
+  }
+}
+
+.inlineEmptyHint {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #ff4d4f;
+  background: #fff2f0;
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  :global(.app-pro-layout--dark) & {
+    background: rgba(255, 77, 79, 0.1);
+    color: #ff4d4f;
+  }
+}
+
+.inlineInfoHint {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #8c8c8c;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+.capabilityRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.displayModelPreviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.displayModelPreviewItem {
+  padding: 16px 0;
+  border-bottom: 1px dashed #f0f0f0;
+  background: transparent;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  :global(.app-pro-layout--dark) & {
+    background: transparent;
+    border-bottom-color: #303030;
+  }
+}
+
+.displayModelPreviewHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.displayModelPreviewName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.displayModelPreviewMeta {
+  font-size: 12px;
+  color: #8c8c8c;
+  word-break: break-all;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+.displayModelModalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.displayModelModalToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.displayModelEditorList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.displayModelEditorCard {
+  border-radius: 14px;
+}
+
+.displayModelEditorItem {
+  padding: 18px 0;
+  border-bottom: 1px solid #eef2f6;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  :global(.app-pro-layout--dark) & {
+    border-bottom-color: #303030;
+  }
+}
+
+.displayModelEditorItemHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.displayModelEditorItemTitle {
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  word-break: break-all;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.displayModelEditorFieldRow {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.displayModelEditorFieldLabel {
+  color: #415064;
+  font-size: 13px;
+  font-weight: 500;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.65);
+  }
+}
+
+.displayModelEditorFieldControl {
+  min-width: 0;
+}
+
+.displayModelEditorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.displayModelEditorTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.displayModelEmptyState {
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+  color: #8c8c8c;
+  background: #fafafa;
+  border: 1px dashed #d9d9d9;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.45);
+    background: #141414;
+    border-color: #303030;
+  }
+}
+
+.advancedToggle {
+  font-size: 12px;
+  color: #1677ff;
+  padding: 0 4px !important;
+  height: 24px !important;
+
+  &:hover {
+    background: transparent !important;
+    color: #4096ff;
+  }
+}
+
+.advancedFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #f0f0f0;
+
+  :global(.app-pro-layout--dark) & {
+    border-top-color: #303030;
+  }
+}
+
+@media (max-width: 1200px) {
+  .slotGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fieldDivider {
+  height: 1px;
+  background: #f0f0f0;
+  margin: 12px 0 24px;
+
+  :global(.app-pro-layout--dark) & {
+    background: #303030;
+  }
+}
+
+.voiceSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.voiceFallbackHint {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff7e6;
+  border: 1px solid #ffe7ba;
+  color: #ad6800;
+  font-size: 13px;
+  line-height: 1.5;
+
+  :global(.app-pro-layout--dark) & {
+    background: rgba(250, 173, 20, 0.12);
+    border-color: rgba(250, 173, 20, 0.28);
+    color: #ffd666;
+  }
+}
+
+.voiceList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.voiceCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid #e8e8e8;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  :global(.app-pro-layout--dark) & {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+
+  &:hover {
+    border-color: #91caff;
+    box-shadow: 0 6px 18px rgba(22, 119, 255, 0.08);
+
+    :global(.app-pro-layout--dark) & {
+      border-color: #1668dc;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+    }
+  }
+}
+
+.voiceCardActive {
+  border-color: #1677ff;
+  background: #f0f7ff;
+  box-shadow: 0 8px 24px rgba(22, 119, 255, 0.12);
+
+  :global(.app-pro-layout--dark) & {
+    background: rgba(22, 119, 255, 0.14);
+    border-color: #69b1ff;
+  }
+}
+
+.voiceAvatar {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f5f5f5;
+}
+
+.voiceContent {
+  min-width: 0;
+  flex: 1;
+}
+
+.voiceHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.voiceName {
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #262626;
+  line-height: 1.4;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.88);
+  }
+}
+
+.voiceSelectedTag {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e6f4ff;
+  color: #1677ff;
+  font-size: 12px;
+  font-weight: 600;
+
+  :global(.app-pro-layout--dark) & {
+    background: rgba(22, 119, 255, 0.2);
+    color: #91caff;
+  }
+}
+
+.voiceDescription {
+  color: #8c8c8c;
+  font-size: 13px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.55);
+  }
+}
+
+.voicePreviewButton {
+  flex-shrink: 0;
+  height: 32px;
+  padding-inline: 8px !important;
+  border-radius: 10px;
+  color: #8c8c8c;
+
+  &:hover {
+    color: #1677ff;
+    background: rgba(22, 119, 255, 0.08) !important;
+  }
+}
+
+.voicePreviewButtonActive {
+  color: #1677ff;
+  background: rgba(22, 119, 255, 0.08) !important;
+}
+
+@media (max-width: 768px) {
+  .sectionCardHeader {
+    flex-direction: column;
+  }
+
+  .displayModelEditorFieldRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .voiceCard {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .voicePreviewButton {
+    margin-left: 68px;
+  }
+}
+
+.notesSection {
+  margin-top: 0;
+  padding: 14px 18px;
+  display: flex;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid #e8edf3;
+  background: #f7f9fb;
+
+  :global(.app-pro-layout--dark) & {
+    background: #1f1f1f;
+    border-color: #303030;
+  }
+
+  :global(.anticon) {
+    color: #bfbfbf;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+}
+
+.notesContent {
+  font-size: 13px;
+  color: #8c8c8c;
+  line-height: 1.6;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+.promptCenterIcon {
+  color: #c44569;
+  background: #fff0f6;
+
+  :global(.app-pro-layout--dark) & {
+    color: #ff85c0;
+    background: rgba(196, 69, 105, 0.22);
+  }
+}
+
+.promptDrawerBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.promptEditorSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.promptMetaWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 2px;
+}
+
+.promptHistorySection {
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  background: #fafafa;
+  padding: 14px 12px;
+  min-height: 400px;
+
+  :global(.app-pro-layout--dark) & {
+    border-color: #303030;
+    background: #141414;
+  }
+}
+
+.promptHistoryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.promptHistoryList {
+  :global(.ant-list-item) {
+    align-items: flex-start;
+    padding-block: 10px;
+  }
+}
+
+.promptHistoryContent {
+  margin-bottom: 0 !important;
+  color: #595959;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.65);
+  }
+}
+
+@media (max-width: 992px) {
+  .promptDrawerBody {
+    grid-template-columns: 1fr;
+  }
+}

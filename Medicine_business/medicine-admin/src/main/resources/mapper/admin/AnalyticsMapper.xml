@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.AnalyticsMapper">
+
+    <select id="selectRealtimeOverview"
+            resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsRealtimeOverviewVo">
+        SELECT order_metrics.cumulativePaidAmount,
+               order_metrics.cumulativePaidOrderCount,
+               order_metrics.todayPaidAmount,
+               order_metrics.todayPaidOrderCount,
+               order_metrics.pendingShipmentOrderCount,
+               order_metrics.pendingReceiptOrderCount,
+               after_sale_metrics.pendingAfterSaleCount,
+               after_sale_metrics.processingAfterSaleCount
+        FROM (SELECT COALESCE(SUM(CASE
+                                      WHEN paid = 1
+                                          AND pay_time IS NOT NULL
+                                          THEN pay_amount
+                                      ELSE 0
+            END), 0)              AS cumulativePaidAmount,
+                     COALESCE(SUM(CASE
+                                      WHEN paid = 1
+                                          AND pay_time IS NOT NULL
+                                          THEN 1
+                                      ELSE 0
+                         END), 0) AS cumulativePaidOrderCount,
+                     COALESCE(SUM(CASE
+                                      WHEN paid = 1
+                                          AND pay_time &gt;= CURRENT_DATE()
+                                          AND pay_time &lt; DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY)
+                                          THEN pay_amount
+                                      ELSE 0
+                         END), 0) AS todayPaidAmount,
+                     COALESCE(SUM(CASE
+                                      WHEN paid = 1
+                                          AND pay_time &gt;= CURRENT_DATE()
+                                          AND pay_time &lt; DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY)
+                                          THEN 1
+                                      ELSE 0
+                         END), 0) AS todayPaidOrderCount,
+                     COALESCE(SUM(CASE WHEN order_status = 'PENDING_SHIPMENT' THEN 1 ELSE 0 END), 0)
+                                  AS pendingShipmentOrderCount,
+                     COALESCE(SUM(CASE WHEN order_status = 'PENDING_RECEIPT' THEN 1 ELSE 0 END), 0)
+                                  AS pendingReceiptOrderCount
+              FROM mall_order
+              WHERE is_deleted = 0) order_metrics
+                 CROSS JOIN
+             (SELECT COALESCE(SUM(CASE
+                                      WHEN after_sale_status IN ('PENDING', 'APPROVED')
+                                          THEN 1
+                                      ELSE 0
+                 END), 0) AS pendingAfterSaleCount,
+                     COALESCE(SUM(CASE WHEN after_sale_status = 'PROCESSING' THEN 1 ELSE 0 END), 0)
+                          AS processingAfterSaleCount
+              FROM mall_after_sale
+              WHERE is_deleted = 0) after_sale_metrics
+    </select>
+
+    <select id="selectRangeSummary" resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsRangeSummaryVo">
+        SELECT order_metrics.paidAmount,
+               order_metrics.paidOrderCount,
+               order_metrics.averageOrderAmount,
+               after_sale_metrics.refundAmount,
+               after_sale_metrics.afterSaleApplyCount,
+               risk_metrics.returnRefundQuantity
+        FROM (SELECT COALESCE(SUM(pay_amount), 0) AS paidAmount,
+                     COUNT(1)                     AS paidOrderCount,
+                     COALESCE(AVG(pay_amount), 0) AS averageOrderAmount
+              FROM mall_order
+              WHERE is_deleted = 0
+                AND paid = 1
+                AND pay_time IS NOT NULL
+                AND pay_time &gt;= #{startTime}
+                AND pay_time &lt; #{endTime}) order_metrics
+                 CROSS JOIN
+             (SELECT COALESCE(SUM(CASE
+                                      WHEN after_sale_status IN ('APPROVED', 'PROCESSING', 'COMPLETED')
+                                          THEN refund_amount
+                                      ELSE 0
+                 END), 0)     AS refundAmount,
+                     COUNT(1) AS afterSaleApplyCount
+              FROM mall_after_sale
+              WHERE is_deleted = 0
+                AND apply_time &gt;= #{startTime}
+                AND apply_time &lt; #{endTime}) after_sale_metrics
+                 CROSS JOIN
+             (SELECT COALESCE(SUM(CASE
+                                      WHEN risk.order_item_id IS NOT NULL
+                                          THEN moi.quantity
+                                      ELSE 0
+                 END), 0) AS returnRefundQuantity
+              FROM mall_order_item moi
+                       INNER JOIN mall_order mo ON mo.id = moi.order_id
+                       LEFT JOIN (SELECT DISTINCT order_item_id
+                                  FROM mall_after_sale
+                                  WHERE is_deleted = 0
+                                    AND after_sale_type = 'RETURN_REFUND'
+                                    AND after_sale_status IN ('APPROVED', 'PROCESSING', 'COMPLETED')) risk
+                                 ON risk.order_item_id = moi.id
+              WHERE mo.is_deleted = 0
+                AND moi.is_deleted = 0
+                AND mo.paid = 1
+                AND mo.pay_time IS NOT NULL
+                AND mo.pay_time &gt;= #{startTime}
+                AND mo.pay_time &lt; #{endTime}) risk_metrics
+    </select>
+
+    <select id="selectConversionSummary"
+            resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsConversionSummaryVo">
+        SELECT COUNT(1)                                               AS createdOrderCount,
+               COALESCE(SUM(CASE WHEN paid = 1 THEN 1 ELSE 0 END), 0) AS paidOrderCount,
+               COALESCE(SUM(CASE WHEN order_status = 'PENDING_PAYMENT' THEN 1 ELSE 0 END), 0)
+                                                                      AS pendingPaymentOrderCount,
+               COALESCE(SUM(CASE WHEN order_status IN ('CANCELLED', 'EXPIRED') THEN 1 ELSE 0 END), 0)
+                                                                      AS closedOrderCount
+        FROM mall_order
+        WHERE is_deleted = 0
+          AND create_time &gt;= #{startTime}
+          AND create_time &lt; #{endTime}
+    </select>
+
+    <select id="selectFulfillmentSummary"
+            resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsFulfillmentSummaryVo">
+        SELECT COALESCE(ROUND(AVG(CASE
+                                      WHEN deliver_time IS NOT NULL
+                                          THEN TIMESTAMPDIFF(SECOND, pay_time, deliver_time)
+            END) / 3600, 1), 0)        AS averageShipmentHours,
+               COALESCE(ROUND(AVG(CASE
+                                      WHEN deliver_time IS NOT NULL
+                                          AND receive_time IS NOT NULL
+                                          THEN TIMESTAMPDIFF(SECOND, deliver_time, receive_time)
+                   END) / 3600, 1), 0) AS averageReceiptHours,
+               COALESCE(SUM(CASE
+                                WHEN order_status = 'PENDING_SHIPMENT'
+                                    AND pay_time &lt; DATE_SUB(NOW(), INTERVAL 24 HOUR)
+                                    THEN 1
+                                ELSE 0
+                   END), 0)            AS overdueShipmentOrderCount,
+               COALESCE(SUM(CASE
+                                WHEN order_status = 'PENDING_RECEIPT'
+                                    AND deliver_time IS NOT NULL
+                                    AND deliver_time &lt; DATE_SUB(NOW(), INTERVAL 7 DAY)
+                                    THEN 1
+                                ELSE 0
+                   END), 0)            AS overdueReceiptOrderCount
+        FROM mall_order
+        WHERE is_deleted = 0
+          AND paid = 1
+          AND pay_time IS NOT NULL
+          AND pay_time &gt;= #{startTime}
+          AND pay_time &lt; #{endTime}
+    </select>
+
+    <select id="selectAfterSaleEfficiencySummary"
+            resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsAfterSaleEfficiencySummaryVo">
+        SELECT COALESCE(ROUND(AVG(CASE
+                                      WHEN audit_time IS NOT NULL
+                                          THEN TIMESTAMPDIFF(SECOND, apply_time, audit_time)
+            END) / 3600, 1), 0)        AS averageAuditHours,
+               COALESCE(ROUND(AVG(CASE
+                                      WHEN complete_time IS NOT NULL
+                                          THEN TIMESTAMPDIFF(SECOND, apply_time, complete_time)
+                   END) / 3600, 1), 0) AS averageCompleteHours,
+               COALESCE(SUM(CASE
+                                WHEN after_sale_status = 'PENDING'
+                                    AND apply_time &lt; DATE_SUB(NOW(), INTERVAL 24 HOUR)
+                                    THEN 1
+                                ELSE 0
+                   END), 0)            AS overdueAuditCount,
+               COALESCE(SUM(CASE
+                                WHEN after_sale_status IN ('APPROVED', 'PROCESSING')
+                                    AND apply_time &lt; DATE_SUB(NOW(), INTERVAL 72 HOUR)
+                                    THEN 1
+                                ELSE 0
+                   END), 0)            AS overdueCompleteCount
+        FROM mall_after_sale
+        WHERE is_deleted = 0
+          AND apply_time &gt;= #{startTime}
+          AND apply_time &lt; #{endTime}
+    </select>
+
+    <select id="selectAfterSaleStatusDistribution"
+            resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsStatusDistributionItemVo">
+        SELECT after_sale_status AS status,
+               COUNT(1)          AS count
+        FROM mall_after_sale
+        WHERE is_deleted = 0
+          AND apply_time &gt;= #{startTime}
+          AND apply_time &lt; #{endTime}
+        GROUP BY after_sale_status
+        ORDER BY count DESC, after_sale_status
+    </select>
+
+    <select id="selectAfterSaleReasonDistribution"
+            resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsReasonDistributionItemVo">
+        SELECT apply_reason AS reason,
+               COUNT(1)     AS count
+        FROM mall_after_sale
+        WHERE is_deleted = 0
+          AND apply_time &gt;= #{startTime}
+          AND apply_time &lt; #{endTime}
+          AND apply_reason IS NOT NULL
+          AND apply_reason != ''
+        GROUP BY apply_reason
+        ORDER BY count DESC, apply_reason
+    </select>
+
+    <select id="selectTopSellingProducts"
+            resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsTopSellingProductVo">
+        SELECT moi.product_id                    AS productId,
+               MAX(moi.product_name)             AS productName,
+               MAX(moi.image_url)                AS productImage,
+               COALESCE(SUM(moi.quantity), 0)    AS soldQuantity,
+               COALESCE(SUM(moi.total_price), 0) AS paidAmount
+        FROM mall_order_item moi
+                 INNER JOIN mall_order mo ON mo.id = moi.order_id
+        WHERE mo.is_deleted = 0
+          AND moi.is_deleted = 0
+          AND mo.paid = 1
+          AND mo.pay_time IS NOT NULL
+          AND mo.pay_time &gt;= #{startTime}
+          AND mo.pay_time &lt; #{endTime}
+        GROUP BY moi.product_id
+        ORDER BY soldQuantity DESC, paidAmount DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectReturnRefundRiskProducts"
+            resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsReturnRefundRiskProductVo">
+        SELECT moi.product_id                 AS productId,
+               MAX(moi.product_name)          AS productName,
+               MAX(moi.image_url)             AS productImage,
+               COALESCE(SUM(moi.quantity), 0) AS soldQuantity,
+               COALESCE(SUM(CASE
+                                WHEN risk.orderItemId IS NOT NULL THEN moi.quantity
+                                ELSE 0
+                   END), 0)                   AS returnRefundQuantity,
+               COALESCE(SUM(CASE
+                                WHEN risk.orderItemId IS NOT NULL THEN risk.refundAmount
+                                ELSE 0
+                   END), 0)                   AS refundAmount
+        FROM mall_order_item moi
+                 INNER JOIN mall_order mo ON mo.id = moi.order_id
+                 LEFT JOIN (SELECT mas.order_item_id      AS orderItemId,
+                                   MAX(mas.refund_amount) AS refundAmount
+                            FROM mall_after_sale mas
+                            WHERE mas.is_deleted = 0
+                              AND mas.after_sale_type = 'RETURN_REFUND'
+                              AND mas.after_sale_status IN ('APPROVED', 'PROCESSING', 'COMPLETED')
+                            GROUP BY mas.order_item_id) risk
+                           ON risk.orderItemId = moi.id
+        WHERE mo.is_deleted = 0
+          AND moi.is_deleted = 0
+          AND mo.paid = 1
+          AND mo.pay_time IS NOT NULL
+          AND mo.pay_time &gt;= #{startTime}
+          AND mo.pay_time &lt; #{endTime}
+        GROUP BY moi.product_id
+        HAVING returnRefundQuantity &gt; 0
+        ORDER BY returnRefundQuantity DESC, soldQuantity DESC, refundAmount DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectPaidTrend" resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsTrendPointVo">
+        SELECT DATE_FORMAT(pay_time, #{groupFormat}) AS label,
+               COUNT(1)                              AS paidOrderCount,
+               COALESCE(SUM(pay_amount), 0)          AS paidAmount
+        FROM mall_order
+        WHERE is_deleted = 0
+          AND paid = 1
+          AND pay_time IS NOT NULL
+          AND pay_time &gt;= #{startTime}
+          AND pay_time &lt; #{endTime}
+        GROUP BY DATE_FORMAT(pay_time, #{groupFormat})
+        ORDER BY label
+    </select>
+
+    <select id="selectAfterSaleTrend" resultType="com.zhangyichuang.medicine.model.vo.analytics.AnalyticsTrendPointVo">
+        SELECT DATE_FORMAT(apply_time, #{groupFormat}) AS label,
+               COUNT(1)                                AS afterSaleApplyCount,
+               COALESCE(SUM(CASE
+                                WHEN after_sale_status IN ('APPROVED', 'PROCESSING', 'COMPLETED')
+                                    THEN refund_amount
+                                ELSE 0
+                   END), 0)                            AS refundAmount
+        FROM mall_after_sale
+        WHERE is_deleted = 0
+          AND apply_time &gt;= #{startTime}
+          AND apply_time &lt; #{endTime}
+        GROUP BY DATE_FORMAT(apply_time, #{groupFormat})
+        ORDER BY label
+    </select>
+
+</mapper>

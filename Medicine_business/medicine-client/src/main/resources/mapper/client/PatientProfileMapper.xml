@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.PatientProfileMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.PatientProfile">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="birthDate" column="birth_date"/>
+        <result property="allergy" column="allergy"/>
+        <result property="pastMedicalHistory" column="past_medical_history"/>
+        <result property="chronicDisease" column="chronic_disease"/>
+        <result property="longTermMedications" column="long_term_medications"/>
+        <result property="relationship" column="relationship"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,name,gender,birth_date,allergy,
+        past_medical_history,chronic_disease,long_term_medications,relationship,is_default,
+        created_at,updated_at
+    </sql>
+</mapper>

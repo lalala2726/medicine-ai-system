@@ -1,0 +1,110 @@
+[
+  {
+    "providerKey": "aliyun-bailian",
+    "providerName": "阿里云百联",
+    "providerType": "aliyun",
+    "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "description": "阿里云百联 OpenAI 兼容接口预设模板",
+    "models": [
+      {
+        "modelName": "qwen3.5-plus",
+        "modelType": "CHAT",
+        "supportReasoning": 1,
+        "supportVision": 1,
+        "description": "Qwen3.5原生视觉语言系列Plus模型，基于混合架构设计，融合线性注意力机制与稀疏混合专家模型，在纯文本与多模态能力上相较3系列实现显著提升，推理效率高，整体性能达到当前前沿模型水平",
+        "enabled": 0,
+        "sort": 10
+      },
+      {
+        "modelName": "qwen3.5-flash",
+        "modelType": "CHAT",
+        "supportReasoning": 1,
+        "supportVision": 1,
+        "description": "Qwen3.5原生视觉语言Flash模型，融合线性注意力与稀疏混合专家架构，兼具高推理效率与快速响应，在文本与多模态任务中性能显著提升",
+        "enabled": 0,
+        "sort": 20
+      },
+      {
+        "modelName": "qwen3-max",
+        "modelType": "CHAT",
+        "supportReasoning": 1,
+        "supportVision": 0,
+        "description": "千问3系列Max模型，在智能体编程与工具调用能力上进行了专项升级，整体性能达到领域SOTA水平，适用于复杂智能体与推理任务场景",
+        "enabled": 0,
+        "sort": 30
+      },
+      {
+        "modelName": "qwen3-vl-flash",
+        "modelType": "CHAT",
+        "supportReasoning": 1,
+        "supportVision": 1,
+        "description": "Qwen3系列小尺寸视觉理解模型，融合思考与非思考模式，支持长视频与长文档理解，具备空间感知与2D/3D视觉定位能力，适用于复杂现实场景任务",
+        "enabled": 0,
+        "sort": 40
+      },
+      {
+        "modelName": "qwen-flash",
+        "modelType": "CHAT",
+        "supportReasoning": 1,
+        "supportVision": 0,
+        "description": "Qwen3系列Flash模型，实现思考模式与非思考模式融合，复杂推理与指令遵循能力优秀，支持最高1M上下文长度",
+        "enabled": 0,
+        "sort": 50
+      },
+      {
+        "modelName": "qwen-max",
+        "modelType": "CHAT",
+        "supportReasoning": 1,
+        "supportVision": 0,
+        "description": "千问2.5系列超大规模语言模型，支持中文与英文等多语言输入，能力持续滚动升级，适用于通用对话与复杂语言理解任务",
+        "enabled": 0,
+        "sort": 60
+      },
+      {
+        "modelName": "qwen3-vl-plus",
+        "modelType": "CHAT",
+        "supportReasoning": 1,
+        "supportVision": 1,
+        "description": "Qwen3系列视觉理解模型，融合思考与非思考模式，在视觉Coding、空间感知与多模态推理能力上全面升级，支持超长视频理解与复杂视觉智能体任务",
+        "enabled": 0,
+        "sort": 70
+      },
+      {
+        "modelName": "text-embedding-v4",
+        "modelType": "EMBEDDING",
+        "supportReasoning": 0,
+        "supportVision": 0,
+        "description": "通义实验室基于Qwen3训练的多语言文本统一向量模型，相较V3版本在文本检索、聚类与分类性能显著提升，在MTEB多语言、中英及Code检索评测中提升15%~40%，支持64~2048维自定义向量维度",
+        "enabled": 0,
+        "sort": 80
+      },
+      {
+        "modelName": "qwen3-rerank",
+        "modelType": "RERANK",
+        "supportReasoning": 0,
+        "supportVision": 0,
+        "description": "通义文本重排模型，适用于语义检索与RAG召回后二次排序场景",
+        "enabled": 0,
+        "sort": 90
+      },
+      {
+        "modelName": "gte-rerank-v2",
+        "modelType": "RERANK",
+        "supportReasoning": 0,
+        "supportVision": 0,
+        "description": "通义多语种文本重排模型，适用于多语种检索与RAG精排场景",
+        "enabled": 0,
+        "sort": 100
+      },
+      {
+        "modelName": "qwen3-vl-rerank",
+        "modelType": "RERANK",
+        "supportReasoning": 0,
+        "supportVision": 1,
+        "description": "通义多模态重排模型，支持文本/图像/视频相关性重排",
+        "enabled": 0,
+        "sort": 110
+      }
+    ]
+  }
+]

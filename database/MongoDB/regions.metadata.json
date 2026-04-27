@@ -1,0 +1,9 @@
+{
+  "database": "medicine",
+  "collection": "regions",
+  "document_count": 664201,
+  "exported_at": "2026-04-27T14:20:29.432277+00:00",
+  "data_file": "regions.jsonl.gz",
+  "indexes_file": "regions.indexes.json",
+  "format": "MongoDB Extended JSON Lines gzip"
+}

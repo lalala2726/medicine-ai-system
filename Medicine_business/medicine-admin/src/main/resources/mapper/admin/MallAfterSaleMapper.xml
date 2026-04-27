@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.MallAfterSaleMapper">
+
+    <resultMap id="AfterSaleListDtoMap" type="com.zhangyichuang.medicine.model.dto.MallAfterSaleListDto">
+        <id column="id" property="id"/>
+        <result column="after_sale_no" property="afterSaleNo"/>
+        <result column="order_id" property="orderId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="order_item_id" property="orderItemId"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_nickname" property="userNickname"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_image" property="productImage"/>
+        <result column="after_sale_type" property="afterSaleType"/>
+        <result column="after_sale_status" property="afterSaleStatus"/>
+        <result column="refund_amount" property="refundAmount"/>
+        <result column="apply_reason" property="applyReason"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="audit_time" property="auditTime"/>
+    </resultMap>
+
+    <select id="selectAfterSaleList" resultMap="AfterSaleListDtoMap">
+        SELECT
+        mas.id,
+        mas.after_sale_no,
+        mas.order_id,
+        mas.order_no,
+        mas.order_item_id,
+        mas.user_id,
+        u.nickname AS user_nickname,
+        moi.product_name,
+        moi.image_url AS product_image,
+        mas.after_sale_type,
+        mas.after_sale_status,
+        mas.refund_amount,
+        mas.apply_reason,
+        mas.apply_time,
+        mas.audit_time
+        FROM mall_after_sale mas
+        LEFT JOIN user u ON mas.user_id = u.id AND u.is_delete = 0
+        LEFT JOIN mall_order_item moi ON mas.order_item_id = moi.id AND moi.is_deleted = 0
+        WHERE mas.is_deleted = 0
+        <if test="request.afterSaleType != null and request.afterSaleType != ''">
+            AND mas.after_sale_type = #{request.afterSaleType}
+        </if>
+        <if test="request.afterSaleStatus != null and request.afterSaleStatus != ''">
+            AND mas.after_sale_status = #{request.afterSaleStatus}
+        </if>
+        <if test="request.orderNo != null and request.orderNo != ''">
+            AND mas.order_no LIKE CONCAT('%', #{request.orderNo}, '%')
+        </if>
+        <if test="request.userId != null">
+            AND mas.user_id = #{request.userId}
+        </if>
+        <if test="request.applyReason != null and request.applyReason != ''">
+            AND mas.apply_reason = #{request.applyReason}
+        </if>
+        ORDER BY mas.apply_time DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.MallProductMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallProduct">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="unit" column="unit"/>
+        <result property="price" column="price"/>
+        <result property="stock" column="stock"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="deliveryType" column="delivery_type"/>
+        <result property="couponEnabled" column="coupon_enabled"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <resultMap id="ProductWithImagesResultMap" type="com.zhangyichuang.medicine.model.dto.MallProductWithImageDto"
+               extends="BaseResultMap">
+        <result property="sales" column="sales"/>
+        <association property="drugDetail" javaType="com.zhangyichuang.medicine.model.dto.DrugDetailDto">
+            <result property="commonName" column="med_common_name"/>
+            <result property="composition" column="med_composition"/>
+            <result property="characteristics" column="med_characteristics"/>
+            <result property="packaging" column="med_packaging"/>
+            <result property="validityPeriod" column="med_validity_period"/>
+            <result property="storageConditions" column="med_storage_conditions"/>
+            <result property="productionUnit" column="med_production_unit"/>
+            <result property="approvalNumber" column="med_approval_number"/>
+            <result property="executiveStandard" column="med_executive_standard"/>
+            <result property="originType" column="med_origin_type"/>
+            <result property="isOutpatientMedicine" column="med_is_outpatient_medicine"/>
+            <result property="warmTips" column="med_warm_tips"/>
+            <result property="brand" column="med_brand"/>
+            <result property="drugCategory" column="med_drug_category"/>
+            <result property="efficacy" column="med_efficacy"/>
+            <result property="usageMethod" column="med_usage_method"/>
+            <result property="adverseReactions" column="med_adverse_reactions"/>
+            <result property="precautions" column="med_precautions"/>
+            <result property="taboo" column="med_taboo"/>
+            <result property="instruction" column="med_instruction"/>
+        </association>
+        <collection property="productImages" ofType="com.zhangyichuang.medicine.model.entity.MallProductImage">
+            <id property="id" column="img_id"/>
+            <result property="productId" column="img_product_id"/>
+            <result property="imageUrl" column="image_url"/>
+            <result property="sort" column="img_sort"/>
+            <result property="createTime" column="img_create_time"/>
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,name,category_id,unit,price,
+        stock,sort,status,delivery_type,coupon_enabled,
+        shipping_id,create_time,
+        update_time,create_by,update_by
+    </sql>
+    <update id="updateStockWithVersion">
+        update mall_product
+        set stock   = stock - #{quantity},
+            version = version + 1
+        where id = #{productId}
+          and stock >= #{quantity}
+          and version = #{version}
+    </update>
+
+    <select id="getProductWithImagesById" resultMap="ProductWithImagesResultMap">
+        SELECT p.id,
+               p.name,
+               p.category_id,
+               p.unit,
+               p.price,
+               p.stock,
+               p.sort,
+               p.status,
+               p.delivery_type,
+               p.coupon_enabled,
+               p.shipping_id,
+               p.create_time,
+               p.update_time,
+               p.create_by,
+               p.update_by,
+               0                         AS sales,
+               img.id                    as img_id,
+               img.product_id            as img_product_id,
+               img.image_url,
+               img.sort                  as img_sort,
+               img.create_time           as img_create_time,
+               md.common_name            AS med_common_name,
+               md.composition            AS med_composition,
+               md.characteristics        AS med_characteristics,
+               md.packaging              AS med_packaging,
+               md.validity_period        AS med_validity_period,
+               md.storage_conditions     AS med_storage_conditions,
+               md.production_unit        AS med_production_unit,
+               md.approval_number        AS med_approval_number,
+               md.executive_standard     AS med_executive_standard,
+               md.origin_type            AS med_origin_type,
+               md.is_outpatient_medicine AS med_is_outpatient_medicine,
+               md.warm_tips              AS med_warm_tips,
+               md.brand                  AS med_brand,
+               md.drug_category          AS med_drug_category,
+               md.efficacy               AS med_efficacy,
+               md.usage_method           AS med_usage_method,
+               md.adverse_reactions      AS med_adverse_reactions,
+               md.precautions            AS med_precautions,
+               md.taboo                  AS med_taboo,
+               md.instruction            AS med_instruction
+        FROM mall_product p
+                 LEFT JOIN mall_product_image img ON p.id = img.product_id AND (img.is_deleted = 0)
+                 LEFT JOIN drug_detail md ON p.id = md.product_id AND (md.is_deleted = 0)
+        WHERE (p.is_deleted = 0)
+          AND p.id = #{productId}
+        ORDER BY img.sort, img.create_time
+    </select>
+
+    <select id="listRecommendProducts" resultType="com.zhangyichuang.medicine.client.model.dto.RecommendProductDto">
+        SELECT p.id,
+               p.name,
+               p.category_id,
+               p.unit,
+               p.price,
+               p.stock,
+               p.sort,
+               p.status,
+               p.delivery_type,
+               p.shipping_id,
+               p.create_time,
+               p.update_time,
+               p.create_by,
+               p.update_by,
+               p.is_deleted,
+               0                    AS sales,
+               COALESCE(v.views, 0) AS views,
+               md.drug_category     AS drug_category
+        FROM mall_product p
+                 LEFT JOIN (SELECT product_id, SUM(view_count) AS views
+                            FROM mall_product_view_history
+                            GROUP BY product_id) v ON v.product_id = p.id
+                 LEFT JOIN drug_detail md ON p.id = md.product_id AND (md.is_deleted = 0)
+        WHERE p.status = 1
+          AND (p.is_deleted = 0)
+        ORDER BY COALESCE(v.views, 0) DESC,
+                 p.sort,
+                 p.id DESC
+        LIMIT 100
+    </select>
+
+    <resultMap id="MallProductDtoMap" type="com.zhangyichuang.medicine.model.dto.MallProductDetailDto">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="unit" column="unit"/>
+        <result property="price" column="price"/>
+        <result property="stock" column="stock"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="deliveryType" column="delivery_type"/>
+        <result property="couponEnabled" column="coupon_enabled"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <association property="drugDetail" javaType="com.zhangyichuang.medicine.model.dto.DrugDetailDto">
+            <result property="commonName" column="med_common_name"/>
+            <result property="composition" column="med_composition"/>
+            <result property="characteristics" column="med_characteristics"/>
+            <result property="packaging" column="med_packaging"/>
+            <result property="validityPeriod" column="med_validity_period"/>
+            <result property="storageConditions" column="med_storage_conditions"/>
+            <result property="productionUnit" column="med_production_unit"/>
+            <result property="approvalNumber" column="med_approval_number"/>
+            <result property="executiveStandard" column="med_executive_standard"/>
+            <result property="originType" column="med_origin_type"/>
+            <result property="isOutpatientMedicine" column="med_is_outpatient_medicine"/>
+            <result property="warmTips" column="med_warm_tips"/>
+            <result property="brand" column="med_brand"/>
+            <result property="drugCategory" column="med_drug_category"/>
+            <result property="efficacy" column="med_efficacy"/>
+            <result property="usageMethod" column="med_usage_method"/>
+            <result property="adverseReactions" column="med_adverse_reactions"/>
+            <result property="precautions" column="med_precautions"/>
+            <result property="taboo" column="med_taboo"/>
+            <result property="instruction" column="med_instruction"/>
+        </association>
+        <collection property="images" ofType="java.lang.String">
+            <result column="image_url"/>
+        </collection>
+    </resultMap>
+
+    <select id="getProductAndDrugInfoById" resultMap="MallProductDtoMap">
+        SELECT p.id,
+               p.name,
+               p.category_id,
+               p.unit,
+               p.price,
+               p.stock,
+               p.sort,
+               p.status,
+               p.delivery_type,
+               p.coupon_enabled,
+               p.version,
+               p.create_time,
+               p.update_time,
+               p.create_by,
+               p.update_by,
+               p.is_deleted,
+               NULL                      AS image_url,
+               md.common_name            AS med_common_name,
+               md.composition            AS med_composition,
+               md.characteristics        AS med_characteristics,
+               md.packaging              AS med_packaging,
+               md.validity_period        AS med_validity_period,
+               md.storage_conditions     AS med_storage_conditions,
+               md.production_unit        AS med_production_unit,
+               md.approval_number        AS med_approval_number,
+               md.executive_standard     AS med_executive_standard,
+               md.origin_type            AS med_origin_type,
+               md.is_outpatient_medicine AS med_is_outpatient_medicine,
+               md.warm_tips              AS med_warm_tips,
+               md.brand                  AS med_brand,
+               md.drug_category          AS med_drug_category,
+               md.efficacy               AS med_efficacy,
+               md.usage_method           AS med_usage_method,
+               md.adverse_reactions      AS med_adverse_reactions,
+               md.precautions            AS med_precautions,
+               md.taboo                  AS med_taboo,
+               md.instruction            AS med_instruction
+        FROM mall_product p
+                 LEFT JOIN drug_detail md ON p.id = md.product_id AND (md.is_deleted = 0)
+        WHERE (p.is_deleted = 0)
+          AND p.id = #{productId}
+        LIMIT 1
+    </select>
+
+    <select id="listAssistantProductPurchaseCardsByIds"
+            resultType="com.zhangyichuang.medicine.client.model.dto.AssistantProductPurchaseCardDto">
+        SELECT p.id,
+        p.name,
+        cover.image_url AS image,
+        p.price,
+        md.packaging AS spec,
+        md.efficacy,
+        md.drug_category AS drug_category,
+        p.stock
+        FROM mall_product p
+        LEFT JOIN (SELECT product_id, image_url
+        FROM (SELECT product_id,
+        image_url,
+        ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY sort, id) AS rn
+        FROM mall_product_image
+        WHERE is_deleted = 0) ranked_image
+        WHERE ranked_image.rn = 1) cover ON cover.product_id = p.id
+        LEFT JOIN drug_detail md ON p.id = md.product_id AND (md.is_deleted = 0)
+        WHERE (p.is_deleted = 0)
+        AND p.status = 1
+        AND p.id IN
+        <foreach collection="productIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+</mapper>

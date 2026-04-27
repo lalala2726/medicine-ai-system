@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.LoginLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.SysLoginLog">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="loginSource" column="login_source"/>
+        <result property="loginStatus" column="login_status"/>
+        <result property="failReason" column="fail_reason"/>
+        <result property="loginType" column="login_type"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="userAgent" column="user_agent"/>
+        <result property="deviceType" column="device_type"/>
+        <result property="os" column="os"/>
+        <result property="browser" column="browser"/>
+        <result property="loginTime" column="login_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,username,login_source,login_status,fail_reason,
+        login_type,ip_address,user_agent,device_type,
+        os,browser,login_time
+    </sql>
+
+    <select id="logList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_login_log
+        <where>
+            <if test="query.username != null and query.username != ''">
+                AND username LIKE CONCAT('%', #{query.username}, '%')
+            </if>
+            <if test="query.loginSource != null and query.loginSource != ''">
+                AND login_source = #{query.loginSource}
+            </if>
+            <if test="query.loginStatus != null">
+                AND login_status = #{query.loginStatus}
+            </if>
+            <if test="query.loginType != null and query.loginType != ''">
+                AND login_type = #{query.loginType}
+            </if>
+            <if test="query.ipAddress != null and query.ipAddress != ''">
+                AND ip_address LIKE CONCAT('%', #{query.ipAddress}, '%')
+            </if>
+            <if test="query.startTime != null">
+                AND login_time &gt;= #{query.startTime}
+            </if>
+            <if test="query.endTime != null">
+                AND login_time &lt;= #{query.endTime}
+            </if>
+        </where>
+        ORDER BY login_time DESC
+    </select>
+</mapper>

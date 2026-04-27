@@ -1,0 +1,109 @@
+.page {
+  height: var(--app-viewport-height);
+  background-color: var(--background-light);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  background: rgba(246, 248, 246, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f0f3f1;
+}
+
+.navLeft,
+.navRight {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #0d1b12;
+  margin-left: -8px;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.navRight {
+  margin-left: 0;
+  margin-right: -8px;
+}
+
+.navTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.list {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.loadingWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+  gap: 12px;
+}
+
+.loadingText {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.emptyWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+
+  :global(.nut-empty) {
+    background-color: transparent !important;
+  }
+}
+
+// 加载更多
+.loadMore {
+  text-align: center;
+  padding: 24px 0;
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+// 没有更多
+.noMore {
+  text-align: center;
+  padding: 24px 0;
+  font-size: 13px;
+  color: #ccc;
+  font-weight: 500;
+}

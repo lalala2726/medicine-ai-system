@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite/client", "jest"]
+  },
+  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx"],
+  "exclude": ["node_modules", "dist", "src/.umi", "src/.umi-test"]
+}

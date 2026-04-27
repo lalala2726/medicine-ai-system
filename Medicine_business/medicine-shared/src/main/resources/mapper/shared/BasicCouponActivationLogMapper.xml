@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.shared.mapper.BasicCouponActivationLogMapper">
+
+    <resultMap id="ActivationRedeemLogRowResultMap"
+               type="com.zhangyichuang.medicine.model.coupon.ActivationRedeemLogRowDto">
+        <id property="id" column="id"/>
+        <result property="requestId" column="request_id"/>
+        <result property="batchId" column="batch_id"/>
+        <result property="activationCodeId" column="activation_code_id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="templateId" column="template_id"/>
+        <result property="templateName" column="template_name"/>
+        <result property="redeemRuleType" column="redeem_rule_type"/>
+        <result property="plainCodeSnapshot" column="plain_code_snapshot"/>
+        <result property="userId" column="user_id"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="resultStatus" column="result_status"/>
+        <result property="failCode" column="fail_code"/>
+        <result property="failMessage" column="fail_message"/>
+        <result property="clientIp" column="client_ip"/>
+        <result property="grantMode" column="grant_mode"/>
+        <result property="grantStatus" column="grant_status"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectRedeemLogPage" resultMap="ActivationRedeemLogRowResultMap">
+        SELECT
+        l.id,
+        l.request_id,
+        l.batch_id,
+        l.activation_code_id,
+        b.batch_no,
+        b.template_id,
+        t.name AS template_name,
+        l.redeem_rule_type,
+        l.plain_code_snapshot,
+        l.user_id,
+        l.coupon_id,
+        l.result_status,
+        l.fail_code,
+        l.fail_message,
+        l.client_ip,
+        l.grant_mode,
+        l.grant_status,
+        l.create_time
+        FROM coupon_activation_log l
+        LEFT JOIN coupon_activation_batch b ON b.id = l.batch_id AND b.is_deleted = 0
+        LEFT JOIN coupon_template t ON t.id = b.template_id AND t.is_deleted = 0
+        <where>
+            l.is_deleted = 0
+            <if test="query != null and query.batchId != null">
+                AND l.batch_id = #{query.batchId}
+            </if>
+            <if test="query != null and query.activationCodeId != null">
+                AND l.activation_code_id = #{query.activationCodeId}
+            </if>
+            <if test="query != null and query.batchNo != null and query.batchNo != ''">
+                AND b.batch_no LIKE CONCAT('%', #{query.batchNo}, '%')
+            </if>
+            <if test="query != null and query.plainCode != null and query.plainCode != ''">
+                AND l.plain_code_snapshot LIKE CONCAT('%', #{query.plainCode}, '%')
+            </if>
+            <if test="query != null and query.userId != null">
+                AND l.user_id = #{query.userId}
+            </if>
+            <if test="query != null and query.resultStatus != null and query.resultStatus != ''">
+                AND l.result_status = #{query.resultStatus}
+            </if>
+            <if test="query != null and query.startTime != null">
+                AND l.create_time <![CDATA[>=]]> #{query.startTime}
+            </if>
+            <if test="query != null and query.endTime != null">
+                AND l.create_time <![CDATA[<=]]> #{query.endTime}
+            </if>
+        </where>
+        ORDER BY l.create_time DESC, l.id DESC
+    </select>
+</mapper>

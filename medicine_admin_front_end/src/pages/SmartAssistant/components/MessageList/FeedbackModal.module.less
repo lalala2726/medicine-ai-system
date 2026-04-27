@@ -1,0 +1,35 @@
+.reasonGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.reasonBtn {
+  padding: 6px 16px;
+  border: 1px solid var(--ant-color-border);
+  border-radius: 20px;
+  background: var(--ant-color-bg-container);
+  color: var(--ant-color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: var(--ant-color-primary);
+    color: var(--ant-color-primary);
+  }
+
+  &.active {
+    background: var(--ant-color-primary-bg);
+    border-color: var(--ant-color-primary);
+    color: var(--ant-color-primary);
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}

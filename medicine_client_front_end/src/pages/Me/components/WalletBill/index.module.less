@@ -1,0 +1,149 @@
+.billPage {
+  height: var(--app-viewport-height);
+  background-color: var(--background-light);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 顶部导航栏
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  background: rgba(246, 248, 246, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f0f3f1;
+}
+
+.navLeft {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #0d1b12;
+  margin-left: -8px;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.navTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.navRight {
+  width: 44px;
+}
+
+// 账单列表
+.billList {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.billItem {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: scale(0.99);
+    background-color: #fcfdfc;
+  }
+}
+
+.billContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.billTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0d1b12;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.billTime {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.billAmount {
+  margin-left: 12px;
+  text-align: right;
+}
+
+.amountValue {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.2;
+  font-family: DINAlternate-Bold, sans-serif;
+}
+
+// 加载状态
+.loadingWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+  gap: 12px;
+}
+
+.loadingText {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.emptyWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 20px;
+
+  :global(.nut-empty) {
+    background-color: transparent !important;
+  }
+}
+
+.loadMore {
+  text-align: center;
+  padding: 24px 0;
+  font-size: 13px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.noMore {
+  text-align: center;
+  padding: 24px 0;
+  font-size: 13px;
+  color: #ccc;
+  font-weight: 500;
+}

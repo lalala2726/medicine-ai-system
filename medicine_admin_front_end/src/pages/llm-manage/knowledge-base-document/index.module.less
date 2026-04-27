@@ -1,0 +1,53 @@
+.container {
+  min-height: calc(100vh - 260px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+:global {
+  .ant-pro-table {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .ant-pro-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      .ant-pro-card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding-inline: 0;
+        padding-bottom: 0;
+
+        .ant-table-wrapper {
+          flex: 1;
+
+          .ant-spin-nested-loading {
+            height: 100%;
+
+            .ant-spin-container {
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+
+              .ant-table {
+                flex: 1;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.paginationWrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 24px;
+  margin-top: auto;
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.MallProductImageMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallProductImage">
+        <id property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="sort" column="sort"/>
+        <result property="createTime" column="create_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,product_id,image_url,sort,create_time,is_deleted
+    </sql>
+
+</mapper>

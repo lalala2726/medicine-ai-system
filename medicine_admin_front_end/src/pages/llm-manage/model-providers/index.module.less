@@ -1,0 +1,143 @@
+.countSummary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.drawerTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.drawerContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.drawerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.sectionTitle {
+  margin: 0 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 15px !important;
+}
+
+.customGrid,
+.presetGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+
+  @media (max-width: 580px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.providerCard {
+  height: 100%;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  background: #ffffff;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #1677ff;
+    box-shadow: 0 8px 24px rgba(22, 119, 255, 0.12);
+  }
+
+  :global {
+    .ant-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+  }
+}
+
+.providerCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.providerIconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #f0f0f0;
+}
+
+.providerCardTitleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+  flex: 1;
+
+  h5 {
+    margin: 0 !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+  }
+}
+
+.providerDescription {
+  margin-bottom: 16px !important;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.45);
+  min-height: 38px;
+  flex-grow: 1;
+}
+
+.providerMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+
+  :global {
+    .ant-tag {
+      margin-inline-end: 0;
+      border-radius: 4px;
+      font-size: 11px;
+      padding-inline: 6px;
+    }
+  }
+}
+
+.sourceEmpty {
+  padding: 60px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 1px dashed #d9d9d9;
+}

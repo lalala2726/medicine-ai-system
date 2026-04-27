@@ -1,0 +1,11 @@
+.claude
+.idea
+medicine_ai_agent.egg-info
+tmp
+.langgraph_api
+.env
+
+# MACOS
+.DS_Store
+__MACOSX
+logs

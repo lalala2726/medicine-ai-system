@@ -1,0 +1,82 @@
+.root {
+  --pull-refresh-head-height: 56px;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  overscroll-behavior-y: contain;
+}
+
+.selfMode {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.track {
+  min-height: calc(100% + var(--pull-refresh-head-height));
+  margin-top: calc(var(--pull-refresh-head-height) * -1);
+  will-change: transform;
+}
+
+.trackAnimating {
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.head {
+  height: var(--pull-refresh-head-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--nutui-color-primary);
+  font-size: 13px;
+  font-weight: 500;
+  user-select: none;
+  pointer-events: none;
+}
+
+.iconWrap {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon {
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.iconReady {
+  transform: rotate(180deg);
+}
+
+.iconRefreshing {
+  animation: spin 0.9s linear infinite;
+}
+
+.iconComplete {
+  transform: scale(1.05);
+}
+
+.text {
+  color: #667069;
+  line-height: 1;
+}
+
+.content {
+  min-height: 100%;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

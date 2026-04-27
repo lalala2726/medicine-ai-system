@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.ConversationMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.Conversation">
+        <id property="id" column="id"/>
+        <result property="uuid" column="uuid"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="deleteTime" column="delete_time"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,uuid,user_id,create_time,update_time,create_by,
+        update_by,delete_time,is_delete
+    </sql>
+</mapper>

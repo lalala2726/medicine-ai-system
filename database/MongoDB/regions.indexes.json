@@ -1,0 +1,47 @@
+{
+  "_id_": {
+    "v": 2,
+    "key": [
+      [
+        "_id",
+        1
+      ]
+    ]
+  },
+  "idx_regions_id": {
+    "v": 2,
+    "key": [
+      [
+        "id",
+        1
+      ]
+    ]
+  },
+  "idx_regions_parent_id": {
+    "v": 2,
+    "key": [
+      [
+        "parent_id",
+        1
+      ]
+    ]
+  },
+  "idx_regions_pinyin_prefix": {
+    "v": 2,
+    "key": [
+      [
+        "pinyin_prefix",
+        1
+      ]
+    ]
+  },
+  "idx_regions_level": {
+    "v": 2,
+    "key": [
+      [
+        "level",
+        1
+      ]
+    ]
+  }
+}

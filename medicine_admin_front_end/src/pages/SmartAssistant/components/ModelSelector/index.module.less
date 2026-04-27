@@ -1,0 +1,126 @@
+/**
+ * ModelSelector 样式
+ *
+ * 参考图片中的千问模型选择器风格：
+ * - 触发器：模型名 + 下拉箭头，点击后展开列表
+ * - 下拉列表：白色卡片，圆角，每项 = 模型名（粗体）+ 描述（灰色小字）+ 选中勾
+ */
+
+/* ---- 触发按钮 ---- */
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ant-color-text);
+  transition: background 0.18s ease;
+  user-select: none;
+  line-height: 1.5;
+
+  &:hover {
+    background: var(--ant-color-fill-tertiary);
+  }
+}
+
+.triggerDisabled {
+  cursor: not-allowed;
+  color: var(--ant-color-text-tertiary);
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+.triggerIcon {
+  font-size: 12px;
+  color: var(--ant-color-text-secondary);
+  transition: transform 0.2s ease;
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
+/* ---- 下拉列表覆盖层容器 ---- */
+.dropdownOverlay {
+  min-width: 240px;
+  max-width: 320px;
+  background: var(--ant-color-bg-container);
+  border-radius: 12px;
+  box-shadow:
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  overflow: hidden;
+}
+
+.sectionLabel {
+  font-size: 11px;
+  color: var(--ant-color-text-quaternary);
+  padding: 4px 12px 2px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ---- 单个模型选项 ---- */
+.modelItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--ant-color-fill-tertiary);
+  }
+
+  &.active {
+    background: rgb(236, 237, 238);
+  }
+}
+
+.modelItemLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  padding-right: 8px;
+}
+
+.modelName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ant-color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modelDesc {
+  font-size: 12px;
+  color: var(--ant-color-text-quaternary);
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-all;
+}
+
+/* 选中图标 */
+.checkIcon {
+  font-size: 14px;
+  color: rgb(86, 91, 97);
+  flex-shrink: 0;
+  margin-top: 2px;
+}

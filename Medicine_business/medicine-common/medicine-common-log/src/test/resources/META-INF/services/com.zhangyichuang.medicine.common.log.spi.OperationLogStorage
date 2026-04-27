@@ -1,0 +1,2 @@
+com.zhangyichuang.medicine.common.log.testspi.ThrowingOperationLogStorage
+com.zhangyichuang.medicine.common.log.testspi.CapturingOperationLogStorage

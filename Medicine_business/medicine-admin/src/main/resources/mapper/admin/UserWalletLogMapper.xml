@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.UserWalletLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.UserWalletLog">
+        <id property="id" column="id"/>
+        <result property="walletId" column="wallet_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="flowNo" column="flow_no"/>
+        <result property="reason" column="reason"/>
+        <result property="bizId" column="biz_id"/>
+        <result property="changeType" column="change_type"/>
+        <result property="amount" column="amount"/>
+        <result property="beforeBalance" column="before_balance"/>
+        <result property="afterBalance" column="after_balance"/>
+        <result property="remark" column="remark"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,wallet_id,user_id,flow_no,reason,biz_id,
+        change_type,amount,before_balance,after_balance,remark,
+        created_at,is_deleted
+    </sql>
+    <select id="getBillPageByUserId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user_wallet_log WHERE (is_deleted IS NULL OR is_deleted = 0) AND user_id = #{userId} ORDER BY created_at
+        DESC
+    </select>
+</mapper>

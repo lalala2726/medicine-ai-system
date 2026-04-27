@@ -1,0 +1,192 @@
+.phoneChangePage {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #333333;
+}
+
+.navLeft,
+.navRight {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navLeft {
+  cursor: pointer;
+}
+
+.navTitle {
+  font-size: 17px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.pageContent {
+  flex: 1;
+  padding: 24px 24px;
+}
+
+.heroSection {
+  margin-bottom: 40px;
+}
+
+.heroTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.heroSubtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #999999;
+  line-height: 1.5;
+}
+
+.formCard {
+  background: transparent;
+}
+
+.currentPhoneCard {
+  margin-bottom: 32px;
+}
+
+.currentPhoneLabel {
+  font-size: 14px;
+  color: #999999;
+  margin-bottom: 4px;
+}
+
+.currentPhoneValue {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.fieldItem {
+  margin-bottom: 20px;
+}
+
+.fieldLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 8px;
+  display: none; /* 极简风格可以隐藏独立label，依赖placeholder或者输入框内部排版，但结构保留 */
+}
+
+.control,
+.codeInputWrapper {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #eeeeee;
+  transition: border-color 0.2s ease;
+}
+
+.control {
+  gap: 8px;
+
+  &:focus-within {
+    border-bottom-color: #15be51;
+  }
+}
+
+.controlIcon {
+  color: #cccccc;
+  display: flex;
+  align-items: center;
+}
+
+.control:focus-within .controlIcon {
+  color: #15be51;
+}
+
+.codeRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.codeInputWrapper {
+  flex: 1;
+
+  &:focus-within {
+    border-bottom-color: #15be51;
+  }
+}
+
+.nutInput {
+  flex: 1;
+
+  :global(.nut-input) {
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+
+  :global(.nut-input-native) {
+    font-size: 15px;
+    color: #333333;
+
+    &::placeholder {
+      color: #cccccc;
+    }
+  }
+}
+
+.sendCodeButton {
+  min-width: 90px;
+  height: 32px;
+  border: 1px solid #15be51;
+  border-radius: 16px;
+  background: transparent;
+  color: #15be51;
+  font-size: 13px;
+  padding: 0 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:active {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    border-color: #eeeeee;
+    color: #bbbbbb;
+    cursor: not-allowed;
+  }
+}
+
+.footer {
+  padding: 16px 24px calc(env(safe-area-inset-bottom) + 24px);
+}
+
+.submitButton {
+  height: 48px;
+  border-radius: 24px;
+  border: none !important;
+  background: #15be51 !important;
+  font-size: 16px;
+  font-weight: 500;
+  color: #ffffff !important;
+
+  &:active {
+    opacity: 0.9;
+  }
+}

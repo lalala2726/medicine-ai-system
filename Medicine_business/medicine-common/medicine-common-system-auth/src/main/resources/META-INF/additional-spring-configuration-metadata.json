@@ -1,0 +1,52 @@
+{
+  "properties": [
+    {
+      "name": "system-auth.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable/disable internal system signature authentication.",
+      "defaultValue": true
+    },
+    {
+      "name": "system-auth.max-skew-seconds",
+      "type": "java.lang.Long",
+      "description": "Allowed timestamp skew window in seconds.",
+      "defaultValue": 300
+    },
+    {
+      "name": "system-auth.nonce-ttl-seconds",
+      "type": "java.lang.Long",
+      "description": "Nonce replay-protection TTL in seconds.",
+      "defaultValue": 600
+    },
+    {
+      "name": "system-auth.nonce-key-prefix",
+      "type": "java.lang.String",
+      "description": "Redis key prefix for nonce replay protection.",
+      "defaultValue": "system_auth:nonce"
+    },
+    {
+      "name": "system-auth.clients-json",
+      "type": "java.lang.String",
+      "description": "Registered system clients JSON, e.g. [{\"app_id\":\"x\",\"secret\":\"y\",\"enabled\":true}].",
+      "defaultValue": "[]"
+    },
+    {
+      "name": "system-auth.default-sign-version",
+      "type": "java.lang.String",
+      "description": "Default X-Agent signature version used for request signing.",
+      "defaultValue": "v1"
+    },
+    {
+      "name": "system-auth.x-agent-key",
+      "type": "java.lang.String",
+      "description": "Local app_id used for outbound X-Agent system auth signing.",
+      "defaultValue": ""
+    },
+    {
+      "name": "system-auth.local-secret",
+      "type": "java.lang.String",
+      "description": "Local secret used for outbound X-Agent signature calculation.",
+      "defaultValue": ""
+    }
+  ]
+}

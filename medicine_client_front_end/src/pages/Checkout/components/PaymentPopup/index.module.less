@@ -1,0 +1,130 @@
+.paymentPopup {
+  padding: 20px 16px;
+}
+
+.popupHeader {
+  margin-bottom: 24px;
+
+  .headerTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+  }
+
+  .headerAmount {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    .amountLabel {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .amountValue {
+      display: flex;
+      align-items: baseline;
+      color: #fa2c19;
+      font-weight: 600;
+
+      .amountSymbol {
+        font-size: 16px;
+        margin-right: 2px;
+      }
+
+      font-size: 24px;
+    }
+  }
+}
+
+.popupContent {
+  margin-bottom: 20px;
+}
+
+.paymentMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paymentMethod {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: rgb(245, 245, 245);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+
+  &:active {
+    opacity: 0.8;
+  }
+
+  &.selected {
+    background: rgba(250, 44, 25, 0.05);
+    border-color: #fa2c19;
+  }
+
+  .methodLeft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .methodIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 8px;
+    color: #fa2c19;
+  }
+
+  .methodInfo {
+    flex: 1;
+  }
+
+  .methodLabel {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  .methodDescription {
+    font-size: 12px;
+    color: #999;
+  }
+}
+
+.popupFooter {
+  .confirmBtn {
+    height: 44px;
+    border-radius: 22px;
+    font-size: 16px;
+    border: none;
+    background: linear-gradient(
+      135deg,
+      var(--nutui-color-primary-stop-1) 0%,
+      var(--nutui-color-primary-stop-2) 100%
+    ) !important;
+    color: #fff !important;
+    box-shadow: none;
+
+    :global {
+      .nut-button-wrap,
+      .nut-button-primary-solid,
+      .nut-button-primary-solid-disabled,
+      .nut-button-text {
+        background: transparent !important;
+        color: inherit !important;
+      }
+    }
+  }
+}

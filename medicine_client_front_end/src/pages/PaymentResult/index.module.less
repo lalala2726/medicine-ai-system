@@ -1,0 +1,131 @@
+.paymentResult {
+  min-height: var(--app-viewport-height);
+  background-color: var(--background-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(env(safe-area-inset-top) + 40px) 24px 40px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.resultContent {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.resultIcon {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+
+  .successIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    background: rgba(21, 190, 81, 0.1);
+    border-radius: 50%;
+    color: var(--nutui-color-primary);
+  }
+
+  .failureIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 50%;
+    color: #ef4444;
+  }
+}
+
+.resultTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b12;
+  margin-bottom: 12px;
+}
+
+.resultDescription {
+  font-size: 15px;
+  color: #667069;
+  line-height: 1.6;
+  margin-bottom: 40px;
+}
+
+.orderInfo {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 40px;
+  text-align: left;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+
+  .infoItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .infoLabel {
+      font-size: 14px;
+      color: #667069;
+      font-weight: 500;
+    }
+
+    .infoValue {
+      font-size: 14px;
+      color: #0d1b12;
+      font-weight: 700;
+      font-family: DINAlternate-Bold, sans-serif;
+    }
+  }
+}
+
+.resultActions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  .actionBtn {
+    width: 100%;
+    height: 50px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+  }
+
+  :global {
+    .nut-button-primary-solid {
+      background: var(--nutui-color-primary) !important;
+      color: #fff !important;
+      box-shadow: none;
+    }
+
+    .nut-button--default {
+      background: #fff !important;
+      color: #0d1b12 !important;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+    }
+  }
+}

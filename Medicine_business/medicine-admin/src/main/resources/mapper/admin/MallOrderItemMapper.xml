@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.MallOrderItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallOrderItem">
+        <id property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="price" column="price"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_id,product_id,product_name,quantity,price,
+        total_price,image_url,create_time,update_time,is_deleted
+    </sql>
+    <select id="getProductSales" resultType="com.zhangyichuang.medicine.admin.model.dto.ProductSalesDto">
+        select moi.product_id as productId, SUM(moi.quantity) as sales
+        from mall_order_item moi
+                 INNER JOIN mall_order mo ON moi.order_id = mo.id
+        WHERE moi.is_deleted = 0
+          AND mo.is_deleted = 0
+          AND mo.order_status = 'COMPLETED'
+        GROUP BY moi.product_id;
+    </select>
+
+    <select id="getProductSalesByIds" resultType="com.zhangyichuang.medicine.admin.model.dto.ProductSalesDto">
+        select moi.product_id as productId, SUM(moi.quantity) as sales
+        from mall_order_item moi
+        INNER JOIN mall_order mo ON moi.order_id = mo.id
+        WHERE moi.is_deleted = 0
+        AND mo.is_deleted = 0
+        AND mo.order_status = 'COMPLETED'
+        AND moi.product_id IN
+        <foreach collection="productIds" item="productId" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+        GROUP BY moi.product_id;
+    </select>
+
+    <select id="findProductIdsWithOrderStatuses" resultType="java.lang.Long">
+        SELECT DISTINCT moi.product_id
+        FROM mall_order_item moi
+        INNER JOIN mall_order mo ON moi.order_id = mo.id
+        WHERE moi.is_deleted = 0
+        AND mo.is_deleted = 0
+        AND moi.product_id IN
+        <foreach collection="productIds" item="productId" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+        AND mo.order_status IN
+        <foreach collection="orderStatuses" item="status" open="(" separator="," close=")">
+            #{status}
+        </foreach>
+    </select>
+</mapper>

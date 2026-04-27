@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "medicine.logging.base-path",
+      "type": "java.lang.String",
+      "description": "日志根目录，日志会按应用名、端口、日期和小时继续分层归档。"
+    },
+    {
+      "name": "medicine.logging.max-history-days",
+      "type": "java.lang.Integer",
+      "description": "日志文件保留天数。"
+    }
+  ]
+}

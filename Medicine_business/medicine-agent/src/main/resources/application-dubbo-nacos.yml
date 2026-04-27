@@ -1,0 +1,46 @@
+dubbo:
+  application:
+    # Dubbo 应用名。
+    # 示例: medicine-agent-dubbo
+    name: medicine-agent-dubbo
+    # 序列化安全检查级别（STRICT/WARN/DISABLE）。
+    # 示例: WARN
+    serialize-check-status: WARN
+    # QoS 管理端口（避免多服务本地启动端口冲突）。
+    # 示例: 22223
+    qos-port: 22223
+  protocol:
+    # Dubbo 协议。
+    # 示例: tri
+    name: tri
+    triple:
+      # Triple HTTP/2 请求头总大小上限（字节），用于承载 Dubbo metadata/attachments。
+      # 示例: 131072
+      max-header-list-size: 131072
+  registry:
+    # Nacos 注册中心地址。
+    # 示例: nacos://localhost:8848
+    address: nacos://localhost:8848
+    parameters:
+      # Nacos 命名空间。
+      # 示例: public
+      namespace: public
+      # Nacos 分组。
+      # 示例: DEFAULT_GROUP
+      group: DEFAULT_GROUP
+      # Nacos 用户名。
+      # 示例: nacos
+      username: nacos
+      # Nacos 密码。
+      # 示例: 123456
+      password: 123456
+  consumer:
+    # 启动时不强制检查 Provider 是否在线。
+    # 示例: false
+    check: false
+    # Consumer 调用超时（毫秒）。
+    # 示例: 10000
+    timeout: 10000
+    # Consumer 重试次数。
+    # 示例: 0
+    retries: 0

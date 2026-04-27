@@ -1,0 +1,17 @@
+.skeletonBlock {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #edf2ed 25%, #f7faf7 50%, #edf2ed 75%);
+  background-size: 200% 100%;
+  animation: skeletonBlockShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeletonBlockShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}

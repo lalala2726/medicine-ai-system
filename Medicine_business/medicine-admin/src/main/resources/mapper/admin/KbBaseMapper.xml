@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.KbBaseMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.KbBase">
+        <id property="id" column="id"/>
+        <result property="knowledgeName" column="knowledge_name"/>
+        <result property="displayName" column="display_name"/>
+        <result property="cover" column="cover"/>
+        <result property="description" column="description"/>
+        <result property="embeddingModel" column="embedding_model"/>
+        <result property="embeddingDim" column="embedding_dim"/>
+        <result property="status" column="status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="KnowledgeBaseListResultMap" type="com.zhangyichuang.medicine.admin.model.dto.KnowledgeBaseListDto">
+        <id property="id" column="id"/>
+        <result property="knowledgeName" column="knowledge_name"/>
+        <result property="displayName" column="display_name"/>
+        <result property="cover" column="cover"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <association property="detail"
+                     javaType="com.zhangyichuang.medicine.admin.model.dto.KnowledgeBaseListDto$Detail">
+            <result property="updateTime" column="detail_update_time"/>
+            <result property="chunkCount" column="detail_chunk_count"/>
+            <result property="fileCount" column="detail_file_count"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,knowledge_name,display_name,cover,description,embedding_model,
+        embedding_dim,status,create_by,update_by,created_at,updated_at
+    </sql>
+
+    <select id="listKnowledgeBase" resultMap="KnowledgeBaseListResultMap">
+        SELECT
+        kb.id,
+        kb.knowledge_name,
+        kb.display_name,
+        kb.cover,
+        kb.description,
+        kb.status,
+        chunk_detail.detail_update_time,
+        COALESCE(chunk_detail.detail_chunk_count, 0) AS detail_chunk_count,
+        COALESCE(document_detail.detail_file_count, 0) AS detail_file_count
+        FROM kb_base kb
+        LEFT JOIN (
+        SELECT
+        knowledge_base_id,
+        MAX(updated_at) AS detail_update_time,
+        COUNT(*) AS detail_chunk_count
+        FROM kb_document_chunk
+        WHERE knowledge_base_id IS NOT NULL
+        GROUP BY knowledge_base_id
+        ) chunk_detail ON chunk_detail.knowledge_base_id = kb.id
+        LEFT JOIN (
+        SELECT
+        knowledge_base_id,
+        COUNT(*) AS detail_file_count
+        FROM kb_document
+        WHERE knowledge_base_id IS NOT NULL
+        GROUP BY knowledge_base_id
+        ) document_detail ON document_detail.knowledge_base_id = kb.id
+        <where>
+            <if test="request.knowledgeName != null and request.knowledgeName != ''">
+                AND kb.knowledge_name LIKE CONCAT('%', #{request.knowledgeName}, '%')
+            </if>
+            <if test="request.displayName != null and request.displayName != ''">
+                AND kb.display_name LIKE CONCAT('%', #{request.displayName}, '%')
+            </if>
+            <if test="request.description != null and request.description != ''">
+                AND kb.description LIKE CONCAT('%', #{request.description}, '%')
+            </if>
+            <if test="request.embeddingModel != null and request.embeddingModel != ''">
+                AND kb.embedding_model LIKE CONCAT('%', #{request.embeddingModel}, '%')
+            </if>
+            <if test="request.embeddingDim != null">
+                AND kb.embedding_dim = #{request.embeddingDim}
+            </if>
+            <if test="request.status != null">
+                AND kb.status = #{request.status}
+            </if>
+        </where>
+        ORDER BY kb.created_at DESC, kb.id DESC
+    </select>
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.CouponLogMapper">
+
+    <insert id="batchInsertExpireLogsByCouponIds">
+        INSERT INTO coupon_log (
+        coupon_id,
+        user_id,
+        order_no,
+        change_type,
+        change_amount,
+        deduct_amount,
+        waste_amount,
+        before_available_amount,
+        after_available_amount,
+        source_type,
+        source_biz_no,
+        remark,
+        operator_id,
+        create_time,
+        is_deleted
+        )
+        SELECT uc.id,
+        uc.user_id,
+        NULL,
+        #{changeType},
+        0,
+        0,
+        0,
+        COALESCE(uc.available_amount, 0),
+        COALESCE(uc.available_amount, 0),
+        #{sourceType},
+        CAST(uc.id AS CHAR),
+        #{remark},
+        #{operatorId},
+        #{createTime},
+        0
+        FROM user_coupon uc
+        WHERE uc.is_deleted = 0
+        AND uc.coupon_status = #{fromStatus}
+        AND uc.update_by = #{operatorId}
+        AND uc.update_time = #{createTime}
+        AND uc.id IN
+        <foreach collection="couponIds" item="couponId" open="(" separator="," close=")">
+            #{couponId}
+        </foreach>
+    </insert>
+
+</mapper>

@@ -1,0 +1,413 @@
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*1GSgSYDD_aIAAAAAQsAAAAgAegCCAQ/AlibabaSans-Light.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*2zEUQqnPNesAAAAAQtAAAAgAegCCAQ/AlibabaSans-Regular.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Medium.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Bold.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'AlibabaSans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('//mdn.alipayobjects.com/huamei_iwk9zp/afts/file/A*E_cxRbMlZqUAAAAAQuAAAAgAegCCAQ/AlibabaSans-Heavy.woff2')
+    format('woff2');
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: rgb(222, 224, 226);
+  font-family:
+    AlibabaSans,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Noto Sans',
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji';
+}
+
+.colorWeak {
+  filter: invert(80%);
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+.ant-pro-sider.ant-layout-sider.ant-pro-sider-fixed {
+  left: unset;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body,
+#root,
+#root * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar,
+#root *::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+html.app-layout-html,
+body.app-layout-body,
+body.app-layout-body #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body.app-layout-body {
+  background: #0056ff;
+}
+
+/* 后台布局：顶部浮层 + 主体卡片 + 仅内容区滚动 */
+.app-pro-layout {
+  --layout-edge-gap: 8px;
+  --layout-panel-gap: 6px;
+  --layout-radius: 16px;
+  --layout-header-height: 56px;
+  --layout-sider-top-gap: 14px;
+  --layout-shell-bg: #fff;
+  --layout-shell-sider-bg: #f9fafb;
+  --layout-shell-border: rgba(15, 23, 42, 0.06);
+  --layout-header-bg: rgba(255, 255, 255, 0.96);
+  --layout-header-border: rgba(0, 86, 255, 0.08);
+  --layout-text-primary: rgba(15, 23, 42, 0.9);
+  --layout-text-secondary: rgba(15, 23, 42, 0.62);
+  --layout-menu-bg: rgb(249, 250, 251);
+  --layout-menu-item-color: rgba(15, 23, 42, 0.8);
+  --layout-menu-item-active-color: rgba(15, 23, 42, 0.92);
+  --layout-menu-group-title-color: rgba(15, 23, 42, 0.46);
+  --layout-menu-group-title-hover-color: rgba(15, 23, 42, 0.58);
+  --layout-menu-icon-color: rgba(15, 23, 42, 0.7);
+  --layout-menu-arrow-color: rgba(15, 23, 42, 0.28);
+  /* 一级/二级菜单项统一横向边距，保证选中背景与侧栏边缘一致。 */
+  --layout-menu-item-inline-gap: 12px;
+  /* 一级/二级菜单项统一圆角，保证左右两侧都是圆角。 */
+  --layout-menu-item-radius: 12px;
+  /* 菜单图标与文字之间的统一间距。 */
+  --layout-menu-item-content-gap: 10px;
+  /* 单栏菜单模式下的右侧视觉补偿，避免右边看起来偏窄。 */
+  --layout-menu-standalone-right-offset: 4px;
+  --layout-menu-item-hover-bg: rgb(233, 233, 235);
+  --layout-menu-item-selected-bg: rgb(233, 233, 235);
+  --layout-menu-item-selected-color: rgba(15, 23, 42, 0.92);
+  --layout-divider-color: rgba(15, 23, 42, 0.08);
+  --layout-mode-hover-bg: rgba(0, 86, 255, 0.06);
+  --layout-mode-active-bg: rgba(0, 86, 255, 0.1);
+  --layout-mode-active-color: #0056ff;
+  --layout-shell-height: calc(
+    100vh - (var(--layout-edge-gap) * 2) - var(--layout-header-height) - var(--layout-panel-gap)
+  );
+  --layout-card-shadow: 0 18px 48px rgba(0, 32, 96, 0.18);
+  --layout-header-shadow: none;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  padding: var(--layout-edge-gap);
+  box-sizing: border-box;
+  overflow: hidden;
+  background: transparent !important;
+
+  > .ant-layout {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: var(--layout-shell-height);
+    min-height: 0 !important;
+    margin-top: calc(var(--layout-header-height) + var(--layout-panel-gap));
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: var(--layout-radius);
+    background: var(--layout-shell-bg) !important;
+    box-shadow: var(--layout-card-shadow);
+  }
+
+  > .ant-layout > .ant-layout-sider,
+  > .ant-layout > .ant-pro-layout-container {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    min-height: 0 !important;
+  }
+
+  > .ant-layout > .ant-layout-sider {
+    overflow: hidden;
+    background: var(--layout-shell-sider-bg) !important;
+    border-inline-end: 1px solid var(--layout-shell-border);
+  }
+
+  > .ant-layout > .ant-layout-sider,
+  > .ant-layout > .ant-layout-sider .ant-layout-sider-children,
+  > .ant-layout > .ant-pro-layout-container,
+  > .ant-layout > .ant-pro-layout-container > .ant-pro-layout-content {
+    height: 100%;
+  }
+
+  > .ant-layout > .ant-layout-sider .ant-layout-sider-children {
+    box-sizing: border-box;
+    min-height: 0 !important;
+    padding-block-start: var(--layout-sider-top-gap);
+  }
+
+  > .ant-layout > .ant-pro-layout-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    background: transparent !important;
+  }
+
+  > .ant-layout > .ant-pro-layout-container > .ant-layout-header:not(.ant-pro-layout-header) {
+    display: none !important;
+  }
+
+  .ant-layout-header.ant-pro-layout-header.ant-pro-layout-header-fixed-header {
+    inset-block-start: var(--layout-edge-gap) !important;
+    inset-inline-start: var(--layout-edge-gap) !important;
+    inset-inline-end: var(--layout-edge-gap) !important;
+    width: auto !important;
+    padding-inline: 8px !important;
+    border: 1px solid var(--layout-shell-border);
+    border-radius: var(--layout-radius) !important;
+    box-shadow: var(--layout-header-shadow);
+    background: var(--layout-header-bg) !important;
+    overflow: hidden;
+  }
+
+  .app-layout-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .app-layout-header-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    color: var(--layout-text-primary);
+    text-decoration: none;
+  }
+
+  .app-layout-header-logo {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+
+  .app-layout-header-title {
+    overflow: hidden;
+    color: var(--layout-text-primary);
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .app-layout-mode-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding-inline-start: 16px;
+    border-inline-start: 1px solid var(--layout-divider-color);
+  }
+
+  .app-layout-mode-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 34px;
+    padding-inline: 14px;
+    border-radius: 999px;
+    color: var(--layout-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+
+    &:hover {
+      color: var(--layout-mode-active-color);
+      background: var(--layout-mode-hover-bg);
+    }
+
+    &.is-active {
+      color: var(--layout-mode-active-color);
+      background: var(--layout-mode-active-bg);
+      font-weight: 600;
+    }
+  }
+
+  &.app-pro-layout--dark {
+    --layout-shell-bg: #141414;
+    --layout-shell-sider-bg: #000000;
+    --layout-shell-border: rgba(148, 163, 184, 0.16);
+    --layout-header-bg: rgb(26, 26, 26);
+    --layout-header-border: rgba(148, 163, 184, 0.18);
+    --layout-text-primary: rgba(255, 255, 255, 0.88);
+    --layout-text-secondary: rgba(226, 232, 240, 0.72);
+    --layout-menu-bg: #000000;
+    --layout-menu-item-color: rgba(255, 255, 255, 0.84);
+    --layout-menu-item-active-color: #7cb4ff;
+    --layout-menu-group-title-color: rgba(255, 255, 255, 0.45);
+    --layout-menu-group-title-hover-color: rgba(255, 255, 255, 0.62);
+    --layout-menu-icon-color: rgba(255, 255, 255, 0.72);
+    --layout-menu-arrow-color: rgba(255, 255, 255, 0.36);
+    --layout-menu-item-hover-bg: rgba(124, 180, 255, 0.08);
+    --layout-menu-item-selected-bg: rgba(124, 180, 255, 0.18);
+    --layout-menu-item-selected-color: #7cb4ff;
+    --layout-divider-color: rgba(148, 163, 184, 0.16);
+    --layout-mode-hover-bg: rgba(59, 130, 246, 0.18);
+    --layout-mode-active-bg: rgba(59, 130, 246, 0.28);
+    --layout-mode-active-color: #7cb4ff;
+    --layout-card-shadow: 0 18px 48px rgba(0, 0, 0, 0.46);
+    --layout-header-shadow: none;
+  }
+
+  &.app-pro-layout--assistant {
+    > .ant-layout > .ant-pro-layout-container {
+      width: 100%;
+      flex: 1 1 auto;
+    }
+
+    // 助手模式下禁止内容区滚动，仅允许会话列表和消息列表各自内部滚动
+    .ant-pro-layout-content {
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .ant-pro-layout-content > * {
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+
+    .app-layout-content-shell,
+    .app-layout-content-wrapper,
+    .app-layout-content-page {
+      height: 100%;
+      min-height: 0;
+      flex: 1 1 auto;
+      overflow: hidden;
+    }
+  }
+
+  .ant-pro-layout-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0 !important;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: transparent !important;
+  }
+
+  .app-layout-content-shell,
+  .app-layout-content-wrapper,
+  .app-layout-content-page {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .app-layout-content-shell {
+    min-height: 100%;
+  }
+
+  .app-layout-content-wrapper {
+    width: 100%;
+    min-height: 100%;
+  }
+
+  .app-layout-content-page {
+    min-height: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-pro-layout {
+    --layout-edge-gap: 10px;
+    --layout-panel-gap: 6px;
+    --layout-radius: 12px;
+    --layout-sider-top-gap: 12px;
+
+    .app-layout-header-brand {
+      gap: 12px;
+    }
+
+    .app-layout-mode-switcher {
+      gap: 6px;
+      padding-inline-start: 12px;
+    }
+
+    .app-layout-mode-link {
+      height: 32px;
+      padding-inline: 12px;
+    }
+  }
+}

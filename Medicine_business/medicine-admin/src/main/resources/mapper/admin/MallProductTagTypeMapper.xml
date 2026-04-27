@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.MallProductTagTypeMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallProductTagType">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <resultMap id="AdminVoResultMap" type="com.zhangyichuang.medicine.model.vo.MallProductTagTypeAdminVo">
+        <id property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        id,
+        code,
+        name,
+        sort,
+        status,
+        create_time,
+        update_time,
+        create_by,
+        update_by,
+        is_deleted
+    </sql>
+
+    <select id="listTypes" resultMap="AdminVoResultMap">
+        SELECT
+        id,
+        code,
+        name,
+        sort,
+        status,
+        create_time,
+        update_time,
+        create_by,
+        update_by
+        FROM mall_product_tag_type
+        <where>
+            (is_deleted IS NULL OR is_deleted = 0)
+            <if test="request.name != null and request.name != ''">
+                AND name LIKE CONCAT('%', #{request.name}, '%')
+            </if>
+            <if test="request.status != null">
+                AND status = #{request.status}
+            </if>
+        </where>
+        ORDER BY sort ASC, id DESC
+    </select>
+</mapper>

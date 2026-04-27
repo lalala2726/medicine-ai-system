@@ -1,0 +1,54 @@
+.inputTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 11px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  background-color: #ffffff;
+  cursor: pointer;
+  min-height: 32px;
+  transition: all 0.2s;
+
+  :global(.app-pro-layout--dark) & {
+    background-color: transparent;
+    border-color: #424242;
+  }
+
+  &:hover {
+    border-color: #4096ff;
+  }
+}
+
+.triggerAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f5f5f5;
+}
+
+.triggerName {
+  color: rgba(0, 0, 0, 0.88);
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.placeholder {
+  color: #bfbfbf;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.triggerIcon {
+  color: #bfbfbf;
+  font-size: 12px;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.25);
+  }
+}

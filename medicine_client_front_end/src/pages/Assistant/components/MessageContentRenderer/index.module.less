@@ -1,0 +1,47 @@
+.userMessageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.textBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.thinking {
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.statusText {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #b91c1c;
+}
+
+.userImageGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.userImage {
+  width: auto;
+  max-width: 200px;
+  height: auto;
+  max-height: 200px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: transparent;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.userImage:active {
+  opacity: 0.8;
+}

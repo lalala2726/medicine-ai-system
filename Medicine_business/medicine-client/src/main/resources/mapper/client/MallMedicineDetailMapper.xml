@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.MallMedicineDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.DrugDetail">
+        <id property="id" column="id"/>
+        <result property="productId" column="product_id"/>
+        <result property="brand" column="brand"/>
+        <result property="drugCategory" column="drug_category"/>
+        <result property="efficacy" column="efficacy"/>
+        <result property="usageMethod" column="usage_method"/>
+        <result property="adverseReactions" column="adverse_reactions"/>
+        <result property="precautions" column="precautions"/>
+        <result property="taboo" column="taboo"/>
+        <result property="instruction" column="instruction"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,product_id,brand,drug_category,efficacy,usage_method,adverse_reactions,
+        precautions,taboo,instruction,create_time,update_time,is_deleted
+    </sql>
+</mapper>

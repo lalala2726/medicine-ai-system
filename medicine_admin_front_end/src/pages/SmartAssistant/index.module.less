@@ -1,0 +1,266 @@
+.pageContainer {
+  --assistant-content-max-width: 760px;
+  --assistant-centered-content-max-width: 620px;
+  --assistant-message-safe-bottom: 220px;
+  --assistant-sider-bg: rgb(249, 250, 251);
+  --assistant-chat-bg: #fff;
+  --assistant-sender-bg: rgba(255, 255, 255, 0.75);
+  --assistant-sender-solid-bg: #fff;
+  --assistant-sender-focus-bg: rgba(255, 255, 255, 0.95);
+  --assistant-sender-border: rgba(0, 0, 0, 0.08);
+  --assistant-sender-shadow:
+    0 12px 32px -8px rgba(0, 0, 0, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.04);
+  --assistant-sender-focus-shadow:
+    0 0 0 2px rgba(22, 119, 255, 0.15), 0 16px 40px -8px rgba(0, 0, 0, 0.12);
+  --assistant-sender-gradient: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.96) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  --assistant-sider-button-border: rgba(15, 23, 42, 0.12);
+  --assistant-sider-button-hover-border: rgba(15, 23, 42, 0.2);
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: transparent;
+}
+
+.dark {
+  --assistant-sider-bg: var(--layout-menu-bg, #000000);
+  --assistant-chat-bg: var(--layout-shell-bg, #141414);
+  --assistant-sender-bg: rgba(30, 30, 30, 0.82);
+  --assistant-sender-solid-bg: var(--layout-shell-bg, #141414);
+  --assistant-sender-focus-bg: rgba(40, 40, 40, 0.96);
+  --assistant-sender-border: var(--layout-shell-border, rgba(148, 163, 184, 0.24));
+  --assistant-sender-shadow:
+    0 18px 40px -10px rgba(0, 0, 0, 0.48), 0 8px 18px -8px rgba(0, 0, 0, 0.38);
+  --assistant-sender-focus-shadow:
+    0 0 0 2px rgba(0, 86, 255, 0.24), 0 20px 44px -10px rgba(0, 0, 0, 0.56);
+  --assistant-sender-gradient: linear-gradient(
+    to top,
+    rgba(20, 20, 20, 0.98) 40%,
+    rgba(20, 20, 20, 0) 100%
+  );
+  --assistant-sider-button-border: var(--layout-shell-border, rgba(148, 163, 184, 0.18));
+  --assistant-sider-button-hover-border: rgba(148, 163, 184, 0.32);
+}
+
+.card {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: transparent;
+}
+
+.layout {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: transparent;
+}
+
+.sidebar {
+  flex: 0 0 250px;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--assistant-sider-bg);
+}
+
+.chatArea {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative; // 设为相对定位，作为绝对定位容器的参考
+  min-width: 0;
+  background: var(--assistant-chat-bg);
+}
+
+// ---- 聊天顶部工具栏（模型选择器所在行）----
+.chatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 6px 8px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--ant-color-border-secondary);
+  background: var(--assistant-chat-bg);
+  min-height: 44px;
+}
+
+// ---- 聊天内容区（相对定位容器，两个面板绝对叠放）----
+.chatContent {
+  flex: 1;
+  position: relative; // 作为欢迎屏和消息面板的定位参考
+  min-height: 0;
+  overflow: hidden;
+  background: inherit;
+}
+
+// ---- 面板：始终挂载，用 opacity 切换，不触发 DOM 抖动 ----
+.paneVisible {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.12s ease;
+}
+
+.paneHidden {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+// ---- 切换会话时的加载遮罩（防止空白闪屏）----
+.transitionMask {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.senderContainer {
+  position: absolute;
+  left: 50%;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(calc(100% - 40px), var(--assistant-content-max-width));
+  pointer-events: none;
+  transition:
+    top 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* 恢复输入框和内部文本的鼠标事件。 */
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.senderContainerCentered {
+  top: calc(50% - 64px);
+  transform: translate(-50%, 0);
+  width: min(calc(100% - 48px), var(--assistant-centered-content-max-width));
+}
+
+.senderContainerDocked {
+  top: 100%;
+  transform: translate(-50%, -100%);
+  width: min(calc(100% - 40px), var(--assistant-content-max-width));
+  padding: 16px 0 12px;
+  background: transparent;
+
+  // 底部全宽纯色遮罩：从输入框顶部向下铺满，遮挡下方聊天文字
+  // 仅覆盖输入框矩形区域及其下方，不影响顶部圆角处的透明度
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    // 从顶部 padding（16px）+ 圆角高度（24px）之后开始，保留圆角区域透明
+    top: 40px;
+    bottom: 0;
+    background: var(--assistant-chat-bg);
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+.hintText {
+  font-size: 12px;
+  margin-top: 8px;
+  text-align: center;
+  color: var(--ant-color-text-tertiary);
+  pointer-events: auto;
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s ease,
+    color 0.3s ease;
+  z-index: 100;
+}
+
+.hintTextWarning {
+  color: var(--ant-color-warning);
+}
+
+.hintTextVisible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hintTextHidden {
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+}
+
+// ---- 欢迎引导屏 ----
+.welcomeScreen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 48px 24px 168px;
+  overflow-y: auto;
+
+  // 隐藏滚动条
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.welcomeTitle {
+  margin-bottom: 0 !important;
+  color: var(--ant-color-text);
+  font-weight: 500;
+  font-size: 28px !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0.02em;
+  text-align: center;
+  max-width: 620px;
+  transform: translateY(-88px);
+}
+
+@media (max-width: 992px) {
+  .welcomeTitle {
+    font-size: 24px !important;
+    transform: translateY(-80px);
+  }
+}
+
+@media (max-width: 768px) {
+  .welcomeTitle {
+    font-size: 22px !important;
+    transform: translateY(-72px);
+  }
+}

@@ -1,0 +1,29 @@
+.coverUploadWrap {
+  display: flex;
+  justify-content: center;
+  :global {
+    .ant-upload-wrapper {
+      width: auto;
+    }
+    .ant-upload.ant-upload-select {
+      width: 104px !important;
+      height: 104px !important;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  }
+}
+
+.coverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 10px 16px;
+}

@@ -1,0 +1,501 @@
+.composerShell {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  isolation: isolate;
+  z-index: 20;
+  padding: 4px 16px 8px;
+  background: transparent;
+  overflow: hidden;
+}
+
+.hiddenImageInput {
+  display: none;
+}
+
+.composerShell::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    to top,
+    rgb(249, 250, 251) 0%,
+    rgb(249, 250, 251) 50%,
+    rgba(249, 250, 251, 0.65) 70%,
+    rgba(249, 250, 251, 0.3) 85%,
+    rgba(249, 250, 251, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 2px 6px;
+  background: #ffffff;
+  border-radius: 22px;
+}
+
+.barActive {
+  align-items: flex-end;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: #4b5563;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.iconButton:active {
+  transform: scale(0.94);
+}
+
+.iconButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.iconButtonDisabledVisual {
+  opacity: 0.45;
+}
+
+.plusButton {
+  background: transparent;
+  color: #111827;
+}
+
+.plusButtonOpen {
+  color: #111827;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.activeActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  margin: 4px 2px 4px 0;
+  padding: 0;
+  color: #ffffff;
+  background: #2a1b15;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.sendButtonReplying {
+  color: #2a1b15;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.08);
+}
+
+.sendButton:active {
+  transform: scale(0.92);
+  background: #1c110e;
+}
+
+.sendButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.82;
+}
+
+.stopButtonIcon {
+  display: block;
+}
+
+.plusButtonOpen svg {
+  transform: rotate(45deg);
+}
+
+.plusButton svg {
+  transition: transform 0.2s ease;
+}
+
+.inputWrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 4px;
+}
+
+.imagePreviewPanel {
+  width: 100%;
+  padding: 10px 8px 4px;
+}
+
+.imagePreviewList {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+.imagePreviewItem {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.imagePreviewImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #f9fafb;
+}
+
+.imagePreviewRemoveButton {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(17, 24, 39, 0.7);
+  color: #ffffff;
+  padding: 0;
+  cursor: pointer;
+}
+
+.attachedProductPanel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+  padding: 0 4px;
+}
+
+.attachedProductCard {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.04),
+    0 1px 4px rgba(0, 0, 0, 0.02);
+  box-sizing: border-box;
+}
+
+.attachedProductHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f8faf9;
+}
+
+.attachedProductHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.attachedProductTag {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  color: #667069;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  background: #f5f6f8;
+  border-radius: 4px;
+}
+
+.attachedProductId {
+  overflow: hidden;
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachedProductCloseButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.attachedProductContent {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.attachedProductCover {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  padding: 4px;
+  object-fit: contain;
+  background: #fcfdfc;
+  border: 1px solid #f8faf9;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.attachedProductMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.attachedProductName {
+  color: #0d1b12;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.attachedProductSubText {
+  margin-top: 8px;
+  color: #667069;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.attachedProductMeta {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.attachedProductPrice {
+  color: #ff4d4f;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.attachedProductUnit {
+  margin-left: 2px;
+  color: #9ca3af;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.voiceBtnWrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 4px;
+}
+
+.voiceHoldButton {
+  flex: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  touch-action: none;
+  -webkit-user-select: none;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.voiceHoldButton:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.voiceHoldButton:disabled {
+  cursor: not-allowed;
+  color: #6b7280;
+  background: transparent;
+  opacity: 0.7;
+}
+
+.input {
+  width: 100%;
+  min-height: 20px;
+  max-height: 80px;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+  color: #111827;
+  font-size: 15px;
+  line-height: 20px;
+  background: transparent;
+  border: none;
+  resize: none;
+  caret-color: #111827;
+}
+
+.input::placeholder {
+  color: #c4c7ce;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.drawerPopup {
+  background: #f7f8fa !important;
+}
+
+.drawerContent {
+  position: relative;
+  padding: 28px 16px calc(24px + env(safe-area-inset-bottom));
+}
+
+.drawerDragPill {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  background-color: #e5e7eb;
+  border-radius: 2px;
+}
+
+.drawerGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 12px;
+}
+
+.drawerGridItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.drawerGridItem:active {
+  transform: scale(0.95);
+}
+
+.drawerGridItemDisabled {
+  opacity: 0.45;
+}
+
+.drawerIconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: #ffffff;
+  border-radius: 16px;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.drawerIconImg {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.drawerIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #333333;
+}
+
+.drawerItemTitle {
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+@media (max-width: 374px) {
+  .composerShell {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .bar {
+    min-height: 40px;
+    padding: 2px 4px;
+    border-radius: 20px;
+  }
+
+  .iconButton {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .input {
+    font-size: 14px;
+  }
+}

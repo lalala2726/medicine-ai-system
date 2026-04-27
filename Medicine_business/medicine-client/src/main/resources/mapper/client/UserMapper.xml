@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.User">
+        <id property="id" column="id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="realName" column="real_name"/>
+        <result property="idCard" column="id_card"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="lastLoginIp" column="last_login_ip"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="deleteTime" column="delete_time"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,nickname,avatar,email,phone_number,gender,
+        birthday,username,password,status,real_name,id_card,
+        last_login_time,last_login_ip,
+        create_time,update_time,create_by,update_by,delete_time,
+        is_delete
+    </sql>
+
+    <select id="listRoleCodesByUserId" resultType="java.lang.String">
+        SELECT r.role_code
+        FROM user_role ur
+                 JOIN role r ON ur.role_id = r.id
+        WHERE ur.user_id = #{userId}
+          AND r.status = 0
+    </select>
+
+    <select id="selectRoleIdByRoleCode" resultType="java.lang.Long">
+        SELECT id
+        FROM role
+        WHERE role_code = #{roleCode}
+          AND status = 0
+        LIMIT 1
+    </select>
+
+    <insert id="insertUserRole">
+        INSERT IGNORE INTO user_role (user_id, role_id)
+        VALUES (#{userId}, #{roleId})
+    </insert>
+</mapper>

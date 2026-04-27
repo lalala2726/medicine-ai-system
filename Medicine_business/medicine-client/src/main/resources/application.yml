@@ -1,0 +1,238 @@
+spring:
+  profiles:
+    # 默认启用的数据源与 Dubbo 模式。
+    # 示例: druid,dubbo-local
+    active: druid,dubbo-local
+  application:
+    # 应用名称。
+    # 示例: Medicine-Client
+    name: Medicine-Client
+    # 应用版本。
+    # 示例: 1.0-beta
+    version: 1.0-beta
+  servlet:
+    multipart:
+      # 单个上传文件最大大小。
+      # 示例: 50MB
+      max-file-size: 50MB
+      # 单次请求上传总大小上限。
+      # 示例: 50MB
+      max-request-size: 50MB
+  data:
+    mongodb:
+      # 是否自动创建 MongoDB 索引。
+      # 示例: true
+      auto-index-creation: true
+    redis:
+      # Redis 主机地址。
+      # 示例: localhost
+      host: localhost
+      # Redis 端口。
+      # 示例: 6379
+      port: 6379
+      # Redis 数据库索引。
+      # 示例: 0
+      database: 0
+      # Redis 密码。
+      # 示例: 123456
+      password: 123456
+  mongodb:
+    # MongoDB 连接串。
+    # 示例: mongodb://user:pass@localhost:27017/medicine?authSource=admin
+    uri: "mongodb://root:123456@localhost:27017/medicine?authSource=admin"
+    representation:
+      # UUID 表示方式。
+      # 示例: standard
+      uuid: standard
+  elasticsearch:
+    # Elasticsearch 用户名。
+    # 示例: elastic
+    username: elastic
+    # Elasticsearch 密码。
+    # 示例: 123456
+    password: 123456
+    # Elasticsearch 节点地址。
+    # 示例: http://localhost:9200
+    uris: http://localhost:9200
+  rabbitmq:
+    # RabbitMQ 主机地址。
+    # 示例: localhost
+    host: localhost
+    # RabbitMQ 端口。
+    # 示例: 5672
+    port: 5672
+    # RabbitMQ 用户名。
+    # 示例: guest
+    username: guest
+    # RabbitMQ 密码。
+    # 示例: 123456
+    password: 123456
+    # RabbitMQ 虚拟主机。
+    # 示例: /
+    virtual-host: "/"
+    listener:
+      simple:
+        # 消息确认模式。
+        # 示例: auto
+        acknowledge-mode: auto
+        # 每次拉取消息数量。
+        # 示例: 10
+        prefetch: 10
+        # 最小并发消费者数量。
+        # 示例: 2
+        concurrency: 2
+        # 最大并发消费者数量。
+        # 示例: 10
+        max-concurrency: 10
+    # 生产者确认类型。
+    # 示例: correlated
+    publisher-confirm-type: correlated
+    # 是否开启消息回退。
+    # 示例: true
+    publisher-returns: true
+    template:
+      # 是否强制回退。
+      # 示例: true
+      mandatory: true
+
+server:
+  # Client HTTP 服务端口。
+  # 示例: 8081
+  port: 8081
+
+mybatis-plus:
+  # 实体别名包路径。
+  # 示例: com.zhangyichuang.medicine.**.entity
+  type-aliases-package: com.zhangyichuang.medicine.**.entity
+  mapper-locations:
+    # Mapper XML 扫描路径。
+    # 示例: classpath*:mapper/**/**.xml
+    - classpath*:mapper/**/**.xml
+  global-config:
+    db-config:
+      # 逻辑删除字段。
+      # 示例: isDeleted
+      logic-delete-field: isDeleted
+      # 逻辑删除值。
+      # 示例: 1
+      logic-delete-value: 1
+      # 逻辑未删除值。
+      # 示例: 0
+      logic-not-delete-value: 0
+
+security:
+  # 鉴权请求头名称。
+  # 示例: Authorization
+  header: Authorization
+  # JWT 签名密钥。
+  # 示例: 123456
+  secret: 123456
+  # Access Token 过期时间（秒，30分钟）。
+  # 示例: 1800
+  access-token-expire-time: 1800
+  # Refresh Token 过期时间（秒，3天）。
+  # 示例: 259200
+  refresh-token-expire-time: 259200
+
+minio:
+  # MinIO 服务地址。
+  # 示例: http://localhost:9000
+  endpoint: http://localhost:9000
+  # MinIO Access Key。
+  # 示例: 123456
+  access-key: 123456
+  # MinIO Secret Key。
+  # 示例: 123456
+  secret-key: 123456
+  # 默认文件桶。
+  # 示例: medicine
+  bucket-name: medicine
+  # 文件上传路径前缀。
+  # 示例: resources
+  upload-path: resources
+  # 文件公网访问前缀。
+  # 示例: http://localhost:9000/medicine/
+  public-url-prefix: "http://localhost:9000/medicine/"
+
+file:
+  upload:
+    # 允许上传的 MIME 类型或文件扩展名。
+    # 示例: [image/jpeg, image/png, application/pdf, .docx]
+    allowed-types:
+      - image/jpeg
+      - image/png
+      - image/gif
+      - image/webp
+      - application/pdf
+      - text/plain
+      - .txt
+      - .md
+      - .pdf
+      - .docx
+      - .doc
+      - .pptx
+      - .ppt
+      - .xlsx
+      - .xls
+
+logging:
+  level:
+    # 根日志级别。
+    # 示例: INFO
+    root: INFO
+
+medicine:
+  captcha:
+    # 验证码功能总开关。
+    # 示例: true
+    enabled: true
+    # 是否强制登录时校验验证码。
+    # 示例: true
+    login-required: true
+    # challenge 过期时间（毫秒）。
+    # 示例: 120000
+    challenge-expire-ms: 120000
+    # 登录消费凭证过期时间（毫秒）。
+    # 示例: 120000
+    verification-expire-ms: 120000
+    # Redis 键前缀。
+    # 示例: medicine:captcha:client
+    redis-key-prefix: medicine:captcha:client
+    # 是否启用默认模板。
+    # 示例: true
+    init-default-template: true
+    # 背景图资源目录前缀。
+    # 示例: classpath:captcha/backgrounds
+    resource-prefix: classpath:captcha/backgrounds
+  redisson:
+    # Redisson 总开关。
+    # 示例: true
+    enabled: true
+    # Redisson 业务线程数。
+    # 示例: 16
+    threads: 16
+    # Redisson Netty 线程数。
+    # 示例: 32
+    netty-threads: 32
+    # 分布式锁 watchdog 超时时间（毫秒）。
+    # 示例: 30000
+    lock-watchdog-timeout-millis: 30000
+    # Redis 连接超时时间（毫秒）。
+    # 示例: 10000
+    connect-timeout-millis: 10000
+    # Redis 命令超时时间（毫秒）。
+    # 示例: 3000
+    timeout-millis: 3000
+    # Redis 命令重试次数。
+    # 示例: 3
+    retry-attempts: 3
+    # Redis 命令重试间隔（毫秒）。
+    # 示例: 1500
+    retry-interval-millis: 1500
+  logging:
+    # 日志根目录。
+    # 示例: logs
+    base-path: logs
+    # 日志保留天数。
+    # 示例: 30
+    max-history-days: 30

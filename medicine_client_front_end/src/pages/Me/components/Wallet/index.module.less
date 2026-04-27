@@ -1,0 +1,206 @@
+.walletPage {
+  min-height: var(--app-viewport-height);
+  background-color: #f7f9f8;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 顶部导航栏
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  background: #f7f9f8;
+}
+
+.navLeft,
+.navRight {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #0d1b12;
+  margin-left: -8px;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.navTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+// 余额卡片
+.balanceCard {
+  position: relative;
+  margin: 16px;
+  padding: 32px 24px;
+  background: linear-gradient(180deg, #e2f6ec 0%, #f0fbf6 100%);
+  border-radius: 24px;
+  overflow: hidden;
+  color: #003d2b;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  // 装饰圆圈
+  &::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    bottom: -20px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 120px;
+    height: 120px;
+    background: #ffffff;
+    opacity: 0.3;
+    border-radius: 50%;
+    filter: blur(20px);
+    pointer-events: none;
+  }
+}
+
+.balanceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.balanceLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5c7667;
+}
+
+.eyeIcon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #5c7667;
+  transition: all 0.3s ease;
+
+  &:active {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+.balanceAmount {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  font-family:
+    DINAlternate-Bold,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  letter-spacing: -0.5px;
+  position: relative;
+  z-index: 1;
+}
+
+.balanceHint {
+  font-size: 13px;
+  color: #5c7667;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+// 常用功能
+.featuresContainer {
+  padding: 0 16px;
+}
+
+.featuresHeader {
+  margin: 12px 0 16px;
+}
+
+.featuresTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+
+  &:active {
+    transform: scale(0.98);
+    background-color: #fcfcfc;
+  }
+}
+
+.featureLeft {
+  flex: 1;
+}
+
+.featureLabel {
+  font-size: 16px;
+  color: #0d1b12;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.featureDesc {
+  font-size: 13px;
+  color: #8e9c94;
+}
+
+.featureRight {
+  display: flex;
+  align-items: center;
+  color: #bec8c2;
+}
+
+// 底部占位
+.bottomPlaceholder {
+  height: 40px;
+}

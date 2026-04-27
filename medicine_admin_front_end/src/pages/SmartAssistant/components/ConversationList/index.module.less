@@ -1,0 +1,116 @@
+.conversationWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--assistant-sider-bg);
+}
+
+.newChatButtonWrapper {
+  flex-shrink: 0;
+  padding: 10px 8px 18px;
+  background: inherit;
+}
+
+.newChatButton {
+  width: 100%;
+  background: var(--assistant-sider-bg) !important;
+  border-color: var(--assistant-sider-button-border) !important;
+  color: var(--ant-color-text) !important;
+  box-shadow: none !important;
+
+  &:hover,
+  &:focus {
+    background: var(--assistant-sider-bg) !important;
+    border-color: var(--assistant-sider-button-hover-border) !important;
+    color: var(--ant-color-text) !important;
+  }
+}
+
+.scrollContainer {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  background: inherit;
+
+  /* 隐藏滚动条 - 兼容各浏览器 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
+
+.scrollContainerNoScroll {
+  overflow-y: hidden;
+}
+
+.container {
+  width: 100%;
+  background: transparent;
+
+  :global {
+    .ant-x-conversations-item {
+      margin: 4px 8px;
+      padding: 0 8px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .ant-x-conversations-item-active {
+      background: var(--layout-menu-item-selected-bg, rgba(0, 86, 255, 0.1)) !important;
+      color: var(--layout-menu-item-selected-color, #0056ff) !important;
+    }
+
+    .ant-x-conversations-item-active:hover {
+      background: var(--layout-menu-item-selected-bg, rgba(0, 86, 255, 0.12)) !important;
+    }
+
+    // 暗色模式下的特殊处理（如果全局变量未生效时作为兜底）
+    :where(.app-pro-layout--dark) & .ant-x-conversations-item-active {
+      background: rgba(124, 180, 255, 0.18) !important;
+      color: #7cb4ff !important;
+    }
+  }
+}
+
+.content {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  background: inherit;
+}
+
+.loadingContainer {
+  padding: 14px 10px 0;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.skeletonRow {
+  width: 100%;
+}
+
+.loadMore {
+  padding: 12px 10px 14px;
+}
+
+.emptyState {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--ant-color-text-tertiary);
+  pointer-events: none;
+}

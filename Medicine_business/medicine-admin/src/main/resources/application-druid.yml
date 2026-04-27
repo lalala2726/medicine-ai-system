@@ -1,0 +1,100 @@
+# 数据源配置（Admin）
+spring:
+  datasource:
+    # MySQL JDBC 连接地址。
+    # 示例: jdbc:mysql://localhost:3306/medicine?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/medicine?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    # MySQL 用户名。
+    # 示例: root
+    username: root
+    # MySQL 密码。
+    # 示例: 123456
+    password: 123456
+    # 数据源实现类型。
+    # 示例: com.alibaba.druid.pool.DruidDataSource
+    type: com.alibaba.druid.pool.DruidDataSource
+    # JDBC 驱动类。
+    # 示例: com.mysql.cj.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
+    druid:
+      # 初始连接数。
+      # 示例: 5
+      initialSize: 5
+      # 最小空闲连接数。
+      # 示例: 10
+      minIdle: 10
+      # 最大活动连接数。
+      # 示例: 20
+      maxActive: 20
+      # 获取连接等待超时（毫秒）。
+      # 示例: 60000
+      maxWait: 60000
+      # 连接超时（毫秒）。
+      # 示例: 30000
+      connectTimeout: 30000
+      # Socket 超时（毫秒）。
+      # 示例: 60000
+      socketTimeout: 60000
+      # 空闲连接检查间隔（毫秒）。
+      # 示例: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      # 连接最小空闲生存时间（毫秒）。
+      # 示例: 300000
+      minEvictableIdleTimeMillis: 300000
+      # 连接最大空闲生存时间（毫秒）。
+      # 示例: 900000
+      maxEvictableIdleTimeMillis: 900000
+      # 连接可用性检测 SQL。
+      # 示例: SELECT 1 FROM DUAL
+      validationQuery: SELECT 1 FROM DUAL
+      # 空闲时检测连接可用性。
+      # 示例: true
+      testWhileIdle: true
+      # 借出连接时是否检测。
+      # 示例: false
+      testOnBorrow: false
+      # 归还连接时是否检测。
+      # 示例: false
+      testOnReturn: false
+      webStatFilter:
+        # 启用 Web 监控过滤器。
+        # 示例: true
+        enabled: true
+      statViewServlet:
+        # 启用 Druid 控制台。
+        # 示例: true
+        enabled: true
+        # 允许访问的 IP 白名单，空表示不限制。
+        # 示例: ""
+        allow: ""
+        # 拒绝访问的 IP 列表，空表示不限制。
+        # 示例: ""
+        deny: ""
+        # Druid 控制台路径。
+        # 示例: /druid/*
+        url-pattern: /druid/*
+        # Druid 控制台用户名。
+        # 示例: admin
+        login-username: admin
+        # Druid 控制台密码。
+        # 示例: 123456
+        login-password: 123456
+      filter:
+        stat:
+          # 启用统计过滤器。
+          # 示例: true
+          enabled: true
+          # 记录慢 SQL。
+          # 示例: true
+          #log-slow-sql: true
+          # 慢 SQL 阈值（毫秒）。
+          # 示例: 1000
+          #slow-sql-millis: 1000
+          # 是否合并 SQL 统计。
+          # 示例: true
+          #merge-sql: true
+        wall:
+          config:
+            # 允许一次执行多条 SQL。
+            # 示例: true
+            multi-statement-allow: true

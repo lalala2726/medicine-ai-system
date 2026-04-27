@@ -1,0 +1,199 @@
+:root {
+  --nutui-color-primary-rgb: 21, 190, 81;
+  --nutui-color-primary: rgb(var(--nutui-color-primary-rgb));
+  --nutui-color-primary-stop-1: #15be51;
+  --nutui-color-primary-stop-2: #0da646;
+  --app-viewport-height: 100vh;
+  --app-bg: #f6f8f6;
+  --background-light: #f6f8f6;
+  --background-dark: #102216;
+  --background: #ffffff;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --primary: #111827;
+  --primary-foreground: #ffffff;
+  --radius: 0.625rem;
+}
+
+@source "../node_modules/streamdown/dist/*.js";
+@source "../node_modules/@streamdown/code/dist/*.js";
+@source "../node_modules/@streamdown/mermaid/dist/*.js";
+@source "../node_modules/@streamdown/math/dist/*.js";
+@source "../node_modules/@streamdown/cjk/dist/*.js";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: #0d1b12;
+  background-color: var(--app-bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --app-viewport-height: 100dvh;
+  }
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: var(--app-viewport-height);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: var(--app-viewport-height);
+  overflow: hidden;
+  background-color: var(--app-bg);
+  overscroll-behavior: none;
+}
+
+html {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#root {
+  overflow: hidden;
+}
+
+/* Webkit浏览器（Chrome, Safari, Edge） */
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+/* 确保html和body元素也隐藏滚动条 */
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+/* 禁用点击高亮 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 禁止长按选中文字 */
+* {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* 禁用 NutUI 主色按钮的边框颜色 */
+.nut-button-primary-disabled,
+.nut-button-primary-disabled.nut-button-icononly,
+.nut-button-primary-solid-disabled {
+  border-color: transparent !important;
+}
+
+/* 避免主按钮在加载/按压时露出内部旧底色 */
+.nut-button.nut-button-primary .nut-button-wrap,
+.nut-button.nut-button-primary .nut-button-primary-solid,
+.nut-button.nut-button-primary .nut-button-text {
+  background: transparent !important;
+}
+
+.nut-button.nut-button-primary .nut-button-primary-disabled,
+.nut-button.nut-button-primary .nut-button-primary-solid-disabled {
+  background: transparent !important;
+}
+
+.nut-button.nut-button-primary .nut-button-primary-solid,
+.nut-button.nut-button-primary .nut-button-text {
+  color: inherit !important;
+}
+
+.nut-button.nut-button-primary .nut-button-primary-disabled,
+.nut-button.nut-button-primary .nut-button-primary-solid-disabled {
+  color: inherit !important;
+}
+
+/* 覆盖 NutUI SearchBar 绿色主色边框 */
+.nut-searchbar-content {
+  border-color: #dcdee0 !important;
+}
+
+.nut-searchbar-focus .nut-searchbar-content {
+  border-color: #b0b3b8 !important;
+}
+
+.nut-searchbar-icon {
+  color: #959799 !important;
+}
+
+/* View Transitions API - 头像过渡动画 */
+::view-transition-old(profile-avatar),
+::view-transition-new(profile-avatar) {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-group(profile-avatar) {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+
+/* 强制覆盖 NutUI Dialog 确认按钮颜色为红色（用于删除确认） */
+.delete-confirm-dialog .nut-dialog-footer .nut-button-primary,
+.nut-dialog.delete-confirm-dialog .nut-dialog-footer .nut-button-primary {
+  background: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25) !important;
+}

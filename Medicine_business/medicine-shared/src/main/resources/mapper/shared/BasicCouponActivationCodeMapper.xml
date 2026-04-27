@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.shared.mapper.BasicCouponActivationCodeMapper">
+
+    <resultMap id="ActivationCodeRowResultMap" type="com.zhangyichuang.medicine.model.coupon.ActivationCodeRowDto">
+        <id property="id" column="id"/>
+        <result property="batchId" column="batch_id"/>
+        <result property="plainCode" column="plain_code"/>
+        <result property="status" column="status"/>
+        <result property="successUseCount" column="success_use_count"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastSuccessTime" column="last_success_time"/>
+        <result property="lastSuccessClientIp" column="last_success_client_ip"/>
+        <result property="lastSuccessUserId" column="last_success_user_id"/>
+    </resultMap>
+
+    <resultMap id="ActivationRedeemCodeResultMap"
+               type="com.zhangyichuang.medicine.model.coupon.ActivationRedeemCodeDto">
+        <id property="batchId" column="batch_id"/>
+        <result property="codeId" column="code_id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="templateId" column="template_id"/>
+        <result property="redeemRuleType" column="redeem_rule_type"/>
+        <result property="validityType" column="validity_type"/>
+        <result property="fixedEffectiveTime" column="fixed_effective_time"/>
+        <result property="fixedExpireTime" column="fixed_expire_time"/>
+        <result property="relativeValidDays" column="relative_valid_days"/>
+        <result property="batchStatus" column="batch_status"/>
+        <result property="codeStatus" column="code_status"/>
+        <result property="plainCode" column="plain_code"/>
+    </resultMap>
+
+    <select id="selectCodesByBatchId" resultMap="ActivationCodeRowResultMap">
+        SELECT c.id,
+               c.batch_id,
+               c.plain_code,
+               c.status,
+               c.success_use_count,
+               c.create_time,
+               l.create_time AS last_success_time,
+               l.client_ip   AS last_success_client_ip,
+               l.user_id     AS last_success_user_id
+        FROM coupon_activation_code c
+                 LEFT JOIN coupon_activation_log l
+                           ON l.activation_code_id = c.id
+                               AND l.result_status = 'SUCCESS'
+                               AND l.is_deleted = 0
+                               AND NOT EXISTS (SELECT 1
+                                               FROM coupon_activation_log nl
+                                               WHERE nl.activation_code_id = c.id
+                                                 AND nl.result_status = 'SUCCESS'
+                                                 AND nl.is_deleted = 0
+                                                 AND (
+                                                   nl.create_time > l.create_time
+                                                       OR (nl.create_time = l.create_time AND nl.id > l.id)
+                                                   ))
+        WHERE c.batch_id = #{batchId}
+          AND c.is_deleted = 0
+        ORDER BY c.create_time ASC, c.id ASC
+    </select>
+
+    <select id="selectCodePageByBatchId" resultMap="ActivationCodeRowResultMap">
+        SELECT c.id,
+               c.batch_id,
+               c.plain_code,
+               c.status,
+               c.success_use_count,
+               c.create_time,
+               l.create_time AS last_success_time,
+               l.client_ip   AS last_success_client_ip,
+               l.user_id     AS last_success_user_id
+        FROM coupon_activation_code c
+                 LEFT JOIN coupon_activation_log l
+                           ON l.activation_code_id = c.id
+                               AND l.result_status = 'SUCCESS'
+                               AND l.is_deleted = 0
+                               AND NOT EXISTS (SELECT 1
+                                               FROM coupon_activation_log nl
+                                               WHERE nl.activation_code_id = c.id
+                                                 AND nl.result_status = 'SUCCESS'
+                                                 AND nl.is_deleted = 0
+                                                 AND (
+                                                   nl.create_time > l.create_time
+                                                       OR (nl.create_time = l.create_time AND nl.id > l.id)
+                                                   ))
+        WHERE c.batch_id = #{batchId}
+          AND c.is_deleted = 0
+        ORDER BY c.create_time ASC, c.id ASC
+    </select>
+
+    <select id="selectRedeemCodeByHash" resultMap="ActivationRedeemCodeResultMap">
+        SELECT b.id     AS batch_id,
+               c.id     AS code_id,
+               b.batch_no,
+               b.template_id,
+               b.redeem_rule_type,
+               b.validity_type,
+               b.fixed_effective_time,
+               b.fixed_expire_time,
+               b.relative_valid_days,
+               b.status AS batch_status,
+               c.status AS code_status,
+               c.plain_code
+        FROM coupon_activation_code c
+                 INNER JOIN coupon_activation_batch b ON b.id = c.batch_id
+        WHERE c.code_hash = #{codeHash}
+          AND c.is_deleted = 0
+          AND b.is_deleted = 0
+        LIMIT 1
+    </select>
+
+    <insert id="batchInsertIgnore">
+        INSERT IGNORE INTO coupon_activation_code
+        (batch_id, code_hash, plain_code, status, success_use_count, version, create_time, update_time, create_by,
+        update_by, is_deleted)
+        VALUES
+        <foreach collection="codes" item="item" separator=",">
+            (#{item.batchId}, #{item.codeHash}, #{item.plainCode}, #{item.status}, #{item.successUseCount},
+            #{item.version}, #{item.createTime}, #{item.updateTime}, #{item.createBy}, #{item.updateBy},
+            #{item.isDeleted})
+        </foreach>
+    </insert>
+
+    <update id="markUniqueCodeUsed">
+        UPDATE coupon_activation_code
+        SET status            = 'USED',
+            success_use_count = success_use_count + 1,
+            update_time       = #{updateTime},
+            update_by         = #{operatorId}
+        WHERE id = #{codeId}
+          AND is_deleted = 0
+          AND status = 'ACTIVE'
+          AND success_use_count = 0
+    </update>
+
+    <update id="increaseSuccessUseCount">
+        UPDATE coupon_activation_code
+        SET success_use_count = success_use_count + 1,
+            update_time       = #{updateTime},
+            update_by         = #{operatorId}
+        WHERE id = #{codeId}
+          AND is_deleted = 0
+          AND status = 'ACTIVE'
+    </update>
+
+    <update id="updateCodeStatusByBatchId">
+        UPDATE coupon_activation_code
+        SET status      = #{toStatus},
+            update_time = #{updateTime},
+            update_by   = #{operatorId}
+        WHERE batch_id = #{batchId}
+          AND is_deleted = 0
+          AND status = #{fromStatus}
+    </update>
+
+    <update id="updateCodeStatusById">
+        UPDATE coupon_activation_code
+        SET status      = #{toStatus},
+            update_time = #{updateTime},
+            update_by   = #{operatorId}
+        WHERE id = #{codeId}
+          AND is_deleted = 0
+          AND status = #{fromStatus}
+    </update>
+
+    <update id="softDeleteCodeById">
+        UPDATE coupon_activation_code
+        SET is_deleted  = 1,
+            update_time = #{updateTime},
+            update_by   = #{operatorId}
+        WHERE id = #{codeId}
+          AND is_deleted = 0
+    </update>
+
+    <update id="softDeleteCodeByBatchId">
+        UPDATE coupon_activation_code
+        SET is_deleted  = 1,
+            update_time = #{updateTime},
+            update_by   = #{operatorId}
+        WHERE batch_id = #{batchId}
+          AND is_deleted = 0
+    </update>
+</mapper>

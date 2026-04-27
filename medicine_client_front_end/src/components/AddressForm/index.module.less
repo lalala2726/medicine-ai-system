@@ -1,0 +1,161 @@
+.addressForm {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--background-light);
+
+  .formHeader {
+    padding: 18px 20px 16px;
+    background: #fff;
+    border-bottom: 1px solid #f8faf9;
+    flex-shrink: 0;
+
+    .formTitle {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0d1b12;
+      text-align: center;
+    }
+  }
+
+  .formContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+
+    :global {
+      .nut-form {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+
+        .nut-form-item {
+          padding: 12px 20px;
+          border-bottom: 1px solid #f8faf9;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .nut-cell__title {
+            font-size: 15px;
+            color: #333d36;
+            font-weight: 500;
+            min-width: 80px;
+          }
+
+          .nut-input {
+            padding: 0;
+            font-size: 15px;
+            color: #0d1b12;
+
+            input {
+              text-align: right;
+              font-weight: 600;
+
+              &::placeholder {
+                color: #9ca3af;
+                font-weight: 400;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .regionSelector {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
+      cursor: pointer;
+      gap: 8px;
+
+      .regionText {
+        flex: 1;
+        font-size: 15px;
+        color: #0d1b12;
+        text-align: right;
+        line-height: 1.4;
+        word-break: break-all;
+        font-weight: 600;
+      }
+
+      .regionPlaceholder {
+        flex-shrink: 0;
+        font-size: 15px;
+        color: #9ca3af;
+        white-space: nowrap;
+      }
+
+      .regionArrow {
+        margin-left: 4px;
+        font-size: 18px;
+        color: #ccc;
+        transform: rotate(90deg);
+        flex-shrink: 0;
+      }
+    }
+  }
+
+  .formFooter {
+    padding: 16px 24px calc(env(safe-area-inset-bottom) + 24px);
+    background: transparent;
+    flex-shrink: 0;
+
+    :global {
+      .nut-button {
+        height: 50px;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 700;
+        background: var(--nutui-color-primary) !important;
+        border: none !important;
+        box-shadow: 0 6px 16px rgba(21, 190, 81, 0.25);
+
+        &:active {
+          opacity: 0.9;
+          transform: scale(0.98);
+        }
+      }
+    }
+  }
+}
+
+// 覆盖 Cascader 样式
+:global {
+  .nut-cascader {
+    .nut-cascader__bar {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid #f8faf9;
+
+      .nut-cascader__title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #0d1b12;
+      }
+    }
+
+    .nut-cascader-item {
+      font-size: 15px;
+      color: #333d36;
+      padding: 14px 20px;
+
+      &.active {
+        color: var(--nutui-color-primary);
+        font-weight: 700;
+        background-color: rgba(21, 190, 81, 0.05);
+      }
+    }
+  }
+
+  // 确保 Popup 圆角样式生效
+  .nut-popup {
+    &.nut-popup-bottom {
+      border-radius: 20px 20px 0 0;
+      overflow: hidden;
+    }
+  }
+}

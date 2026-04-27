@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.MallProductViewHistoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallProductViewHistory">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="lastViewTime" column="last_view_time"/>
+        <result property="firstViewTime" column="first_view_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_id,product_id,view_count,last_view_time,first_view_time
+    </sql>
+
+    <select id="listViewHistory" resultType="com.zhangyichuang.medicine.client.model.vo.ViewHistoryVo">
+        SELECT h.product_id      AS productId,
+               p.name            AS productName,
+               p.price           AS price,
+               0                 AS sales,
+               md.drug_category  AS drugCategory,
+               img.image_url     AS coverImage,
+               h.view_count      AS viewCount,
+               h.first_view_time AS firstViewTime,
+               h.last_view_time  AS lastViewTime
+        FROM mall_product_view_history h
+                 LEFT JOIN mall_product p ON h.product_id = p.id
+                 LEFT JOIN drug_detail md ON h.product_id = md.product_id AND (md.is_deleted = 0)
+                 LEFT JOIN (SELECT product_id, MIN(image_url) AS image_url
+                            FROM mall_product_image
+                            WHERE is_deleted = 0
+                            GROUP BY product_id) img ON img.product_id = h.product_id
+        WHERE h.user_id = #{userId}
+        ORDER BY h.last_view_time DESC, h.id DESC
+    </select>
+</mapper>

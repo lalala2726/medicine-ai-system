@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="medicine-app"/>
+    <springProperty scope="context" name="SERVER_PORT" source="server.port" defaultValue="unknown-port"/>
+    <springProperty scope="context" name="LOG_BASE_PATH" source="medicine.logging.base-path" defaultValue="logs"/>
+    <springProperty scope="context" name="ROOT_LOG_LEVEL" source="logging.level.root" defaultValue="INFO"/>
+    <springProperty scope="context" name="LOG_MAX_HISTORY_DAYS" source="medicine.logging.max-history-days"
+                    defaultValue="30"/>
+
+    <contextName>${APP_NAME}-${SERVER_PORT}</contextName>
+
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n%ex"/>
+
+    <!-- 控制台日志，便于本地开发与直接启动时观察输出。 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 正常日志文件：按 应用 / 端口 / 日期 / 小时 归档，排除 ERROR。 -->
+    <appender name="NORMAL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_BASE_PATH}/${APP_NAME}/${SERVER_PORT}/info/%d{yyyy-MM-dd}/${APP_NAME}-${SERVER_PORT}-info.%d{yyyy-MM-dd-HH}.log
+            </fileNamePattern>
+            <maxHistory>${LOG_MAX_HISTORY_DAYS}</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 错误日志文件：按 应用 / 端口 / 日期 / 小时 归档，只接收 ERROR。 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_BASE_PATH}/${APP_NAME}/${SERVER_PORT}/error/%d{yyyy-MM-dd}/${APP_NAME}-${SERVER_PORT}-error.%d{yyyy-MM-dd-HH}.log
+            </fileNamePattern>
+            <maxHistory>${LOG_MAX_HISTORY_DAYS}</maxHistory>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="${ROOT_LOG_LEVEL}">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="NORMAL_FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+</configuration>

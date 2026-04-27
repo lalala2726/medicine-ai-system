@@ -1,0 +1,273 @@
+.activationPage {
+  min-height: var(--app-viewport-height);
+  background: linear-gradient(180deg, #e4f2ea 0%, #f6f8f6 220px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pageHeader {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  background: transparent;
+}
+
+.headerLeft,
+.headerRight {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d1b12;
+}
+
+.headerLeft {
+  margin-left: -8px;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.headerTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.pageContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroSection {
+  padding: 16px 24px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroTitle {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0d1b12;
+  line-height: 1.3;
+}
+
+.heroSubtitle {
+  font-size: 14px;
+  color: #4a5c51;
+  margin-top: 6px;
+}
+
+.formSection {
+  flex: 1;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 32px 24px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.03);
+}
+
+.inputWrapper {
+  background: #f6f8f6;
+  border-radius: 12px;
+  padding: 4px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+
+  &:focus-within {
+    background: #fff;
+    border-color: rgba(21, 190, 81, 0.4);
+    box-shadow: 0 0 0 4px rgba(21, 190, 81, 0.08);
+  }
+}
+
+.codeInput {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  color: #0d1b12;
+  outline: none;
+  font-weight: 600;
+  letter-spacing: 1px;
+
+  &::placeholder {
+    color: #99a39d;
+    font-weight: 400;
+    letter-spacing: normal;
+  }
+}
+
+.buttonWrapper {
+  margin-top: 8px;
+  margin-bottom: 32px;
+}
+
+/* 修复激活按钮点击变红的问题 */
+.submitBtn {
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border: none !important;
+  background: var(--nutui-color-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px rgba(21, 190, 81, 0.24);
+  transition: all 0.2s;
+
+  &:active {
+    transform: scale(0.98);
+    background: var(--nutui-color-primary-stop-2) !important;
+    box-shadow: 0 4px 12px rgba(21, 190, 81, 0.16);
+  }
+}
+
+.rulesSection {
+  padding: 0 4px;
+}
+
+.ruleTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0d1b12;
+  margin-bottom: 12px;
+}
+
+.ruleList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ruleItem {
+  font-size: 13px;
+  color: #667069;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+
+  &::before {
+    content: '•';
+    color: #99a39d;
+    margin-right: 8px;
+    font-size: 14px;
+  }
+}
+
+// Result section
+.resultSection {
+  flex: 1;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 40px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.03);
+}
+
+.successIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
+  background: rgba(21, 190, 81, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  .checkMark {
+    font-size: 36px;
+    color: var(--nutui-color-primary);
+    font-weight: bold;
+  }
+}
+
+.successTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0d1b12;
+  margin-bottom: 8px;
+}
+
+.successSubtitle {
+  font-size: 14px;
+  color: #667069;
+  margin-bottom: 32px;
+}
+
+.infoList {
+  width: 100%;
+  background: #f9fbf9;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 36px;
+  border: 1px solid #f0f3f1;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.infoLabel {
+  color: #667069;
+}
+
+.infoValue {
+  color: #0d1b12;
+  font-weight: 500;
+}
+
+.infoValueAmount {
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 18px;
+  font-family: DINAlternate-Bold, sans-serif;
+}
+
+.actionButtons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.secondaryBtn {
+  text-align: center;
+  font-size: 15px;
+  color: #667069;
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 12px;
+  background: #f6f8f6;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:active {
+    background: #eef2ef;
+  }
+}

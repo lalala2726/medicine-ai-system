@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.MallOrderShippingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallOrderShipping">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="shipping_no" property="shippingNo"/>
+        <result column="shipping_company" property="shippingCompany"/>
+        <result column="delivery_type" property="deliveryType"/>
+        <result column="sender_name" property="senderName"/>
+        <result column="sender_phone" property="senderPhone"/>
+        <result column="status" property="status"/>
+        <result column="shipping_info" property="shippingInfo"/>
+        <result column="deliver_time" property="deliverTime"/>
+        <result column="receive_time" property="receiveTime"/>
+        <result column="shipment_note" property="shipmentNote"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id, shipping_no, shipping_company, delivery_type, sender_name, sender_phone,
+        status, shipping_info, deliver_time, receive_time, shipment_note, create_time, update_time, is_deleted
+    </sql>
+
+</mapper>
+

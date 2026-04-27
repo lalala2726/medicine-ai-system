@@ -1,0 +1,173 @@
+.page {
+  height: var(--app-viewport-height);
+  background-color: var(--background-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  background: rgba(246, 248, 246, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #f0f3f1;
+}
+
+.navLeft,
+.navRight {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0d1b12;
+}
+
+.navLeft {
+  cursor: pointer;
+  margin-left: -8px;
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.navTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summaryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 20px 32px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+  margin-bottom: 12px;
+}
+
+.summaryType {
+  font-size: 15px;
+  font-weight: 500;
+  color: #5c7667;
+  margin-bottom: 12px;
+}
+
+.summaryAmount {
+  font-size: 44px;
+  line-height: 1.2;
+  font-weight: 800;
+  font-family:
+    DINAlternate-Bold,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.summaryTime {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0d1b12;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f8faf9;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: var(--nutui-color-primary);
+    border-radius: 2px;
+  }
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid #f8faf9;
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.label {
+  width: 80px;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #667069;
+  font-weight: 500;
+}
+
+.value,
+.valueAmount {
+  flex: 1;
+  text-align: right;
+  font-size: 14px;
+  color: #0d1b12;
+  font-weight: 600;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.valueAmount {
+  font-size: 16px;
+  font-family: DINAlternate-Bold, sans-serif;
+}
+
+.loadingWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.loadingText {
+  font-size: 14px;
+  color: #9ca3af;
+}

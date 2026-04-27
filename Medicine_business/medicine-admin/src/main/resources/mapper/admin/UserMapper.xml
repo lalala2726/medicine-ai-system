@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="status" column="status"/>
+        <result property="realName" column="real_name"/>
+        <result property="idCard" column="id_card"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="lastLoginIp" column="last_login_ip"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="deleteTime" column="delete_time"/>
+        <result property="isDelete" column="is_delete"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        u.id, u.username, u.password, u.nickname, u.avatar, u.email, u.phone_number, u.status, u.real_name, u.id_card,
+        u.last_login_time, u.last_login_ip, u.create_time,
+        u.update_time, u.create_by, u.update_by, u.delete_time, u.is_delete
+    </sql>
+
+    <select id="listUser" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM user u
+        <where>
+            u.is_delete = 0
+            <if test="request.id != null">
+                AND u.id = #{request.id}
+            </if>
+            <if test="request.username != null and request.username != ''">
+                AND u.username LIKE CONCAT('%', #{request.username}, '%')
+            </if>
+            <if test="request.nickname != null and request.nickname != ''">
+                AND u.nickname LIKE CONCAT('%', #{request.nickname}, '%')
+            </if>
+            <if test="request.realName != null and request.realName != ''">
+                AND u.real_name LIKE CONCAT('%', #{request.realName}, '%')
+            </if>
+            <if test="request.phoneNumber != null and request.phoneNumber != ''">
+                AND u.phone_number LIKE CONCAT('%', #{request.phoneNumber}, '%')
+            </if>
+            <if test="request.email != null and request.email != ''">
+                AND u.email LIKE CONCAT('%', #{request.email}, '%')
+            </if>
+            <if test="request.idCard != null and request.idCard != ''">
+                AND u.id_card LIKE CONCAT('%', #{request.idCard}, '%')
+            </if>
+            <if test="request.avatar != null and request.avatar != ''">
+                AND u.avatar = #{request.avatar}
+            </if>
+            <if test="request.roleId != null">
+                AND EXISTS (
+                SELECT 1
+                FROM user_role ur2
+                WHERE ur2.user_id = u.id
+                AND ur2.role_id = #{request.roleId}
+                )
+            </if>
+            <if test="request.status != null">
+                AND u.status = #{request.status}
+            </if>
+            <if test="request.createBy != null and request.createBy != ''">
+                AND u.create_by = #{request.createBy}
+            </if>
+        </where>
+        ORDER BY u.create_time DESC
+    </select>
+    <resultMap id="UserOrderStatisticsMap" type="com.zhangyichuang.medicine.admin.model.dto.UserOrderStatistics">
+        <result property="totalOrderCount" column="total_order_count"/>
+        <result property="totalConsumption" column="total_consumption"/>
+    </resultMap>
+
+    <select id="getOrderStatisticsByUserId"
+            resultMap="UserOrderStatisticsMap">
+        SELECT COUNT(1)                     AS total_order_count,
+               COALESCE(SUM(pay_amount), 0) AS total_consumption
+        FROM mall_order
+        WHERE (is_deleted IS NULL OR is_deleted = 0)
+          AND user_id = #{userId}
+    </select>
+</mapper>

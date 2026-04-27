@@ -1,0 +1,458 @@
+.container {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  // 隐藏滚动条但保持滚动功能
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE/Edge
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari/Opera
+  }
+
+  // 让消息列表居中显示
+  :global {
+    .ant-bubble-list {
+      width: 100%;
+      max-width: var(--assistant-content-max-width, 760px);
+      margin: 0 auto;
+      max-height: none !important;
+    }
+
+    // Bubble.List 内部滚动容器：取消内部滚动，让外层 .container 成为滚动元素
+    .ant-bubble-list-scroll-box {
+      max-height: none !important;
+      overflow-y: visible !important;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        display: none;
+      }
+    }
+
+    // 隐藏头像
+    .ant-bubble-avatar {
+      display: none;
+    }
+
+    .ant-bubble-content {
+      font-size: 16px;
+      overflow: visible; // 允许内容（如表格）正常展示
+    }
+
+    .ant-bubble-start:not(.ant-bubble-divider):not(.ant-bubble-system) {
+      padding-inline-end: 0;
+    }
+
+    // Markdown 通用样式（字号、图表容器等）
+    .x-markdown-light,
+    .x-markdown-dark {
+      font-size: 16px;
+
+      p {
+        font-size: 16px;
+      }
+
+      li {
+        font-size: 16px;
+      }
+
+      code {
+        font-size: 14px;
+      }
+
+      // 覆写表格样式：去掉厚重阴影
+      table {
+        box-shadow: none !important;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      // 图表容器：去掉父级 pre 的代码块样式，确保 block 布局撑满宽度
+      pre:has([data-chart]) {
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 16px 0;
+        overflow: visible !important;
+        border: none !important;
+        border-radius: 0 !important;
+        white-space: normal !important;
+        display: block;
+        width: 100%;
+        min-width: 0;
+
+        code {
+          background: transparent !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          border: none !important;
+          display: block !important;
+          width: 100% !important;
+          white-space: normal !important;
+          overflow: visible !important;
+          min-width: 0;
+
+          // 图表容器确保展开
+          [data-chart] {
+            width: 100% !important;
+            display: block !important;
+            min-width: 0;
+          }
+        }
+      }
+    }
+
+    // ---- 亮色主题覆写 ----
+    .x-markdown-light {
+      --table-head-bg: rgba(250, 250, 250, 0.6);
+      --table-body-bg: transparent;
+      --cite-bg: rgba(0, 0, 0, 0.03);
+      --cite-hover-bg: rgba(0, 0, 0, 0.06);
+
+      table {
+        border: 1px solid rgba(0, 0, 0, 0.06);
+      }
+
+      thead {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+      }
+
+      tbody tr {
+        background-color: transparent !important;
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.02) !important;
+        }
+      }
+
+      th {
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.85);
+        background-color: rgba(0, 0, 0, 0.02);
+      }
+
+      td {
+        color: rgba(0, 0, 0, 0.65);
+      }
+
+      th,
+      td {
+        border-color: rgba(0, 0, 0, 0.06) !important;
+      }
+
+      blockquote {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+        border-left-color: rgba(0, 0, 0, 0.08) !important;
+      }
+    }
+
+    // ---- 暗色主题覆写 ----
+    .x-markdown-dark {
+      --table-head-bg: rgba(255, 255, 255, 0.04);
+      --table-body-bg: transparent;
+      --cite-bg: rgba(255, 255, 255, 0.04);
+      --cite-hover-bg: rgba(255, 255, 255, 0.08);
+
+      table {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      thead {
+        background-color: rgba(255, 255, 255, 0.04) !important;
+      }
+
+      tbody tr {
+        background-color: transparent !important;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.04) !important;
+        }
+      }
+
+      th {
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.85);
+        background-color: rgba(255, 255, 255, 0.04);
+      }
+
+      td {
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      th,
+      td {
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      blockquote {
+        background-color: rgba(255, 255, 255, 0.04) !important;
+        border-left-color: rgba(255, 255, 255, 0.12) !important;
+      }
+
+      // 暗色模式下的图片：背景设为 rgb(20, 20, 20)，稍微降低亮度，避免刺眼
+      img {
+        background-color: rgb(20, 20, 20);
+        filter: brightness(0.8) contrast(1.1);
+        transition: filter 0.3s ease;
+        border-radius: 8px;
+
+        &:hover {
+          filter: brightness(1);
+        }
+      }
+    }
+  }
+}
+
+.aiMessageItem {
+  :global {
+    .ant-bubble-body,
+    .ant-bubble-content {
+      width: 100%;
+    }
+  }
+}
+
+.aiMessageContent {
+  line-height: 1.8;
+  font-size: 15px;
+  width: 100%;
+  min-width: 0; // 允许内容收缩，防止撑破父容器
+  min-height: 28px; // 确保至少有一行的高度，避免切换状态时塌陷
+
+  // 确保段落、代码块和图表之间有适当间距
+  :global {
+    p {
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+
+    pre {
+      margin: 16px 0;
+    }
+
+    code {
+      margin: 16px 0;
+    }
+
+    // 表格外层包裹容器，支持横向滚动
+    table {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      overflow-x: auto !important; // 覆盖主题的 overflow: hidden
+      overflow-y: hidden;
+      border-collapse: collapse;
+
+      // 表格横向滚动条样式
+      scrollbar-width: thin;
+      scrollbar-color: var(--ant-color-text-quaternary) transparent;
+      &::-webkit-scrollbar {
+        height: 6px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: var(--ant-color-text-quaternary);
+        border-radius: 3px;
+      }
+      &::-webkit-scrollbar-track {
+        background: var(--ant-color-fill-quaternary);
+        border-radius: 3px;
+      }
+    }
+
+    // 表格内容不换行，保持可读性
+    th,
+    td {
+      white-space: nowrap;
+      padding: 8px 12px;
+    }
+  }
+}
+
+.thinkingPanel {
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--ant-color-border-secondary);
+  border-radius: 8px;
+  background: var(--ant-color-fill-quaternary);
+
+  :global(.app-pro-layout--dark) & {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.thinkingPanelCollapsed {
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 16px;
+}
+
+.thinkingPanelHeader {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 7px 10px 7px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ant-color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  border-bottom: 0;
+}
+
+.thinkingPanelTitle {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+
+  :global(.anticon) {
+    flex-shrink: 0;
+    color: var(--ant-color-text-tertiary);
+    font-size: 14px;
+  }
+}
+
+.thinkingPanelToggle {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  color: var(--ant-color-text-tertiary);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+
+  &:hover {
+    color: var(--ant-color-text-secondary);
+    background: var(--ant-color-fill-secondary);
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.thinkingPanelBody {
+  flex: 1;
+  min-height: 0;
+  padding: 8px 12px 12px;
+  overflow-y: auto;
+  color: var(--ant-color-text-secondary);
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ant-color-text-quaternary) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ant-color-text-quaternary);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+.loadMoreIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  color: var(--ant-color-text-tertiary);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.loadMoreHint {
+  text-align: center;
+  padding: 8px 0;
+  color: var(--ant-color-text-quaternary);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.messageFooter {
+  margin-top: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  // 鼠标悬浮在消息气泡区域时显示操作栏
+  :global(.ant-bubble):hover & {
+    opacity: 1;
+  }
+}
+
+.userMessageRender {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+.userImageDisplayArea {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.userImageWrapper {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--ant-color-border-secondary);
+  box-sizing: border-box;
+
+  :global(.ant-image) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.userTextBubble {
+  background: var(--ant-color-fill-tertiary);
+  color: var(--ant-color-text);
+  padding: 12px 16px;
+  border-radius: 20px 8px 20px 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 100%;
+  word-break: break-word;
+}

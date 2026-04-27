@@ -1,0 +1,271 @@
+.orderPayment {
+  min-height: var(--app-viewport-height);
+  background: var(--app-bg);
+  display: flex;
+  flex-direction: column;
+  height: var(--app-viewport-height);
+  overflow: hidden;
+}
+
+.paymentHeader {
+  position: relative;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+  padding: 0 16px;
+  background: var(--app-bg);
+  flex-shrink: 0;
+
+  .headerLeft {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: -8px;
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  .headerTitle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 17px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .headerRight {
+    font-size: 14px;
+    color: #333;
+  }
+}
+
+.paymentContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+// 金额区域
+.amountSection {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  color: #ef4444;
+
+  .currency {
+    font-size: 24px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  .amount {
+    font-size: 40px;
+    font-weight: 600;
+    font-family: DINAlternate-Bold, sans-serif;
+  }
+}
+
+// 倒计时区域
+.countdownSection {
+  display: flex;
+  justify-content: center;
+  margin-top: 0;
+  margin-bottom: 24px;
+
+  .countdownPill {
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.paidPill {
+  background: rgba(34, 197, 94, 0.12) !important;
+  color: #16a34a !important;
+}
+
+// 订单摘要区域
+.orderSummarySection {
+  background: #fff;
+  border-radius: 12px;
+  padding: 8px 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  .summaryItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #f8f8f8;
+    }
+
+    .label {
+      font-size: 14px;
+      color: #888;
+      flex-shrink: 0;
+    }
+
+    .value {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+      text-align: right;
+      word-break: break-all;
+      margin-left: 20px;
+      line-height: 1.4;
+    }
+  }
+}
+
+// 支付工具卡片
+.paymentToolsCard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 0 20px;
+  margin-bottom: 16px;
+
+  .cardTitle {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    padding: 16px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  .paymentList {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paymentItem {
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:active {
+      opacity: 0.8;
+    }
+
+    .iconWrapper {
+      width: 32px;
+      height: 32px;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      img,
+      svg {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .labelRow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .label {
+        font-size: 16px;
+        color: #333;
+        font-weight: 400;
+      }
+
+      .recommendTag {
+        background: var(--nutui-color-primary);
+        color: #fff;
+        font-size: 10px;
+        padding: 1px 4px;
+        border-radius: 2px;
+        line-height: 1.2;
+      }
+
+      .desc {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+
+    .checkIcon {
+      margin-left: 12px;
+
+      .radioUnchecked {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        background: #fff;
+      }
+    }
+  }
+}
+
+// 底部支付按钮
+.paymentFooter {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  z-index: 100;
+  padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
+
+  .confirmBtn {
+    width: 100%;
+    height: 48px;
+    border-radius: 24px;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    background: var(--nutui-color-primary) !important;
+    color: #fff !important;
+    box-shadow: none;
+
+    :global {
+      .nut-button-wrap,
+      .nut-button-primary-solid,
+      .nut-button-primary-solid-disabled,
+      .nut-button-text {
+        background: transparent !important;
+        color: inherit !important;
+      }
+    }
+
+    &:active {
+      opacity: 0.9;
+    }
+  }
+}

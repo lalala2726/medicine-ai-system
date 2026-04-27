@@ -1,0 +1,49 @@
+.pullToRefreshContainer {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  user-select: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.refreshIndicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(245, 245, 245, 0.95) 0%, rgba(245, 245, 245, 0) 100%);
+}
+
+.refreshContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.refreshIcon {
+  font-size: 16px;
+  color: #1890ff;
+  transition: transform 0.3s ease;
+}
+
+.refreshIcon.ready {
+  transform: rotate(180deg);
+}
+
+.refreshText {
+  color: #666;
+}
+
+.content {
+  min-height: 100%;
+  will-change: transform;
+}

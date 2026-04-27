@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.MallOrderItemMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallOrderItem">
+        <id property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="quantity" column="quantity"/>
+        <result property="price" column="price"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_id,product_id,product_name,quantity,price,
+        total_price,image_url,create_time,update_time,is_deleted
+    </sql>
+
+    <select id="listCompletedSalesByProductIds"
+            resultType="com.zhangyichuang.medicine.client.model.dto.ProductSalesDto">
+        SELECT moi.product_id AS productId, SUM(moi.quantity) AS sales
+        FROM mall_order_item moi
+        INNER JOIN mall_order mo ON moi.order_id = mo.id
+        WHERE moi.is_deleted = 0
+        AND mo.is_deleted = 0
+        AND mo.order_status = 'COMPLETED'
+        <if test="productIds != null and productIds.size() &gt; 0">
+            AND moi.product_id IN
+            <foreach collection="productIds" item="productId" open="(" separator="," close=")">
+                #{productId}
+            </foreach>
+        </if>
+        GROUP BY moi.product_id
+    </select>
+</mapper>

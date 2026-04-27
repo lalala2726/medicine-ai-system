@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.admin.mapper.MallOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.zhangyichuang.medicine.model.entity.MallOrder">
+        <id property="id" column="id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="userId" column="user_id"/>
+        <result property="itemsAmount" column="items_amount"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="freightAmount" column="freight_amount"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="couponName" column="coupon_name"/>
+        <result property="couponDeductAmount" column="coupon_deduct_amount"/>
+        <result property="couponConsumeAmount" column="coupon_consume_amount"/>
+        <result property="couponWasteAmount" column="coupon_waste_amount"/>
+        <result property="couponSnapshotJson" column="coupon_snapshot_json"/>
+        <result property="payType" column="pay_type"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="deliveryType" column="delivery_type"/>
+        <result property="addressId" column="address_id"/>
+        <result property="receiverName" column="receiver_name"/>
+        <result property="receiverPhone" column="receiver_phone"/>
+        <result property="receiverDetail" column="receiver_detail"/>
+        <result property="note" column="note"/>
+        <result property="payExpireTime" column="pay_expire_time"/>
+        <result property="refundStatus" column="refund_status"/>
+        <result property="refundTime" column="refund_time"/>
+        <result property="refundPrice" column="refund_price"/>
+        <result property="afterSaleFlag" column="after_sale_flag"/>
+        <result property="payTime" column="pay_time"/>
+        <result property="paid" column="paid"/>
+        <result property="deliverTime" column="deliver_time"/>
+        <result property="receiveTime" column="receive_time"/>
+        <result property="finishTime" column="finish_time"/>
+        <result property="closeReason" column="close_reason"/>
+        <result property="closeTime" column="close_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <resultMap id="OrderWithProductResultMap" type="com.zhangyichuang.medicine.model.dto.OrderWithProductDto"
+               extends="BaseResultMap">
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="productQuantity" column="product_quantity"/>
+        <result property="productImage" column="product_image"/>
+        <result property="productPrice" column="product_price"/>
+        <result property="productCategory" column="product_category"/>
+    </resultMap>
+
+    <resultMap id="OrderDetailRowResultMap" type="com.zhangyichuang.medicine.admin.model.dto.OrderDetailRow">
+        <result property="orderId" column="order_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="userId" column="user_id"/>
+        <result property="userNickname" column="user_nickname"/>
+        <result property="userPhoneNumber" column="user_phone_number"/>
+        <result property="receiverName" column="receiver_name"/>
+        <result property="receiverPhone" column="receiver_phone"/>
+        <result property="receiverDetail" column="receiver_detail"/>
+        <result property="deliveryType" column="delivery_type"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="payType" column="pay_type"/>
+        <result property="itemsAmount" column="items_amount"/>
+        <result property="totalAmount" column="total_amount"/>
+        <result property="payAmount" column="pay_amount"/>
+        <result property="freightAmount" column="freight_amount"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="couponName" column="coupon_name"/>
+        <result property="couponDeductAmount" column="coupon_deduct_amount"/>
+        <result property="couponConsumeAmount" column="coupon_consume_amount"/>
+        <result property="orderItemId" column="order_item_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="productImage" column="product_image"/>
+        <result property="productPrice" column="product_price"/>
+        <result property="productQuantity" column="product_quantity"/>
+        <result property="productTotalAmount" column="product_total_amount"/>
+        <result property="productCouponDeductAmount" column="product_coupon_deduct_amount"/>
+        <result property="productPayableAmount" column="product_payable_amount"/>
+        <result property="orderCreateTime" column="order_create_time"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_no,user_id,items_amount,total_amount,pay_amount,freight_amount,
+        coupon_id,coupon_name,coupon_deduct_amount,coupon_consume_amount,coupon_waste_amount,coupon_snapshot_json,
+        pay_type,order_status,delivery_type,address_id,receiver_name,
+        receiver_phone,receiver_detail,note,pay_expire_time,refund_status,refund_time,refund_price,after_sale_flag,
+        pay_time,paid,deliver_time,receive_time,finish_time,close_reason,close_time,remark,
+        create_by,update_by,create_time,update_time,is_deleted
+    </sql>
+    <select id="orderList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM mall_order
+        WHERE is_deleted = 0
+        <if test="request.orderNo != null and request.orderNo != ''">
+            AND order_no = #{request.orderNo}
+        </if>
+        <if test="request.payType != null and request.payType != ''">
+            AND pay_type = #{request.payType}
+        </if>
+        <if test="request.orderStatus != null and request.orderStatus != ''">
+            AND order_status = #{request.orderStatus}
+        </if>
+        <if test="request.deliveryType != null and request.deliveryType != ''">
+            AND delivery_type = #{request.deliveryType}
+        </if>
+        <if test="request.receiverName != null and request.receiverName != ''">
+            AND receiver_name LIKE CONCAT('%', #{request.receiverName}, '%')
+        </if>
+        <if test="request.receiverPhone != null and request.receiverPhone != ''">
+            AND receiver_phone LIKE CONCAT('%', #{request.receiverPhone}, '%')
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="orderListWithProduct" resultMap="OrderWithProductResultMap">
+        SELECT
+        o.id,
+        o.order_no,
+        o.user_id,
+        o.items_amount,
+        o.total_amount,
+        o.pay_amount,
+        o.freight_amount,
+        o.coupon_id,
+        o.coupon_name,
+        o.coupon_deduct_amount,
+        o.coupon_consume_amount,
+        o.coupon_waste_amount,
+        o.coupon_snapshot_json,
+        o.pay_type,
+        o.order_status,
+        o.delivery_type,
+        o.address_id,
+        o.receiver_name,
+        o.receiver_phone,
+        o.receiver_detail,
+        o.note,
+        o.pay_expire_time,
+        o.refund_status,
+        o.refund_time,
+        o.refund_price,
+        o.after_sale_flag,
+        o.pay_time,
+        o.paid,
+        o.deliver_time,
+        o.receive_time,
+        o.finish_time,
+        o.close_reason,
+        o.close_time,
+        o.remark,
+        o.create_by,
+        o.update_by,
+        o.create_time,
+        o.update_time,
+        p.id AS product_id,
+        COALESCE(p.name, first_item.product_name) AS product_name,
+        first_item.quantity AS product_quantity,
+        p.price AS product_price,
+        c.name AS product_category,
+        (SELECT pi.image_url FROM mall_product_image pi WHERE pi.product_id = p.id AND (pi.is_deleted IS NULL OR
+        pi.is_deleted = 0) ORDER BY pi.sort ASC LIMIT 1) AS product_image
+        FROM mall_order o
+        LEFT JOIN (
+        SELECT oi.order_id, oi.product_id, oi.quantity, oi.product_name
+        FROM mall_order_item oi
+        WHERE (oi.is_deleted IS NULL OR oi.is_deleted = 0)
+        AND oi.id = (
+        SELECT MIN(id)
+        FROM mall_order_item moi
+        WHERE moi.order_id = oi.order_id
+        AND (moi.is_deleted IS NULL OR moi.is_deleted = 0)
+        )
+        ) first_item ON o.id = first_item.order_id
+        LEFT JOIN mall_product p ON first_item.product_id = p.id AND (p.is_deleted IS NULL OR p.is_deleted = 0)
+        LEFT JOIN mall_category c ON p.category_id = c.id
+        <where>
+            (o.is_deleted IS NULL OR o.is_deleted = 0)
+            <if test="request.orderNo != null and request.orderNo != ''">
+                AND o.order_no = #{request.orderNo}
+            </if>
+            <if test="request.payType != null and request.payType != ''">
+                AND o.pay_type = #{request.payType}
+            </if>
+            <if test="request.orderStatus != null and request.orderStatus != ''">
+                AND o.order_status = #{request.orderStatus}
+            </if>
+            <if test="request.deliveryType != null and request.deliveryType != ''">
+                AND o.delivery_type = #{request.deliveryType}
+            </if>
+            <if test="request.receiverName != null and request.receiverName != ''">
+                AND o.receiver_name LIKE CONCAT('%', #{request.receiverName}, '%')
+            </if>
+            <if test="request.receiverPhone != null and request.receiverPhone != ''">
+                AND o.receiver_phone LIKE CONCAT('%', #{request.receiverPhone}, '%')
+            </if>
+        </where>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <select id="getExpiredOrderClean" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM mall_order
+        WHERE (is_deleted IS NULL OR is_deleted = 0)
+        AND order_status = 'PENDING_PAYMENT'
+        AND pay_expire_time &lt; FROM_UNIXTIME(#{expiredTime} / 1000)
+    </select>
+
+    <select id="getPaidOrderPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM mall_order
+        WHERE (is_deleted IS NULL OR is_deleted = 0)
+        AND user_id = #{userId}
+        AND paid = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getOrderOverviewStats" resultType="com.zhangyichuang.medicine.admin.model.dto.OrderOverviewStats">
+        SELECT COUNT(*)                                                           AS totalOrders,
+               SUM(CASE WHEN order_status = 'PENDING_PAYMENT' THEN 1 ELSE 0 END)  AS pendingPayment,
+               SUM(CASE WHEN order_status = 'PENDING_SHIPMENT' THEN 1 ELSE 0 END) AS pendingShipment,
+               SUM(CASE WHEN order_status = 'PENDING_RECEIPT' THEN 1 ELSE 0 END)  AS pendingReceipt,
+               SUM(CASE WHEN order_status = 'COMPLETED' THEN 1 ELSE 0 END)        AS completed,
+               SUM(CASE WHEN order_status = 'REFUNDED' THEN 1 ELSE 0 END)         AS refunded,
+               SUM(CASE WHEN order_status = 'AFTER_SALE' THEN 1 ELSE 0 END)       AS afterSale,
+               SUM(CASE WHEN order_status = 'CANCELLED' THEN 1 ELSE 0 END)        AS cancelled,
+               COALESCE(SUM(CASE
+                                WHEN paid = 1 AND order_status NOT IN ('CANCELLED', 'REFUNDED')
+                                    THEN pay_amount
+                                ELSE 0 END), 0)                                   AS totalSales,
+               COALESCE(SUM(refund_price), 0)                                     AS refundedAmount
+        FROM mall_order
+        WHERE (is_deleted IS NULL OR is_deleted = 0)
+    </select>
+
+    <select id="selectOrderDetailRowsByOrderNos" resultMap="OrderDetailRowResultMap">
+        SELECT o.id AS order_id,
+        o.order_no,
+        o.user_id,
+        u.nickname AS user_nickname,
+        u.phone_number AS user_phone_number,
+        o.receiver_name,
+        o.receiver_phone,
+        o.receiver_detail,
+        o.delivery_type,
+        o.order_status,
+        o.pay_type,
+        o.items_amount,
+        o.total_amount,
+        o.pay_amount,
+        o.freight_amount,
+        o.coupon_id,
+        o.coupon_name,
+        o.coupon_deduct_amount,
+        o.coupon_consume_amount,
+        oi.id AS order_item_id,
+        oi.product_id,
+        oi.product_name,
+        oi.image_url AS product_image,
+        oi.price AS product_price,
+        oi.quantity AS product_quantity,
+        oi.total_price AS product_total_amount,
+        oi.coupon_deduct_amount AS product_coupon_deduct_amount,
+        oi.payable_amount AS product_payable_amount,
+        o.create_time AS order_create_time
+        FROM mall_order o
+        LEFT JOIN `user` u
+        ON u.id = o.user_id
+        AND (u.is_delete IS NULL OR u.is_delete = 0)
+        LEFT JOIN mall_order_item oi
+        ON oi.order_id = o.id
+        AND (oi.is_deleted IS NULL OR oi.is_deleted = 0)
+        WHERE (o.is_deleted IS NULL OR o.is_deleted = 0)
+        AND o.order_no IN
+        <foreach collection="orderNos" item="orderNo" open="(" separator="," close=")">
+            #{orderNo}
+        </foreach>
+        ORDER BY o.create_time DESC, oi.id
+    </select>
+
+</mapper>

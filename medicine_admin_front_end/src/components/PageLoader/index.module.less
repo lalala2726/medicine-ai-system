@@ -1,0 +1,112 @@
+// 公共布局
+.base() {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+// 全屏模式（AuthGuard 初始加载、登录页等）
+.fullscreen {
+  .base();
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  // background 通过 inline style 动态设置（根据 localStorage 主题）
+}
+
+// 内容区模式（路由懒加载，不遮挡侧边栏和顶部栏）
+.content {
+  .base();
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+  background: var(--ant-color-bg-layout, transparent);
+  transition: background 0.3s;
+}
+
+.loader {
+  position: relative;
+  width: 2.5em;
+  height: 2.5em;
+  transform: rotate(165deg);
+}
+
+.loader::before,
+.loader::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 0.25em;
+  transform: translate(-50%, -50%);
+}
+
+.loader::before {
+  animation: loader-before 2s infinite;
+}
+
+.loader::after {
+  animation: loader-after 2s infinite;
+}
+
+@keyframes loader-before {
+  0% {
+    width: 0.5em;
+    box-shadow:
+      1em -0.5em rgba(225, 20, 98, 0.75),
+      -1em 0.5em rgba(111, 202, 220, 0.75);
+  }
+  35% {
+    width: 2.5em;
+    box-shadow:
+      0 -0.5em rgba(225, 20, 98, 0.75),
+      0 0.5em rgba(111, 202, 220, 0.75);
+  }
+  70% {
+    width: 0.5em;
+    box-shadow:
+      -1em -0.5em rgba(225, 20, 98, 0.75),
+      1em 0.5em rgba(111, 202, 220, 0.75);
+  }
+  100% {
+    box-shadow:
+      1em -0.5em rgba(225, 20, 98, 0.75),
+      -1em 0.5em rgba(111, 202, 220, 0.75);
+  }
+}
+
+@keyframes loader-after {
+  0% {
+    height: 0.5em;
+    box-shadow:
+      0.5em 1em rgba(61, 184, 143, 0.75),
+      -0.5em -1em rgba(233, 169, 32, 0.75);
+  }
+  35% {
+    height: 2.5em;
+    box-shadow:
+      0.5em 0 rgba(61, 184, 143, 0.75),
+      -0.5em 0 rgba(233, 169, 32, 0.75);
+  }
+  70% {
+    height: 0.5em;
+    box-shadow:
+      0.5em -1em rgba(61, 184, 143, 0.75),
+      -0.5em 1em rgba(233, 169, 32, 0.75);
+  }
+  100% {
+    box-shadow:
+      0.5em 1em rgba(61, 184, 143, 0.75),
+      -0.5em -1em rgba(233, 169, 32, 0.75);
+  }
+}
+
+.text {
+  font-size: 14px;
+  color: var(--ant-color-text-tertiary, rgba(0, 0, 0, 0.45));
+}

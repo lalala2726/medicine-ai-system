@@ -1,0 +1,235 @@
+.patientFormPopup {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--background-light);
+  overflow: hidden;
+
+  .navbar {
+    padding: 18px 20px 16px;
+    background: #fff;
+    border-bottom: 1px solid #f8faf9;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .navTitle {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0d1b12;
+      margin: 0;
+    }
+  }
+}
+
+.contentWrapper {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #667069;
+  margin-bottom: 12px;
+  margin-left: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &::before {
+    content: '';
+    width: 3px;
+    height: 12px;
+    background: var(--nutui-color-primary);
+    border-radius: 2px;
+  }
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.formItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid #f8faf9;
+  min-height: 52px;
+  box-sizing: border-box;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.verticalItem {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 16px;
+
+    .label {
+      margin-bottom: 8px;
+      width: 100%;
+    }
+
+    .inputWrapper {
+      width: 100%;
+    }
+  }
+}
+
+.label {
+  font-size: 15px;
+  color: #333d36;
+  font-weight: 500;
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.inputWrapper {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.customInput {
+  --nut-input-border-bottom: 0;
+  padding: 0 !important;
+  background: transparent !important;
+  width: 100%;
+
+  :global {
+    .nut-input-native {
+      text-align: right;
+      font-size: 15px;
+      color: #0d1b12;
+      font-weight: 600;
+
+      &::placeholder {
+        color: #9ca3af;
+        font-weight: 400;
+      }
+    }
+
+    .nut-input-inner {
+      padding: 0;
+      justify-content: flex-end;
+    }
+  }
+}
+
+.customTextArea {
+  --nut-textarea-font-size: 14px;
+  width: 100%;
+  padding: 0 !important;
+  background: #fff !important;
+  border-radius: 0;
+  padding: 0 !important;
+  border: none !important;
+
+  :global {
+    .nut-textarea__textarea {
+      color: #0d1b12;
+      font-weight: 500;
+      text-align: left;
+      padding: 0;
+
+      &::placeholder {
+        color: #9ca3af;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+.valueText {
+  font-size: 15px;
+  color: #0d1b12;
+  font-weight: 600;
+}
+
+.placeholder {
+  font-size: 15px;
+  color: #9ca3af;
+}
+
+.radioGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  :global {
+    .nut-radio__label {
+      font-size: 14px;
+      color: #333d36;
+      font-weight: 500;
+    }
+    .nut-radio__icon {
+      color: var(--nutui-color-primary) !important;
+    }
+  }
+}
+
+.footer {
+  padding: 16px 24px calc(env(safe-area-inset-bottom) + 24px);
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.submitBtn {
+  height: 50px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  background: var(--nutui-color-primary) !important;
+  border: none !important;
+  box-shadow: 0 6px 16px rgba(21, 190, 81, 0.25);
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+:global {
+  .nut-switch {
+    &.nut-switch-base.nut-switch-open {
+      background: var(--nutui-color-primary) !important;
+    }
+  }
+
+  .nut-datepicker {
+    .nut-datepicker__bar {
+      padding: 18px 20px 16px;
+      border-bottom: 1px solid #f8faf9;
+
+      .nut-datepicker__title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #0d1b12;
+      }
+
+      .nut-datepicker__cancel {
+        color: #667069;
+      }
+
+      .nut-datepicker__confirm {
+        color: var(--nutui-color-primary);
+      }
+    }
+  }
+}

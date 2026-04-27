@@ -1,0 +1,33 @@
+{
+  "analysis": {
+    "analyzer": {
+      "ik_pinyin_index": {
+        "type": "custom",
+        "tokenizer": "ik_max_word",
+        "filter": [
+          "lowercase",
+          "py"
+        ]
+      },
+      "ik_pinyin_search": {
+        "type": "custom",
+        "tokenizer": "ik_smart",
+        "filter": [
+          "lowercase",
+          "py"
+        ]
+      }
+    },
+    "filter": {
+      "py": {
+        "type": "pinyin",
+        "keep_full_pinyin": true,
+        "keep_joined_full_pinyin": true,
+        "keep_original": true,
+        "none_chinese_pinyin_tokenize": false,
+        "trim_whitespace": true,
+        "limit_first_letter_length": 16
+      }
+    }
+  }
+}

@@ -1,0 +1,451 @@
+.page {
+  padding-bottom: 24px;
+}
+
+.heroPanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at top left, rgba(22, 119, 255, 0.12), transparent 35%),
+    linear-gradient(135deg, #ffffff 0%, #f7fbff 48%, #fffdf9 100%);
+  border: 1px solid rgba(22, 119, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+
+  :global(.app-pro-layout--dark) & {
+    background:
+      radial-gradient(circle at top left, rgba(22, 119, 255, 0.15), transparent 35%),
+      linear-gradient(135deg, #1f1f1f 0%, #141414 100%);
+    border-color: #303030;
+    box-shadow: none;
+  }
+}
+
+.heroTitle {
+  margin: 0 !important;
+  color: #1f1f1f;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.heroSubtitle {
+  color: rgba(0, 0, 0, 0.45);
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+.mainCard {
+  border-radius: 16px;
+  box-shadow:
+    0 10px 24px rgba(15, 35, 95, 0.04),
+    0 2px 6px rgba(15, 35, 95, 0.03);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  :global(.ant-pro-card-header) {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  :global(.ant-pro-card-body) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  :global(.app-pro-layout--dark) & {
+    box-shadow: none;
+  }
+}
+
+.metricsSection {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.metricsGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.groupTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f1f1f;
+  padding-left: 4px;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  flex: 1;
+}
+
+.metricCard {
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: #fff !important;
+  border: 1px solid #f0f0f0 !important;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  :global(.app-pro-layout--dark) & {
+    background: #141414 !important;
+    border-color: #303030 !important;
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+  }
+}
+
+.metricIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.blueTone :global(.ant-pro-card-statistic) .ant-statistic-content {
+  color: #0958d9;
+}
+.blueTone .metricIcon {
+  color: #1677ff;
+  background: rgba(22, 119, 255, 0.08);
+}
+
+.greenTone :global(.ant-pro-card-statistic) .ant-statistic-content {
+  color: #389e0d;
+}
+.greenTone .metricIcon {
+  color: #52c41a;
+  background: rgba(82, 196, 26, 0.08);
+}
+
+.goldTone :global(.ant-pro-card-statistic) .ant-statistic-content {
+  color: #d48806;
+}
+.goldTone .metricIcon {
+  color: #faad14;
+  background: rgba(250, 173, 20, 0.1);
+}
+
+.purpleTone :global(.ant-pro-card-statistic) .ant-statistic-content {
+  color: #531dab;
+}
+.purpleTone .metricIcon {
+  color: #722ed1;
+  background: rgba(114, 46, 209, 0.08);
+}
+
+.orangeTone :global(.ant-pro-card-statistic) .ant-statistic-content {
+  color: #d46b08;
+}
+.orangeTone .metricIcon {
+  color: #fa8c16;
+  background: rgba(250, 140, 22, 0.1);
+}
+
+.tealTone :global(.ant-pro-card-statistic) .ant-statistic-content {
+  color: #08979c;
+}
+.tealTone .metricIcon {
+  color: #13c2c2;
+  background: rgba(19, 194, 194, 0.08);
+}
+
+.redTone :global(.ant-pro-card-statistic) .ant-statistic-content {
+  color: #cf1322;
+}
+.redTone .metricIcon {
+  color: #f5222d;
+  background: rgba(245, 34, 45, 0.08);
+}
+
+.skyTone :global(.ant-pro-card-statistic) .ant-statistic-content {
+  color: #0b5cab;
+}
+.skyTone .metricIcon {
+  color: #1677ff;
+  background: rgba(24, 144, 255, 0.08);
+}
+
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summaryMetric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 12px;
+  background: #f9fbff;
+  border: none;
+  transition: all 0.3s;
+  &:hover {
+    background: #f0f7ff;
+  }
+
+  :global(.app-pro-layout--dark) & {
+    background: rgba(255, 255, 255, 0.04);
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+}
+
+.actionLink {
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  font-size: 12px;
+  color: #1677ff;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  text-decoration: none;
+  z-index: 1;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.metricCardWrap {
+  position: relative;
+}
+
+.highRiskRow > td {
+  background-color: #fff1f0 !important;
+
+  :global(.app-pro-layout--dark) & {
+    background-color: #431418 !important;
+  }
+}
+
+.metricValue {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f1f1f;
+  font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.chartArea {
+  min-height: 280px;
+  padding-top: 16px;
+}
+
+.trendPanelWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.trendPanel {
+  padding: 16px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+  border: 1px solid rgba(22, 119, 255, 0.08);
+
+  :global(.app-pro-layout--dark) & {
+    background: linear-gradient(180deg, #1f1f1f 0%, #141414 100%);
+    border-color: #303030;
+  }
+}
+
+.trendPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.insightList {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.insightRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  flex: 1;
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  &:first-child {
+    padding-top: 0;
+  }
+
+  :global(.app-pro-layout--dark) & {
+    border-color: #303030;
+  }
+}
+
+.insightInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.insightLabel {
+  color: #1f1f1f;
+  font-weight: 500;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.insightHint {
+  font-size: 12px;
+}
+
+.insightValue {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f1f1f;
+  font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+
+  :global(.app-pro-layout--dark) & {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.tableScrollArea {
+  flex: 1;
+  min-height: 0;
+  :global(.ant-table-wrapper),
+  :global(.ant-spin-nested-loading),
+  :global(.ant-spin-container),
+  :global(.ant-table),
+  :global(.ant-table-container) {
+    height: 100%;
+  }
+}
+
+.pieArea {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.productImg {
+  border-radius: 4px;
+  border: 1px solid #f0f0f0;
+
+  :global(.app-pro-layout--dark) & {
+    border-color: #303030;
+  }
+}
+
+.productCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.moneyText {
+  color: #f5222d;
+}
+
+.insightSection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.tableSection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 1400px) {
+  .summaryStrip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .metricsSection {
+    flex-direction: column;
+  }
+  .metricsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .summaryStrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .insightSection {
+    grid-template-columns: 1fr;
+  }
+  .tableSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroPanel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .summaryStrip {
+    grid-template-columns: 1fr;
+  }
+
+  .trendPanelHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+}

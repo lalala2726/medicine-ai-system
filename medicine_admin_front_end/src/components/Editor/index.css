@@ -1,0 +1,134 @@
+/* Rich Text Editor 样式覆盖 */
+
+.ai-editor-host {
+  --editor-border-color: #d9d9d9;
+  --editor-bg-container-color: #ffffff;
+  --editor-primary-color: #1677ff;
+  --editor-border-secondary-color: #f0f0f0;
+  --editor-dropdown-border-color: #e5e7eb;
+  --editor-bg-elevated-color: #ffffff;
+  border: 1px solid var(--editor-border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--editor-bg-container-color);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.ai-editor-host:focus-within {
+  border-color: var(--editor-primary-color);
+  box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.12);
+}
+
+.ai-editor-host .aie-container,
+.ai-editor-host .aie-main,
+.ai-editor-host .aie-content,
+.ai-editor-host .aie-editor {
+  height: 100% !important;
+}
+
+.ai-editor-host .aie-toolbar {
+  flex-wrap: wrap;
+  gap: 4px 2px;
+  min-height: auto;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--editor-border-secondary-color);
+  background: color-mix(in srgb, var(--editor-bg-container-color) 92%, #edf2ff 8%);
+}
+
+.ai-editor-host .aie-toolbar-item {
+  margin: 0;
+}
+
+.ai-editor-host .aie-toolbar-separator {
+  margin: 2px 6px;
+}
+
+.ai-editor-host .aie-dropdown-container,
+.ai-editor-host .aie-bubble-menu,
+.ai-editor-host .tippy-box {
+  border: 1px solid var(--editor-dropdown-border-color) !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12) !important;
+  background: var(--editor-bg-elevated-color) !important;
+}
+
+.ai-editor-host .aie-dropdown-container {
+  z-index: 1000;
+}
+
+.ai-editor-host .aie-bubble-menu {
+  z-index: 1001;
+}
+
+/* 去掉选择文本浮层外层的浅灰包裹层（常见为 rgb(249, 249, 249)）。 */
+.ai-editor-host .tippy-content,
+.ai-editor-host .tippy-content > .suggestion,
+.ai-editor-host .tippy-content > .suggestion > .ai-command-container {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.ai-editor-host .tippy-content {
+  padding: 0 !important;
+}
+
+.ai-editor-host .aie-toolbar-dropdown {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.ai-editor-host .aie-toolbar::-webkit-scrollbar,
+.ai-editor-host .aie-toolbar-dropdown::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.ai-editor-host .aie-toolbar::-webkit-scrollbar-thumb,
+.ai-editor-host .aie-toolbar-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.45);
+  border-radius: 999px;
+}
+
+.ai-editor-host .aie-toolbar::-webkit-scrollbar-track,
+.ai-editor-host .aie-toolbar-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ai-editor-host #aie-footer,
+.ai-editor-host aie-footer,
+.ai-editor-host .aie-footer,
+.ai-editor-host .aie-editor-footer,
+.ai-editor-host .aie-status-bar,
+.ai-editor-host .aie-status-container,
+.ai-editor-host .aie-editor-status,
+.ai-editor-host .aie-upload-progress,
+.ai-editor-host .aie-copyright,
+.ai-editor-host .aie-branding {
+  display: none !important;
+}
+
+.ai-editor-host.aie-theme-dark {
+  border-color: rgba(148, 163, 184, 0.24);
+  background: #11161f;
+}
+
+.ai-editor-host.aie-theme-dark:focus-within {
+  border-color: #5b9cff;
+  box-shadow: 0 0 0 3px rgba(91, 156, 255, 0.2);
+}
+
+.ai-editor-host.aie-theme-dark .aie-toolbar {
+  border-bottom-color: rgba(148, 163, 184, 0.16);
+  background: #141b24;
+}
+
+.ai-editor-host.aie-theme-dark .aie-dropdown-container,
+.ai-editor-host.aie-theme-dark .aie-bubble-menu,
+.ai-editor-host.aie-theme-dark .tippy-box {
+  border-color: rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.42) !important;
+  background: #1a2230 !important;
+}

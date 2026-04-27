@@ -1,0 +1,242 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.bottomActions {
+  padding: 16px 20px calc(env(safe-area-inset-bottom) + 24px);
+  background: #ffffff;
+  z-index: 10;
+  margin-top: auto;
+}
+
+.newButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 48px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 12px;
+  color: #374151;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
+}
+
+.newIcon {
+  margin-right: 6px;
+  color: #4b5563;
+}
+
+.newButton:active {
+  transform: scale(0.98);
+  background: #e5e7eb;
+}
+
+.scrollArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: calc(env(safe-area-inset-top) + 20px) 12px 0px;
+}
+
+.centerState {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 12px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.errorText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #b91c1c;
+}
+
+.retryButton {
+  border-radius: 999px;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.emptyText {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.itemWrapper {
+  position: relative;
+}
+
+.item {
+  width: 100%;
+  padding: 12px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #111827;
+  text-align: left;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.item:disabled {
+  opacity: 0.5;
+}
+
+.item:active:not(:disabled) {
+  opacity: 0.7;
+}
+
+.itemActive {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.itemActive .itemTitle {
+  font-weight: 600;
+}
+
+.itemTitle {
+  display: block;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.contextMenu {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 20;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.contextMenu button {
+  padding: 12px 24px;
+  border: none;
+  background: white;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.contextMenu button + button {
+  border-top: 1px solid #f3f4f6;
+}
+
+.contextMenu button:active {
+  background: #f9fafb;
+}
+
+.dangerAction {
+  color: #ef4444 !important;
+}
+
+.renameInput {
+  margin-top: 16px;
+  border-radius: 8px;
+  background: #f9fafb;
+  padding: 8px 12px;
+}
+
+.renameDialogFooter {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.renameDialogCancel,
+.renameDialogConfirm {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.renameDialogCancel {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #374151 !important;
+}
+
+.renameDialogConfirm {
+  background: var(--nutui-color-primary) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(var(--nutui-color-primary-rgb), 0.25);
+}
+
+.renameDialogCancel:active {
+  background: #f9fafb !important;
+}
+
+.renameDialogConfirm:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+/* 覆盖 NutUI 删除确认弹窗中按钮的样式 */
+:global(.nut-dialog) {
+  .nut-dialog-footer {
+    .nut-button-primary {
+      background: #ef4444 !important;
+      border-color: #ef4444 !important;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25) !important;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+}

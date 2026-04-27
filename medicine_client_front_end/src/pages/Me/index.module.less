@@ -1,0 +1,256 @@
+.mePage {
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-light);
+  padding-bottom: 50px; // Space for tabbar
+}
+
+.meContainer {
+  padding: 0 0 24px;
+  box-sizing: border-box;
+}
+
+// User Header
+.userHeader {
+  background: linear-gradient(180deg, rgba(21, 190, 81, 0.15) 0%, rgba(21, 190, 81, 0.05) 100%);
+  padding: calc(env(safe-area-inset-top) + 24px) 20px 30px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  border-bottom-left-radius: 24px;
+  border-bottom-right-radius: 24px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  align-items: flex-start;
+}
+
+.userName {
+  display: flex;
+  align-items: center;
+}
+
+.nickname {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0d1b12;
+  line-height: 1.2;
+}
+
+.userPhone {
+  font-size: 13px;
+  color: #667069;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  view-transition-name: profile-avatar;
+}
+
+// Stats Row
+.headerStats {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 10px;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0d1b12;
+  font-family: DINAlternate-Bold, Roboto, sans-serif;
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 12px;
+  color: #667069;
+}
+
+// Section Card Common
+.sectionCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 0 16px 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.sectionMore {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+// Orders
+.orderTypes {
+  display: flex;
+  justify-content: space-between;
+}
+
+.orderTypeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  flex: 1;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.orderIconWrapper {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orderIcon {
+  color: var(--nutui-color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orderLabel {
+  font-size: 12px;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+// Service Grid
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px 0;
+}
+
+.serviceItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.serviceIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--nutui-color-primary);
+  background: rgba(21, 190, 81, 0.08);
+  border-radius: 10px;
+}
+
+.serviceLabel {
+  font-size: 12px;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+// Menu List Style (for Logout)
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.menuLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menuIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(102, 112, 105, 0.08);
+  color: #667069;
+  border-radius: 10px;
+}
+
+.menuLabel {
+  font-size: 15px;
+  font-weight: 500;
+  color: #0d1b12;
+}
+
+.logoutLabel {
+  color: #ef4444;
+}
+
+.logoutIcon {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+}

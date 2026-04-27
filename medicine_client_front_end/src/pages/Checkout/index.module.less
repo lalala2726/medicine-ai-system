@@ -1,0 +1,1079 @@
+.checkoutPage {
+  min-height: var(--app-viewport-height);
+  background-color: var(--background-light);
+  display: flex;
+  flex-direction: column;
+  height: var(--app-viewport-height);
+  overflow: hidden;
+}
+
+.checkoutHeader {
+  position: relative;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(env(safe-area-inset-top) + 44px);
+  padding: env(safe-area-inset-top) 16px 0;
+  background: rgba(246, 248, 246, 0.95);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+
+  .headerLeft {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: -8px;
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  .headerTitle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 17px;
+    font-weight: 700;
+    color: #0d1b12;
+  }
+}
+
+.loadingWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.checkoutContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+}
+
+.checkoutSkeletonAddressCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.checkoutSkeletonAddressIcon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 12px;
+}
+
+.checkoutSkeletonAddressInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkoutSkeletonAddressUser {
+  width: 132px;
+  height: 17px;
+  margin-bottom: 9px;
+}
+
+.checkoutSkeletonAddressText {
+  width: 100%;
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.checkoutSkeletonAddressTextShort {
+  width: 72%;
+  height: 14px;
+}
+
+.checkoutSkeletonHeaderTitle {
+  width: 112px;
+  height: 16px;
+}
+
+.checkoutSkeletonSnapshot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  background: linear-gradient(180deg, rgba(21, 190, 81, 0.08) 0%, rgba(21, 190, 81, 0.02) 100%);
+  border-bottom: 1px solid #f1f4f2;
+}
+
+.checkoutSkeletonSnapshotMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkoutSkeletonSnapshotTitle {
+  width: 148px;
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.checkoutSkeletonSnapshotDesc {
+  width: 88%;
+  height: 12px;
+}
+
+.checkoutSkeletonSnapshotBadge {
+  width: 78px;
+  height: 24px;
+}
+
+.checkoutSkeletonGoodsItem {
+  display: flex;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f8faf9;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.checkoutSkeletonGoodsImage {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 12px;
+}
+
+.checkoutSkeletonGoodsInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.checkoutSkeletonGoodsName {
+  width: 100%;
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.checkoutSkeletonGoodsNameShort {
+  width: 68%;
+  height: 14px;
+  margin-bottom: 10px;
+}
+
+.checkoutSkeletonGoodsSpec {
+  width: 48px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.checkoutSkeletonGoodsBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.checkoutSkeletonGoodsPrice {
+  width: 72px;
+  height: 17px;
+}
+
+.checkoutSkeletonGoodsQuantity {
+  width: 76px;
+  height: 24px;
+  border-radius: 6px;
+}
+
+.checkoutSkeletonOptions {
+  padding: 0 20px;
+}
+
+.checkoutSkeletonOption {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  border-top: 1px solid #f8faf9;
+}
+
+.checkoutSkeletonOptionLabel {
+  width: 92px;
+  height: 15px;
+}
+
+.checkoutSkeletonOptionValue {
+  width: 128px;
+  height: 15px;
+}
+
+.checkoutSkeletonOptionValueShort {
+  width: 88px;
+  height: 15px;
+}
+
+.checkoutSkeletonPriceTitle {
+  width: 72px;
+  height: 16px;
+}
+
+.checkoutSkeletonPriceRow,
+.checkoutSkeletonPriceRowTotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.checkoutSkeletonPriceRowTotal {
+  margin-top: 16px;
+  margin-bottom: 0;
+  padding-top: 16px;
+  border-top: 1px dashed #f0f0f0;
+}
+
+.checkoutSkeletonPriceLabel,
+.checkoutSkeletonPriceLabelTotal {
+  width: 64px;
+  height: 14px;
+}
+
+.checkoutSkeletonPriceLabelTotal {
+  height: 15px;
+}
+
+.checkoutSkeletonPriceValue {
+  width: 86px;
+  height: 14px;
+}
+
+.checkoutSkeletonPriceValueShort {
+  width: 72px;
+  height: 14px;
+}
+
+.checkoutSkeletonPriceValueTotal {
+  width: 96px;
+  height: 18px;
+}
+
+.checkoutSkeletonFooterLabel {
+  width: 42px;
+  height: 14px;
+}
+
+.checkoutSkeletonFooterTotal {
+  width: 92px;
+  height: 22px;
+}
+
+.checkoutSkeletonSubmit {
+  width: 120px;
+  height: 44px;
+  border-radius: 12px;
+}
+
+.checkoutInlineSkeletonLong {
+  display: inline-block;
+  width: 180px;
+  max-width: 100%;
+  height: 12px;
+  vertical-align: middle;
+}
+
+.checkoutInlineSkeletonMedium {
+  display: inline-block;
+  width: 96px;
+  height: 15px;
+  vertical-align: middle;
+}
+
+.checkoutInlineSkeletonShort {
+  display: inline-block;
+  width: 72px;
+  height: 15px;
+  vertical-align: middle;
+}
+
+.checkoutPriceValueSkeleton,
+.checkoutPriceValueSkeletonShort,
+.checkoutPriceTotalSkeleton,
+.checkoutFooterTotalSkeleton {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.checkoutPriceValueSkeleton {
+  width: 76px;
+  height: 14px;
+}
+
+.checkoutPriceValueSkeletonShort {
+  width: 62px;
+  height: 14px;
+}
+
+.checkoutPriceTotalSkeleton {
+  width: 88px;
+  height: 18px;
+}
+
+.checkoutFooterTotalSkeleton {
+  width: 92px;
+  height: 22px;
+}
+
+// 通用卡片样式
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+// 收货地址卡片
+.addressCard {
+  .card();
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  padding-bottom: 20px;
+
+  &:active {
+    background: #fcfdfc;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--nutui-color-primary) 0,
+      var(--nutui-color-primary) 20px,
+      #fff 20px,
+      #fff 25px,
+      #398afe 25px,
+      #398afe 45px,
+      #fff 45px,
+      #fff 50px
+    );
+  }
+
+  .addressContent {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .locationIcon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: rgba(21, 190, 81, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--nutui-color-primary);
+      flex-shrink: 0;
+    }
+
+    .addressInfo {
+      flex: 1;
+      min-width: 0;
+
+      .userInfo {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 4px;
+
+        .userName {
+          font-size: 17px;
+          font-weight: 700;
+          color: #0d1b12;
+        }
+
+        .userPhone {
+          font-size: 14px;
+          color: #667069;
+          font-family: DINAlternate-Bold, sans-serif;
+        }
+      }
+
+      .userAddress {
+        font-size: 14px;
+        color: #333d36;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    .arrowIcon {
+      color: #ccc;
+    }
+  }
+
+  .addressEmpty {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+
+    .emptyText {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      color: #0d1b12;
+      font-weight: 600;
+
+      svg {
+        color: var(--nutui-color-primary);
+      }
+    }
+  }
+}
+
+// 商品卡片
+.goodsCard {
+  .card();
+  padding: 0;
+  overflow: hidden;
+
+  .cardHeader {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f8faf9;
+    font-size: 16px;
+    font-weight: 700;
+    color: #0d1b12;
+  }
+
+  .orderSnapshot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px;
+    background: linear-gradient(180deg, rgba(21, 190, 81, 0.08) 0%, rgba(21, 190, 81, 0.02) 100%);
+    border-bottom: 1px solid #f1f4f2;
+
+    .snapshotMain {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .snapshotTitle {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0d1b12;
+      line-height: 1.4;
+    }
+
+    .snapshotDesc {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #617067;
+      line-height: 1.45;
+    }
+
+    .snapshotBadge {
+      flex-shrink: 0;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(239, 68, 68, 0.08);
+      color: #ef4444;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+    }
+  }
+
+  .goodsList {
+    padding: 0 20px;
+  }
+
+  .goodsItem {
+    display: flex;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid #f8faf9;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .goodsImage {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #f9f9f9;
+      flex-shrink: 0;
+    }
+
+    .goodsInfo {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+
+      .goodsName {
+        font-size: 14px;
+        font-weight: 600;
+        color: #0d1b12;
+        line-height: 1.4;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .goodsSpec {
+        font-size: 12px;
+        color: #667069;
+        background: #f6f8f6;
+        padding: 2px 8px;
+        border-radius: 4px;
+        align-self: flex-start;
+      }
+
+      .goodsBottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .goodsPrice {
+          color: #ef4444;
+          font-weight: 700;
+          font-family: DINAlternate-Bold, sans-serif;
+
+          .symbol {
+            font-size: 12px;
+            margin-right: 2px;
+          }
+          .value {
+            font-size: 17px;
+          }
+        }
+
+        .goodsQuantity {
+          :global {
+            .nut-input-number {
+              background: #f6f8f6;
+              border-radius: 6px;
+              height: 24px;
+              padding: 0;
+            }
+            .nut-input-number__minus,
+            .nut-input-number__plus {
+              width: 24px;
+              height: 24px;
+              background: transparent;
+            }
+            .nut-input-number__input {
+              width: 28px;
+              height: 24px;
+              background: transparent;
+              font-size: 13px;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .orderOptions {
+    padding: 0 20px;
+
+    .optionItem {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 0;
+      border-top: 1px solid #f8faf9;
+      font-size: 15px;
+
+      &.clickable {
+        cursor: pointer;
+        &:active {
+          opacity: 0.7;
+        }
+      }
+
+      &.remarkOption {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+
+        .optionLabelBlock {
+          flex: none;
+        }
+      }
+
+      .optionLabelBlock {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .optionLabel {
+        font-weight: 600;
+        color: #333d36;
+      }
+
+      .optionHint {
+        font-size: 12px;
+        color: #7a867f;
+        line-height: 1.4;
+      }
+
+      .optionContent {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+        color: #667069;
+
+        &.highlight {
+          color: #0d1b12;
+          font-weight: 600;
+        }
+      }
+
+      .remarkInputWrapper {
+        width: 100%;
+      }
+
+      .remarkInput {
+        width: 100%;
+        min-height: 80px;
+        padding: 12px;
+        border-radius: 12px;
+        background: #f6f8f6;
+        --nutui-textarea-padding: 0;
+        --nutui-textarea-font-size: 14px;
+        box-sizing: border-box;
+
+        :global {
+          .nut-textarea__textarea {
+            color: #0d1b12;
+            font-weight: 500;
+            background: transparent;
+          }
+          .nut-textarea__limit {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 4px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 价格明细卡片
+.priceCard {
+  .card();
+
+  .priceHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .priceTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0d1b12;
+  }
+
+  .priceBadge {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(21, 190, 81, 0.1);
+    color: #0f9f57;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .priceItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #667069;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .value {
+      color: #0d1b12;
+      font-weight: 600;
+      font-family: DINAlternate-Bold, sans-serif;
+    }
+
+    .discount {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    &.total {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px dashed #f0f0f0;
+
+      .label {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0d1b12;
+      }
+
+      .value {
+        color: #ef4444;
+        font-size: 18px;
+        font-weight: 700;
+        font-family: DINAlternate-Bold, sans-serif;
+      }
+    }
+  }
+}
+
+.couponPopup {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #f5fbf6 0%, #ffffff 160px);
+}
+
+.couponHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #edf1ee;
+}
+
+.couponTitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0d1b12;
+}
+
+.couponClose {
+  min-width: 44px;
+  text-align: right;
+  color: var(--nutui-color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.couponBody {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 16px calc(env(safe-area-inset-bottom) + 18px);
+}
+
+.couponOptionCard {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &.selected {
+    border-color: rgba(21, 190, 81, 0.45);
+    box-shadow: 0 6px 18px rgba(21, 190, 81, 0.14);
+  }
+
+  &.available {
+    .cardLeft {
+      background: linear-gradient(145deg, #1fb86b 0%, #0e9f56 100%);
+      color: #fff;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.8;
+    .cardLeft {
+      background: linear-gradient(145deg, #afb7b2 0%, #9ea6a1 100%);
+      color: #f7f8f7;
+    }
+    cursor: not-allowed;
+
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+// “不使用优惠券” 卡片的样式调整
+.couponOptionCard.noneSelected {
+  padding: 16px 0 16px 16px;
+  align-items: center;
+  border: 1px solid #edf1ee;
+  box-shadow: none;
+
+  &.selected {
+    border-color: rgba(21, 190, 81, 0.45);
+    box-shadow: none;
+  }
+
+  .couponCardLeft {
+    flex: 1;
+  }
+
+  .couponName {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0d1b12;
+  }
+
+  .couponDesc {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #57625a;
+  }
+}
+
+.cardLeft {
+  width: 105px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 0;
+    width: 12px;
+    height: 100%;
+    background: radial-gradient(circle at 0 8px, transparent 6px, #fff 6px);
+    background-size: 12px 18px;
+    background-repeat: repeat-y;
+  }
+}
+
+.amountLine {
+  display: flex;
+  align-items: baseline;
+  line-height: 1;
+}
+
+.symbol {
+  font-size: 14px;
+  margin-right: 2px;
+}
+
+.amount {
+  font-size: 28px;
+  font-weight: 800;
+  font-family: DINAlternate-Bold, sans-serif;
+}
+
+.amountHint {
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.cardRight {
+  flex: 1;
+  padding: 14px 10px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  justify-content: center;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.couponName {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0d1b12;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardMeta {
+  font-size: 13px;
+  color: #57625a;
+  line-height: 1.4;
+}
+
+.timeLine {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #8a9490;
+  line-height: 1.35;
+  word-break: break-all;
+}
+
+.couponInvalidReason {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #d14343;
+  line-height: 1.4;
+}
+
+.checkWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 14px;
+  flex-shrink: 0;
+}
+
+.selectedIcon {
+  flex-shrink: 0;
+  color: #14a85e;
+}
+
+.unselectedIcon {
+  flex-shrink: 0;
+  color: #b6bfb9;
+}
+
+.couponEmpty {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 14px;
+  color: #8a9490;
+}
+
+// 底部提交栏
+.checkoutFooter {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(60px + env(safe-area-inset-bottom));
+  padding: 0 16px env(safe-area-inset-bottom);
+  background: #fff;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+
+  .footerLeft {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+
+    .totalLabel {
+      font-size: 14px;
+      color: #667069;
+      font-weight: 500;
+    }
+
+    .totalPrice {
+      color: #ef4444;
+      font-family: DINAlternate-Bold, sans-serif;
+      font-weight: 700;
+
+      .symbol {
+        font-size: 14px;
+        margin-right: 1px;
+      }
+
+      .value {
+        font-size: 22px;
+      }
+    }
+  }
+
+  .submitBtn {
+    min-width: 120px;
+    height: 44px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    background: linear-gradient(
+      135deg,
+      var(--nutui-color-primary-stop-1) 0%,
+      var(--nutui-color-primary-stop-2) 100%
+    ) !important;
+    color: #fff !important;
+    box-shadow: none;
+
+    :global {
+      .nut-button-wrap,
+      .nut-button-primary-solid,
+      .nut-button-primary-solid-disabled,
+      .nut-button-text {
+        background: transparent !important;
+        color: inherit !important;
+      }
+    }
+
+    &:active {
+      opacity: 0.9;
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      background: #e5e7eb !important;
+      box-shadow: none;
+      color: #9ca3af !important;
+    }
+  }
+}

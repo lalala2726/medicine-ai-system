@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "dubbo.references.medicine-admin.url",
+      "type": "java.lang.String",
+      "description": "Admin Provider direct URL used by agent in dubbo-local fallback mode.",
+      "defaultValue": "tri://localhost:20880"
+    },
+    {
+      "name": "dubbo.references.medicine-client.url",
+      "type": "java.lang.String",
+      "description": "Client Provider direct URL used by agent in dubbo-local fallback mode.",
+      "defaultValue": "tri://localhost:20881"
+    }
+  ]
+}

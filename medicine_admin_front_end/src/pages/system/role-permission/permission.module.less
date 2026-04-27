@@ -1,0 +1,82 @@
+.pageContent {
+  padding-bottom: 88px;
+}
+
+.permissionContainer {
+  padding: 16px 0;
+}
+
+/* 第 1 级行：左侧父级 + 右侧子节点区域 */
+.permissionRow {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.permissionRow:last-child {
+  border-bottom: none;
+}
+
+.parentItem {
+  width: 160px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+/* 第 1 级右侧的子节点容器 */
+.childrenContainer {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: flex-start;
+}
+
+/* 叶子节点，inline 显示 */
+.leafItem {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 4px;
+}
+
+/* 第 2 级及以下的嵌套分组 */
+.nestedGroup {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 0 6px 0;
+  border-left: 2px solid #e8e8e8;
+  padding-left: 12px;
+}
+
+.nestedParent {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.nestedChildren {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding-left: 20px;
+  align-items: flex-start;
+}
+
+.footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 16px 24px;
+  background: var(--ant-color-bg-elevated);
+  border-top: 1px solid var(--ant-color-border-secondary);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.footerContent {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}

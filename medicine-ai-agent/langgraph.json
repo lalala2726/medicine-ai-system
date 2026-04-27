@@ -1,0 +1,10 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "admin_assistant": "./app/agent/admin/langgraph_app.py:graph",
+    "client_assistant": "./app/agent/client/langgraph_app.py:graph"
+  },
+  "env": "./.env"
+}

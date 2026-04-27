@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.zhangyichuang.medicine</groupId>
+        <artifactId>Medicine</artifactId>
+        <version>1.0-beta</version>
+    </parent>
+
+    <artifactId>medicine-agent</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-storage</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-system-auth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-rpc-contract</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo-registry-nacos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.zhangyichuang.medicine</groupId>
+        <artifactId>Medicine</artifactId>
+        <version>1.0-beta</version>
+    </parent>
+    <artifactId>medicine-shared</artifactId>
+    <name>medicine-shared</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-mongodb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-storage</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zhangyichuang.medicine</groupId>
+            <artifactId>medicine-common-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>

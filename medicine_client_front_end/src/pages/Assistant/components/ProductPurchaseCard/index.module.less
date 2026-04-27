@@ -1,0 +1,230 @@
+.assistantProductPurchaseCard {
+  /* 隔离 NutUI 主题色，防止 --nutui-color-primary 覆盖卡片配色 */
+  --nutui-color-primary: rgb(3, 194, 146);
+  --nutui-color-primary-stop-1: rgb(3, 194, 146);
+  --nutui-color-primary-stop-2: rgb(4, 175, 132);
+  color: #111827;
+
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: none;
+  border: 1px solid #f0f2f5;
+  background: #ffffff;
+
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+
+    .headerIconBox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #f0f2f5;
+    }
+
+    .headerIcon {
+      color: rgb(3, 194, 146);
+    }
+
+    .headerMain {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .headerTitle {
+      color: #111827;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .headerHint {
+      color: #6b7280;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .productList {
+    max-height: 280px;
+    overflow-y: auto;
+
+    /* 隐藏滚动条 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
+    }
+  }
+
+  .productItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  .productImage {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .productInfo {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .productName {
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    word-break: break-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .productMeta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .productPrice {
+    display: flex;
+    align-items: baseline;
+    color: #ef4444;
+    font-weight: 600;
+  }
+
+  .priceSymbol {
+    font-size: 12px;
+    margin-right: 2px;
+  }
+
+  .priceValue {
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .productQuantity {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .productArrow {
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footerSection {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .summarySection {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(15, 23, 42, 0.04);
+  }
+
+  .totalLabel {
+    color: #4b5563;
+    font-size: 13px;
+  }
+
+  .totalPrice {
+    display: flex;
+    align-items: baseline;
+    color: #ef4444;
+    font-weight: 700;
+  }
+
+  .totalPriceValue {
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+
+  .actionSection {
+    display: flex;
+  }
+
+  .purchaseButton {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgb(3, 194, 146) 0%, rgb(4, 175, 132) 100%);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(3, 194, 146, 0.2);
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 6px rgba(3, 194, 146, 0.15);
+    }
+  }
+}

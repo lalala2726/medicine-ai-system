@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.shared.mapper.BasicCouponActivationBatchMapper">
+
+    <resultMap id="ActivationBatchRowResultMap" type="com.zhangyichuang.medicine.model.coupon.ActivationBatchRowDto">
+        <id property="id" column="id"/>
+        <result property="batchNo" column="batch_no"/>
+        <result property="templateId" column="template_id"/>
+        <result property="templateName" column="template_name"/>
+        <result property="redeemRuleType" column="redeem_rule_type"/>
+        <result property="validityType" column="validity_type"/>
+        <result property="fixedEffectiveTime" column="fixed_effective_time"/>
+        <result property="fixedExpireTime" column="fixed_expire_time"/>
+        <result property="relativeValidDays" column="relative_valid_days"/>
+        <result property="status" column="status"/>
+        <result property="generateCount" column="generate_count"/>
+        <result property="successUseCount" column="success_use_count"/>
+        <result property="remark" column="remark"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="ActivationBatchSelectColumns">
+        b.id,
+        b.batch_no,
+        b.template_id,
+        t.name AS template_name,
+        b.redeem_rule_type,
+        b.validity_type,
+        b.fixed_effective_time,
+        b.fixed_expire_time,
+        b.relative_valid_days,
+        b.status,
+        b.generate_count,
+        b.success_use_count,
+        b.remark,
+        b.create_by,
+        b.create_time
+    </sql>
+
+    <select id="selectBatchPage" resultMap="ActivationBatchRowResultMap">
+        SELECT
+        <include refid="ActivationBatchSelectColumns"/>
+        FROM coupon_activation_batch b
+        LEFT JOIN coupon_template t ON t.id = b.template_id AND t.is_deleted = 0
+        <where>
+            b.is_deleted = 0
+            <if test="query != null and query.batchNo != null and query.batchNo != ''">
+                AND b.batch_no LIKE CONCAT('%', #{query.batchNo}, '%')
+            </if>
+            <if test="query != null and query.templateId != null">
+                AND b.template_id = #{query.templateId}
+            </if>
+            <if test="query != null and query.templateName != null and query.templateName != ''">
+                AND t.name LIKE CONCAT('%', #{query.templateName}, '%')
+            </if>
+            <if test="query != null and query.redeemRuleType != null and query.redeemRuleType != ''">
+                AND b.redeem_rule_type = #{query.redeemRuleType}
+            </if>
+            <if test="query != null and query.validityType != null and query.validityType != ''">
+                AND b.validity_type = #{query.validityType}
+            </if>
+            <if test="query != null and query.status != null and query.status != ''">
+                AND b.status = #{query.status}
+            </if>
+            <if test="query != null and query.startTime != null">
+                AND b.create_time <![CDATA[>=]]> #{query.startTime}
+            </if>
+            <if test="query != null and query.endTime != null">
+                AND b.create_time <![CDATA[<=]]> #{query.endTime}
+            </if>
+        </where>
+        ORDER BY b.create_time DESC, b.id DESC
+    </select>
+
+    <select id="selectBatchDetail" resultMap="ActivationBatchRowResultMap">
+        SELECT
+        <include refid="ActivationBatchSelectColumns"/>
+        FROM coupon_activation_batch b
+        LEFT JOIN coupon_template t ON t.id = b.template_id AND t.is_deleted = 0
+        WHERE b.id = #{batchId}
+        AND b.is_deleted = 0
+    </select>
+
+    <update id="updateBatchStatus">
+        UPDATE coupon_activation_batch
+        SET status      = #{status},
+            update_time = #{updateTime},
+            update_by   = #{operatorId}
+        WHERE id = #{batchId}
+          AND is_deleted = 0
+    </update>
+
+    <update id="increaseSuccessUseCount">
+        UPDATE coupon_activation_batch
+        SET success_use_count = success_use_count + 1,
+            update_time       = #{updateTime},
+            update_by         = #{operatorId}
+        WHERE id = #{batchId}
+          AND is_deleted = 0
+          AND status = 'ACTIVE'
+    </update>
+
+    <update id="softDeleteBatchById">
+        UPDATE coupon_activation_batch
+        SET is_deleted  = 1,
+            update_time = #{updateTime},
+            update_by   = #{operatorId}
+        WHERE id = #{batchId}
+          AND is_deleted = 0
+    </update>
+</mapper>

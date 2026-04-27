@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhangyichuang.medicine.client.mapper.MallAfterSaleMapper">
+
+    <resultMap id="AfterSaleListVoMap" type="com.zhangyichuang.medicine.model.vo.AfterSaleListVo">
+        <id column="id" property="id"/>
+        <result column="after_sale_no" property="afterSaleNo"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_nickname" property="userNickname"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_image" property="productImage"/>
+        <result column="after_sale_type" property="afterSaleType"/>
+        <result column="after_sale_type_name" property="afterSaleTypeName"/>
+        <result column="after_sale_status" property="afterSaleStatus"/>
+        <result column="after_sale_status_name" property="afterSaleStatusName"/>
+        <result column="refund_amount" property="refundAmount"/>
+        <result column="apply_reason_name" property="applyReasonName"/>
+        <result column="apply_time" property="applyTime"/>
+        <result column="audit_time" property="auditTime"/>
+    </resultMap>
+
+    <select id="selectAfterSaleList" resultMap="AfterSaleListVoMap">
+        SELECT
+        mas.id,
+        mas.after_sale_no,
+        mas.order_no,
+        mas.order_item_id,
+        mas.user_id,
+        u.nickname AS user_nickname,
+        moi.product_name,
+        moi.image_url AS product_image,
+        mas.after_sale_type,
+        CASE mas.after_sale_type
+        WHEN 'REFUND_ONLY' THEN '仅退款'
+        WHEN 'RETURN_REFUND' THEN '退货退款'
+        WHEN 'EXCHANGE' THEN '换货'
+        ELSE '未知'
+        END AS after_sale_type_name,
+        mas.after_sale_status,
+        CASE mas.after_sale_status
+        WHEN 'PENDING' THEN '待审核'
+        WHEN 'APPROVED' THEN '已通过'
+        WHEN 'REJECTED' THEN '已拒绝'
+        WHEN 'PROCESSING' THEN '处理中'
+        WHEN 'COMPLETED' THEN '已完成'
+        WHEN 'CANCELLED' THEN '已取消'
+        ELSE '未知'
+        END AS after_sale_status_name,
+        mas.refund_amount,
+        CASE mas.apply_reason
+        WHEN 'ADDRESS_ERROR' THEN '收货地址填错了'
+        WHEN 'NOT_AS_DESCRIBED' THEN '与描述不符'
+        WHEN 'INFO_ERROR' THEN '信息填错了，重新拍'
+        WHEN 'DAMAGED' THEN '收到商品损坏了'
+        WHEN 'DELAYED' THEN '未按预定时间发货'
+        WHEN 'OTHER' THEN '其它原因'
+        ELSE '未知'
+        END AS apply_reason_name,
+        mas.apply_time,
+        mas.audit_time
+        FROM mall_after_sale mas
+        LEFT JOIN user u ON mas.user_id = u.id AND (u.is_delete IS NULL OR u.is_delete = 0)
+        LEFT JOIN mall_order_item moi ON mas.order_item_id = moi.id AND (moi.is_deleted IS NULL OR moi.is_deleted = 0)
+        WHERE (mas.is_deleted IS NULL OR mas.is_deleted = 0)
+        AND mas.user_id = #{userId}
+        <if test="request.afterSaleType != null and request.afterSaleType != ''">
+            AND mas.after_sale_type = #{request.afterSaleType}
+        </if>
+        <if test="request.afterSaleStatus != null and request.afterSaleStatus != ''">
+            AND mas.after_sale_status = #{request.afterSaleStatus}
+        </if>
+        <if test="request.orderNo != null and request.orderNo != ''">
+            AND mas.order_no LIKE CONCAT('%', #{request.orderNo}, '%')
+        </if>
+        ORDER BY mas.apply_time DESC
+    </select>
+
+</mapper>

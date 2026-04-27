@@ -49,28 +49,28 @@
 
 ### 管理端
 
-![售后总览](https://medicine.zhangyichuang.com/images/after-sales-overview.png)
+![售后总览](./images/admin/after-sales-overview.png)
 
-![运营分析](https://medicine.zhangyichuang.com/images/operations-analytics.png)
+![运营分析](./images/admin/operations-analytics.png)
 
-![AI 助手演示](https://medicine.zhangyichuang.com/images/ai-assistant-demo.png)
+![AI 助手演示](./images/admin/ai-assistant-demo.png)
 
 ### 客户端
 
 <table>
   <tr>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-01.png" alt="客户端界面 01" width="180" /></td>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-02.png" alt="客户端界面 02" width="180" /></td>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-03.png" alt="客户端界面 03" width="180" /></td>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-04.png" alt="客户端界面 04" width="180" /></td>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-05.png" alt="客户端界面 05" width="180" /></td>
+    <td><img src="./images/client/client-interface-01.png" alt="客户端界面 01" width="180" /></td>
+    <td><img src="./images/client/client-interface-02.png" alt="客户端界面 02" width="180" /></td>
+    <td><img src="./images/client/client-interface-03.png" alt="客户端界面 03" width="180" /></td>
+    <td><img src="./images/client/client-interface-04.png" alt="客户端界面 04" width="180" /></td>
+    <td><img src="./images/client/client-interface-05.png" alt="客户端界面 05" width="180" /></td>
   </tr>
   <tr>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-06.png" alt="客户端界面 06" width="180" /></td>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-07.png" alt="客户端界面 07" width="180" /></td>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-08.png" alt="客户端界面 08" width="180" /></td>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-09.png" alt="客户端界面 09" width="180" /></td>
-    <td><img src="https://medicine.zhangyichuang.com/images/client/client-interface-10.png" alt="客户端界面 10" width="180" /></td>
+    <td><img src="./images/client/client-interface-06.png" alt="客户端界面 06" width="180" /></td>
+    <td><img src="./images/client/client-interface-07.png" alt="客户端界面 07" width="180" /></td>
+    <td><img src="./images/client/client-interface-08.png" alt="客户端界面 08" width="180" /></td>
+    <td><img src="./images/client/client-interface-09.png" alt="客户端界面 09" width="180" /></td>
+    <td><img src="./images/client/client-interface-10.png" alt="客户端界面 10" width="180" /></td>
   </tr>
 </table>
 
@@ -136,6 +136,10 @@ Medicine_business/
 - 图片理解：支持药品图片识别和结构化解析。
 - 工具调用：通过工具协议调用后端商品、订单、用户和知识库能力。
 - 知识库检索：可接入向量数据库和知识图谱增强医学问答。
+
+## 数据来源与致谢
+
+本项目 Neo4j 医疗知识图谱使用的数据来自 [QASystemOnMedicalKG](https://github.com/liuhuanyong/QASystemOnMedicalKG)。图谱数据的具体导入方式请参考该仓库中的说明文档。感谢原作者和相关贡献者的开源工作。
 
 ## 启动要求
 

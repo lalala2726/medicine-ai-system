@@ -102,7 +102,7 @@ Medicine_business/
 
 | 模块 | 技术 |
 | --- | --- |
-| 业务后端 | Spring Boot、Java、Maven、Dubbo、MyBatis-Plus、Sa-Token、RabbitMQ |
+| 业务后端 | Spring Boot、Java、Maven、Dubbo、MyBatis-Plus、Spring Security、RabbitMQ |
 | 管理端前端 | React、TypeScript、Vite、Ant Design、Ant Design Pro Components |
 | 客户端前端 | React、TypeScript、Vite、NutUI、Zustand |
 | AI Agent | Python、FastAPI、LangChain、LangGraph、Pydantic |

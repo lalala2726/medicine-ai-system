@@ -55,6 +55,12 @@
 
 ![AI 助手演示](./images/admin/ai-assistant-demo.png)
 
+![智能体监控总览](./images/admin/agent-monitor-overview.png)
+
+![智能体监控指标](./images/admin/agent-monitor-metrics.png)
+
+![智能体跟踪详情](./images/admin/agent-trace-detail.png)
+
 ### 客户端
 
 <table>
@@ -270,3 +276,11 @@ pnpm dev
 ```
 
 客户端前端使用 Vite 默认开发端口，通常为 `http://localhost:5173`。
+
+## 更新日志
+
+### 2026-05-02
+
+- 新增管理端智能体观测能力截图，包含监控面板、调用指标趋势和智能体跟踪详情。
+- 更新 MySQL 初始化脚本，补充智能体观测、监控面板、智能体跟踪、跟踪详情查看和跟踪记录删除权限。
+- 当前开源版本的大模型能力只适配阿里云百联平台模型，其他模型平台未做适配。

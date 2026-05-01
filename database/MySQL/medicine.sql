@@ -1325,7 +1325,7 @@ CREATE TABLE `permission` (
   `create_by` varchar(50) DEFAULT NULL COMMENT '创建人',
   `update_by` varchar(50) DEFAULT NULL COMMENT '更新人',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=1010 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='权限表';
 
 -- ----------------------------
 -- Records of permission
@@ -1470,6 +1470,11 @@ INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name
 INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name`, `sort_order`, `status`, `remark`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES (137, 132, 'system:agent_prompt:sync', '提示词同步', 50, 0, '管理端权限：提示词同步', '2026-04-25 11:46:17', '2026-04-25 11:46:17', 'system', 'system');
 INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name`, `sort_order`, `status`, `remark`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES (138, 132, 'system:agent_prompt:delete', '提示词删除', 60, 0, '管理端权限：提示词删除', '2026-04-25 11:46:17', '2026-04-25 11:46:17', 'system', 'system');
 INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name`, `sort_order`, `status`, `remark`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES (1000, 0, 'system:smart_assistant', '智能助手', 60, 0, '管理端权限：智能助手入口', '2026-04-25 15:00:52', '2026-04-25 15:00:52', 'system', 'system');
+INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name`, `sort_order`, `status`, `remark`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES (1005, 92, 'system:agent_trace', '智能体观测', 70, 0, '智能体观测菜单权限', '2026-05-02 02:26:04', '2026-05-02 02:26:04', 'system', 'system');
+INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name`, `sort_order`, `status`, `remark`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES (1006, 1005, 'system:agent_trace:monitor', '监控面板', 10, 0, '智能体观测监控面板权限', '2026-05-02 02:26:04', '2026-05-02 02:26:04', 'system', 'system');
+INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name`, `sort_order`, `status`, `remark`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES (1007, 1005, 'system:agent_trace:list', '智能体跟踪', 20, 0, '智能体跟踪列表权限', '2026-05-02 02:26:04', '2026-05-02 02:26:04', 'system', 'system');
+INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name`, `sort_order`, `status`, `remark`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES (1008, 1007, 'system:agent_trace:query', '查看跟踪详情', 10, 0, '智能体跟踪详情权限', '2026-05-02 02:26:04', '2026-05-02 02:26:04', 'system', 'system');
+INSERT INTO `permission` (`id`, `parent_id`, `permission_code`, `permission_name`, `sort_order`, `status`, `remark`, `create_time`, `update_time`, `create_by`, `update_by`) VALUES (1009, 1007, 'system:agent_trace:delete', '删除跟踪记录', 20, 0, '智能体跟踪删除权限', '2026-05-02 02:26:04', '2026-05-02 02:26:04', 'system', 'system');
 COMMIT;
 
 -- ----------------------------

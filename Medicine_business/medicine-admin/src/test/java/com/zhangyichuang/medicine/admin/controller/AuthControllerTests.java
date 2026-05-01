@@ -1,5 +1,6 @@
 package com.zhangyichuang.medicine.admin.controller;
 
+import com.zhangyichuang.medicine.admin.model.request.AdminPasswordChangeRequest;
 import com.zhangyichuang.medicine.admin.service.AuthService;
 import com.zhangyichuang.medicine.common.security.entity.AuthTokenVo;
 import com.zhangyichuang.medicine.model.request.LoginRequest;
@@ -70,5 +71,25 @@ class AuthControllerTests {
         assertEquals("admin", result.getData().getUsername());
         assertEquals(Set.of("super_admin"), result.getData().getRoles());
         verify(authService).currentUserInfo();
+    }
+
+    /**
+     * 验证修改当前用户密码接口会把请求参数委托给认证服务。
+     */
+    @Test
+    void changeCurrentUserPassword_ShouldDelegateToAuthService() {
+        AdminPasswordChangeRequest request = new AdminPasswordChangeRequest();
+        request.setOldPassword("oldPassword123");
+        request.setNewPassword("newPassword123");
+        request.setCaptchaVerificationId("captcha-verification-id");
+
+        var result = authController.changeCurrentUserPassword(request);
+
+        assertEquals(200, result.getCode());
+        verify(authService).changeCurrentUserPassword(
+                "oldPassword123",
+                "newPassword123",
+                "captcha-verification-id"
+        );
     }
 }

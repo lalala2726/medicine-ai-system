@@ -19,6 +19,8 @@ const HANDLED_STREAM_ACTION_KEYS_STORAGE_KEY = 'assistant-handled-stream-action-
 const HANDLED_STREAM_ACTION_KEYS_LIMIT = 500
 /** 已处理过的 SSE action 去重键内存缓存，避免同一页面生命周期内重复读取。 */
 const handledStreamActionKeys = new Set<string>()
+/** 本机持久化去重键是否已经加载到内存。 */
+let handledStreamActionKeysLoaded = false
 
 /**
  * SSE action 事件的页面回调接口。
@@ -60,7 +62,22 @@ const readHandledStreamActionKeys = () => {
   /** 本机保存的原始去重键 JSON 字符串。 */
   const rawActionKeys = localStorage.getItem(HANDLED_STREAM_ACTION_KEYS_STORAGE_KEY)
 
-  return rawActionKeys ? (JSON.parse(rawActionKeys) as string[]) : []
+  if (!rawActionKeys) {
+    return []
+  }
+
+  try {
+    /** 从本机存储解析出的去重键候选值。 */
+    const parsedActionKeys = JSON.parse(rawActionKeys)
+
+    return Array.isArray(parsedActionKeys)
+      ? parsedActionKeys.filter((actionKey): actionKey is string => typeof actionKey === 'string')
+      : []
+  } catch (error) {
+    console.warn('[AssistantStreamActionRouter] invalid handled action keys storage', error)
+    localStorage.removeItem(HANDLED_STREAM_ACTION_KEYS_STORAGE_KEY)
+    return []
+  }
 }
 
 /**
@@ -76,21 +93,25 @@ const writeHandledStreamActionKeys = (actionKeys: string[]) => {
   localStorage.setItem(HANDLED_STREAM_ACTION_KEYS_STORAGE_KEY, JSON.stringify(limitedActionKeys))
   handledStreamActionKeys.clear()
   limitedActionKeys.forEach(actionKey => handledStreamActionKeys.add(actionKey))
+  handledStreamActionKeysLoaded = true
 }
 
 /**
- * 将本机存储中的 SSE action 去重键同步到内存缓存。
+ * 确保本机存储中的 SSE action 去重键只加载一次到内存缓存。
  *
- * @returns 同步后的 SSE action 去重键列表
+ * @returns 无返回值
  */
-const syncHandledStreamActionKeys = () => {
+const ensureHandledStreamActionKeysLoaded = () => {
+  if (handledStreamActionKeysLoaded) {
+    return
+  }
+
   /** 本机已保存的 SSE action 去重键列表。 */
   const storedActionKeys = readHandledStreamActionKeys()
 
   handledStreamActionKeys.clear()
   storedActionKeys.forEach(actionKey => handledStreamActionKeys.add(actionKey))
-
-  return storedActionKeys
+  handledStreamActionKeysLoaded = true
 }
 
 /**
@@ -100,7 +121,7 @@ const syncHandledStreamActionKeys = () => {
  * @returns 当前 SSE action 是否已经处理过
  */
 const hasHandledStreamActionKey = (actionKey: string) => {
-  syncHandledStreamActionKeys()
+  ensureHandledStreamActionKeysLoaded()
 
   return handledStreamActionKeys.has(actionKey)
 }
@@ -112,14 +133,13 @@ const hasHandledStreamActionKey = (actionKey: string) => {
  * @returns 无返回值
  */
 const markStreamActionKeyHandled = (actionKey: string) => {
-  /** 本机已保存的 SSE action 去重键列表。 */
-  const storedActionKeys = syncHandledStreamActionKeys()
+  ensureHandledStreamActionKeysLoaded()
 
   if (handledStreamActionKeys.has(actionKey)) {
     return
   }
 
-  writeHandledStreamActionKeys([...storedActionKeys, actionKey])
+  writeHandledStreamActionKeys([...handledStreamActionKeys, actionKey])
 }
 
 /**

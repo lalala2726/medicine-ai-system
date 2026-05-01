@@ -23,6 +23,8 @@ const ADMIN_ASSISTANT_SUBMIT_URL = '/ai_api/admin/assistant/chat/submit';
 const ADMIN_ASSISTANT_STREAM_URL = '/ai_api/admin/assistant/chat/stream';
 /** 管理端助手停止接口路径 */
 const ADMIN_ASSISTANT_STOP_URL = '/ai_api/admin/assistant/chat/stop';
+/** 智能助手 JSON 请求超时时间，避免提交/停止请求无限等待。 */
+const ADMIN_ASSISTANT_JSON_REQUEST_TIMEOUT_MS = 30_000;
 
 // ======================== 类型定义 ========================
 
@@ -269,6 +271,12 @@ async function fetchAssistantJsonResponse<TBody>(
   body: TBody,
   refreshWhenExpired: boolean,
 ): Promise<Response> {
+  const timeoutController = new AbortController();
+  const timeoutTimer = setTimeout(
+    () => timeoutController.abort(),
+    ADMIN_ASSISTANT_JSON_REQUEST_TIMEOUT_MS,
+  );
+
   try {
     return await fetch(url, {
       method: 'POST',
@@ -277,6 +285,7 @@ async function fetchAssistantJsonResponse<TBody>(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+      signal: timeoutController.signal,
     });
   } catch (error) {
     logAssistantRequestError(url, {
@@ -284,6 +293,8 @@ async function fetchAssistantJsonResponse<TBody>(
       error,
     });
     throw error;
+  } finally {
+    clearTimeout(timeoutTimer);
   }
 }
 

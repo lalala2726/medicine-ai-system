@@ -67,7 +67,7 @@ def test_get_neo4j_settings_uses_defaults(monkeypatch: pytest.MonkeyPatch) -> No
 
 def test_get_neo4j_settings_reads_env_values(monkeypatch: pytest.MonkeyPatch) -> None:
     """验证显式环境变量会覆盖默认 Neo4j 配置。"""
-    monkeypatch.setenv("NEO4J_URI", "bolt://localhost:17687")
+    monkeypatch.setenv("NEO4J_URI", "bolt://127.0.0.1:17687")
     monkeypatch.setenv("NEO4J_USER", "graph_user")
     monkeypatch.setenv("NEO4J_PASSWORD", "graph_password")
     monkeypatch.setenv("NEO4J_DATABASE", "medicine_graph")
@@ -76,7 +76,7 @@ def test_get_neo4j_settings_reads_env_values(monkeypatch: pytest.MonkeyPatch) ->
 
     settings = neo4j_config_module.get_neo4j_settings()
 
-    assert settings.uri == "bolt://localhost:17687"
+    assert settings.uri == "bolt://127.0.0.1:17687"
     assert settings.user == "graph_user"
     assert settings.password == "graph_password"
     assert settings.database == "medicine_graph"

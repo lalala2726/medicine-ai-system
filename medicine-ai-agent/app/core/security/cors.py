@@ -20,7 +20,7 @@ def _merge_origin_regex_patterns(*patterns: str) -> str:
     return rf"^(?:{'|'.join(normalized_patterns)})$"
 
 
-# 本地开发默认允许的 localhost/localhost 来源。
+# 本地开发默认允许的 localhost/127.0.0.1 来源。
 LOCALHOST_ORIGIN_REGEX = r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$"
 # 局域网调试时允许的私有网段来源，例如 192.168.x.x / 10.x.x.x / 172.16.x.x-172.31.x.x。
 LOCAL_AREA_NETWORK = (

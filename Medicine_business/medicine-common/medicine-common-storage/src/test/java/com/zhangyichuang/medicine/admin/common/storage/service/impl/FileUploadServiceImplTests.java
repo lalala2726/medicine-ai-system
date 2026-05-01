@@ -30,7 +30,7 @@ class FileUploadServiceImplTests {
     /**
      * 默认 CDN 地址。
      */
-    private static final String CDN_FILE_URL = "http://localhost:9000/medicine/resources/2026/03/test-file.pdf";
+    private static final String CDN_FILE_URL = "https://medicine-cdn.zhangchuangla.cn/resources/2026/03/test-file.pdf";
 
     @Test
     void uploadBuildsObjectNameWithNormalizedUploadPath() {

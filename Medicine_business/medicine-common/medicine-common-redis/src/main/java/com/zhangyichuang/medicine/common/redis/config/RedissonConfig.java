@@ -88,7 +88,7 @@ public class RedissonConfig {
      */
     private String buildRedisAddress(DataRedisProperties redisProperties) {
         String protocol = redisProperties.getSsl() != null && redisProperties.getSsl().isEnabled() ? "rediss" : "redis";
-        String host = StringUtils.hasText(redisProperties.getHost()) ? redisProperties.getHost() : "localhost";
+        String host = StringUtils.hasText(redisProperties.getHost()) ? redisProperties.getHost() : "127.0.0.1";
         int port = redisProperties.getPort() > 0 ? redisProperties.getPort() : 6379;
         return String.format(SINGLE_SERVER_ADDRESS_TEMPLATE, protocol, host, port);
     }

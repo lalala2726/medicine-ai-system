@@ -2,10 +2,10 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
-/** 开发服务监听地址，开源默认仅监听本机。 */
-const LAN_ACCESS_HOST = 'localhost';
+/** 开发服务监听地址，允许同一局域网设备访问。 */
+const LAN_ACCESS_HOST = '0.0.0.0';
 /** Vite 开发服务允许访问的主机列表。 */
-const ALLOWED_HOSTS = ['localhost'];
+const ALLOWED_HOSTS = ['medicine-client.zhangchuangla.cn', 'medicine-admin.zhangchuangla.cn'];
 
 // https://vitejs.dev/config/
 export default defineConfig({

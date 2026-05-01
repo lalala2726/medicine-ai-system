@@ -41,6 +41,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.zhangyichuang.medicine.common.core.constants.SecurityConstants.CLAIM_KEY_SESSION_ID;
@@ -333,7 +334,7 @@ public class AuthServiceImpl implements AuthService, BaseService {
             throw new ServiceException(ResponseCode.OPERATION_ERROR, CHANGE_PASSWORD_FAIL_MESSAGE);
         }
 
-        logout(SecurityUtils.getToken());
+        redisTokenStore.deleteSessionsByUserIds(Set.of(userId));
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.zhangyichuang.medicine.admin.controller;
 
+import com.zhangyichuang.medicine.admin.model.request.AdminPasswordChangeRequest;
 import com.zhangyichuang.medicine.admin.model.request.AdminPhoneVerificationCodeSendRequest;
 import com.zhangyichuang.medicine.admin.model.request.AdminProfileUpdateRequest;
 import com.zhangyichuang.medicine.admin.model.request.AdminUserPhoneChangeRequest;
@@ -126,6 +127,24 @@ public class AuthController extends BaseController {
     @PreventDuplicateSubmit
     public AjaxResult<Void> changeCurrentUserPhone(@Valid @RequestBody AdminUserPhoneChangeRequest request) {
         authService.changeCurrentUserPhone(request.getPhoneNumber(), request.getVerificationCode());
+        return success();
+    }
+
+    /**
+     * 修改当前登录用户密码。
+     *
+     * @param request 修改密码请求
+     * @return 修改结果
+     */
+    @Operation(summary = "修改当前登录用户密码", description = "校验原密码与滑动验证码后修改当前登录管理员密码")
+    @PutMapping("/password")
+    @PreventDuplicateSubmit
+    public AjaxResult<Void> changeCurrentUserPassword(@Valid @RequestBody AdminPasswordChangeRequest request) {
+        authService.changeCurrentUserPassword(
+                request.getOldPassword(),
+                request.getNewPassword(),
+                request.getCaptchaVerificationId()
+        );
         return success();
     }
 

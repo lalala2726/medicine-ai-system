@@ -18,7 +18,6 @@ from app.core.agent.middleware import (
     tool_call_status,
     tool_thinking_redaction,
 )
-from app.core.agent.tool_cache import ADMIN_TOOL_CACHE_PROFILE, tool_cacheable
 from app.schemas.http_response import HttpResponse
 from app.utils.http_client import HttpClient
 
@@ -75,72 +74,6 @@ class AfterSaleNosRequest(BaseModel):
     )
 
 
-def _build_after_sale_list_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造售后列表缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 与真实 HTTP 查询参数一致的结构。
-
-    异常说明：
-        无。
-    """
-
-    return {
-        "pageNum": arguments.get("page_num"),
-        "pageSize": arguments.get("page_size"),
-        "afterSaleType": arguments.get("after_sale_type"),
-        "afterSaleStatus": arguments.get("after_sale_status"),
-        "orderNo": arguments.get("order_no"),
-        "userId": arguments.get("user_id"),
-        "applyReason": arguments.get("apply_reason"),
-    }
-
-
-def _build_after_sale_detail_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造售后详情缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 标准化后的售后单号数组。
-
-    异常说明：
-        ValueError: 当 `after_sale_nos` 非法时抛出。
-    """
-
-    raw_after_sale_nos = arguments.get("after_sale_nos")
-    normalized_after_sale_nos = normalize_string_list(raw_after_sale_nos, field_name="after_sale_nos")
-    return {"after_sale_nos": normalized_after_sale_nos}
-
-
-def _build_after_sale_context_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造售后聚合上下文缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 标准化且数量合法的售后单号数组。
-
-    异常说明：
-        ValueError: 当 `after_sale_nos` 非法或超过批量上限时抛出。
-    """
-
-    cache_input = _build_after_sale_detail_cache_input(arguments)
-    validate_context_batch_size(cache_input["after_sale_nos"], field_name="after_sale_nos")
-    return cache_input
-
-
 @tool(
     args_schema=AfterSaleListRequest,
     description=(
@@ -154,11 +87,6 @@ def _build_after_sale_context_cache_input(arguments: dict[str, object]) -> dict[
     start_message="正在查询售后列表",
     error_message="查询售后列表失败",
     timely_message="售后列表正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="after_sale_list",
-    input_builder=_build_after_sale_list_cache_input,
 )
 async def after_sale_list(
         page_num: int = 1,
@@ -222,11 +150,6 @@ async def after_sale_list(
     error_message="查询售后上下文失败",
     timely_message="售后上下文正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="after_sale_context",
-    input_builder=_build_after_sale_context_cache_input,
-)
 async def after_sale_context(after_sale_nos: list[str]) -> dict:
     """
     功能描述：
@@ -265,11 +188,6 @@ async def after_sale_context(after_sale_nos: list[str]) -> dict:
     start_message="正在查询售后详情",
     error_message="查询售后详情失败",
     timely_message="售后详情正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="after_sale_detail",
-    input_builder=_build_after_sale_detail_cache_input,
 )
 async def after_sale_detail(after_sale_nos: list[str]) -> dict:
     """

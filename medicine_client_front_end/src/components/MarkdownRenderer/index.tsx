@@ -44,6 +44,9 @@ const DEFAULT_MARKDOWN_RENDERER_CONTROLS: ControlsConfig = {
   table: false
 }
 
+/** MarkdownRenderer 默认是否展示代码块行号。移动端默认隐藏，避免占用阅读宽度。 */
+const DEFAULT_MARKDOWN_RENDERER_LINE_NUMBERS: NonNullable<StreamdownProps['lineNumbers']> = false
+
 /**
  * 组合 Markdown 根节点样式类名。
  *
@@ -65,7 +68,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
   content,
   mode = DEFAULT_MARKDOWN_RENDERER_MODE,
   controls = DEFAULT_MARKDOWN_RENDERER_CONTROLS,
-  lineNumbers,
+  lineNumbers = DEFAULT_MARKDOWN_RENDERER_LINE_NUMBERS,
   className
 }) => {
   return (

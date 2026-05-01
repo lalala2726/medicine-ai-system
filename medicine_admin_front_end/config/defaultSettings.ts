@@ -10,6 +10,8 @@ type AppSettings = ProLayoutProps & {
 
 const LIGHT_BG_LAYOUT = '#f0f2f6';
 const DARK_BG_LAYOUT = '#141414';
+/** 默认业务 API 代理前缀，生产环境由 Nginx 或网关转发。 */
+const DEFAULT_API_BASE_URL = '/api';
 
 /**
  * 根据导航主题计算布局背景色。
@@ -41,7 +43,7 @@ export const applyThemeSettings = <T extends Partial<AppSettings>>(
  */
 const Settings: AppSettings = applyThemeSettings({
   // 默认的 API 基础路径
-  apiBaseURL: process.env.NODE_ENV === 'development' ? '/api' : 'http://localhost:8082/api',
+  apiBaseURL: DEFAULT_API_BASE_URL,
 
   // 其他默认设置...
   navTheme: 'light',

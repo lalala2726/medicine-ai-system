@@ -19,6 +19,7 @@ import com.zhangyichuang.medicine.common.core.exception.ServiceException;
 import com.zhangyichuang.medicine.common.core.utils.Assert;
 import com.zhangyichuang.medicine.common.core.utils.BeanCotyUtils;
 import com.zhangyichuang.medicine.common.security.base.BaseService;
+import com.zhangyichuang.medicine.common.security.token.RedisTokenStore;
 import com.zhangyichuang.medicine.model.dto.*;
 import com.zhangyichuang.medicine.model.entity.*;
 import com.zhangyichuang.medicine.model.enums.WalletChangeTypeEnum;
@@ -29,6 +30,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -43,12 +46,18 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService, BaseService {
 
+    /**
+     * 正常启用的角色状态编码。
+     */
+    private static final int ROLE_STATUS_NORMAL = 0;
+
     private final UserWalletLogService userWalletLogService;
     private final MallOrderService mallOrderService;
     private final UserWalletService userWalletService;
     private final RoleService roleService;
     private final UserRoleService userRoleService;
     private final CaptchaService captchaService;
+    private final RedisTokenStore redisTokenStore;
 
     /**
      * 根据用户ID查询用户信息
@@ -146,10 +155,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public Page<UserListDto> listUser(UserListQueryRequest request) {
         Page<User> userPage = request.toPage();
         Page<User> result = baseMapper.listUser(userPage, request);
+        Map<Long, String> userRoleNamesMap = buildUserRoleNamesMap(result.getRecords());
         List<UserListDto> rows = result.getRecords().stream()
                 .map(user -> {
                     UserListDto userListDto = BeanCotyUtils.copyProperties(user, UserListDto.class);
-                    userListDto.setRoles(buildUserRoleNames(user.getId()));
+                    userListDto.setRoles(userRoleNamesMap.getOrDefault(user.getId(), ""));
                     return userListDto;
                 })
                 .toList();
@@ -230,8 +240,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (roleChanged) {
             roleService.isRoleExistById(requestedRoleIds);
             userRoleService.updateUserRole(request.getId(), requestedRoleIds);
+            clearUserSessionsAfterCommit(request.getId());
         }
-        return userInfoUpdated || roleChanged || (requestedRoleIds != null && !hasUserInfoUpdate);
+        return userInfoUpdated || roleChanged;
     }
 
     /**
@@ -410,6 +421,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     /**
+     * 注册用户会话清理动作，保证角色变更提交成功后旧权限立即失效。
+     *
+     * @param userId 需要清理在线会话的用户ID
+     */
+    private void clearUserSessionsAfterCommit(Long userId) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    redisTokenStore.deleteSessionsByUserIds(Set.of(userId));
+                }
+            });
+            return;
+        }
+        redisTokenStore.deleteSessionsByUserIds(Set.of(userId));
+    }
+
+    /**
      * 校验用户角色变更权限。
      *
      * @param targetUserId     被修改的用户ID
@@ -486,27 +515,63 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     /**
-     * 构建用户角色名称展示文本。
+     * 批量构建用户角色名称展示文本。
      *
-     * @param userId 用户ID
-     * @return 逗号分隔的启用角色名称
+     * @param users 当前分页用户列表
+     * @return 用户ID到逗号分隔启用角色名称的映射
      */
-    private String buildUserRoleNames(Long userId) {
-        Set<Long> roleIds = userRoleService.getUserRoleByUserId(userId);
-        if (roleIds == null || roleIds.isEmpty()) {
-            return "";
+    private Map<Long, String> buildUserRoleNamesMap(List<User> users) {
+        if (users == null || users.isEmpty()) {
+            return Map.of();
         }
-        return roleService.lambdaQuery()
+        List<Long> userIds = users.stream()
+                .map(User::getId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        if (userIds.isEmpty()) {
+            return Map.of();
+        }
+        List<UserRole> userRoles = userRoleService.lambdaQuery()
+                .in(UserRole::getUserId, userIds)
+                .list();
+        if (userRoles == null || userRoles.isEmpty()) {
+            return Map.of();
+        }
+        Set<Long> roleIds = userRoles.stream()
+                .map(UserRole::getRoleId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        if (roleIds.isEmpty()) {
+            return Map.of();
+        }
+        Map<Long, String> roleNameMap = roleService.lambdaQuery()
                 .in(Role::getId, roleIds)
-                .eq(Role::getStatus, 0)
+                .eq(Role::getStatus, ROLE_STATUS_NORMAL)
                 .list()
                 .stream()
-                .map(Role::getRoleName)
-                .filter(Objects::nonNull)
-                .map(String::trim)
-                .filter(roleName -> !roleName.isEmpty())
-                .sorted()
-                .collect(Collectors.joining(","));
+                .filter(role -> role.getId() != null)
+                .filter(role -> StringUtils.isNotBlank(role.getRoleName()))
+                .collect(Collectors.toMap(Role::getId, role -> role.getRoleName().trim(),
+                        (left, right) -> left, LinkedHashMap::new));
+        if (roleNameMap.isEmpty()) {
+            return Map.of();
+        }
+        Map<Long, List<String>> namesByUserId = new LinkedHashMap<>();
+        for (UserRole userRole : userRoles) {
+            String roleName = roleNameMap.get(userRole.getRoleId());
+            if (userRole.getUserId() != null && StringUtils.isNotBlank(roleName)) {
+                namesByUserId.computeIfAbsent(userRole.getUserId(), key -> new ArrayList<>()).add(roleName);
+            }
+        }
+        return namesByUserId.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .distinct()
+                                .sorted()
+                                .collect(Collectors.joining(",")),
+                        (left, right) -> left,
+                        LinkedHashMap::new));
     }
 
     /**
@@ -549,7 +614,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         Role userRole = roleService.lambdaQuery()
                 .eq(Role::getRoleCode, RolesConstant.USER)
-                .eq(Role::getStatus, 0)
+                .eq(Role::getStatus, ROLE_STATUS_NORMAL)
                 .one();
         if (userRole == null || userRole.getId() == null) {
             throw new ServiceException(ResponseCode.OPERATION_ERROR, "默认用户角色不存在，请先初始化RBAC数据");

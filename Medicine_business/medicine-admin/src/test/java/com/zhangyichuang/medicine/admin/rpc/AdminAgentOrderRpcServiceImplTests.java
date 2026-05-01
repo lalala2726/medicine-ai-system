@@ -1,17 +1,20 @@
 package com.zhangyichuang.medicine.admin.rpc;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.zhangyichuang.medicine.admin.service.MallAfterSaleService;
 import com.zhangyichuang.medicine.admin.service.MallOrderService;
+import com.zhangyichuang.medicine.admin.service.MallOrderShippingService;
 import com.zhangyichuang.medicine.admin.service.MallOrderTimelineService;
 import com.zhangyichuang.medicine.common.core.exception.ParamException;
 import com.zhangyichuang.medicine.model.dto.OrderContextDto;
 import com.zhangyichuang.medicine.model.dto.OrderDetailDto;
 import com.zhangyichuang.medicine.model.entity.MallAfterSale;
 import com.zhangyichuang.medicine.model.entity.MallOrder;
+import com.zhangyichuang.medicine.model.entity.MallOrderShipping;
 import com.zhangyichuang.medicine.model.entity.MallOrderTimeline;
 import com.zhangyichuang.medicine.model.enums.OrderStatusEnum;
-import com.zhangyichuang.medicine.model.vo.OrderShippingVo;
+import com.zhangyichuang.medicine.model.enums.ShippingStatusEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,7 +28,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +39,9 @@ class AdminAgentOrderRpcServiceImplTests {
 
     @Mock
     private MallOrderTimelineService mallOrderTimelineService;
+
+    @Mock
+    private MallOrderShippingService mallOrderShippingService;
 
     @Mock
     private MallAfterSaleService mallAfterSaleService;
@@ -52,17 +58,28 @@ class AdminAgentOrderRpcServiceImplTests {
     void getOrderContextsByOrderNos_ShouldBuildFullOrderContext() {
         LambdaQueryChainWrapper<MallOrder> orderQuery = mock(LambdaQueryChainWrapper.class);
         when(mallOrderService.lambdaQuery()).thenReturn(orderQuery);
-        when(orderQuery.eq(any(), any())).thenReturn(orderQuery);
-        when(orderQuery.one()).thenReturn(createOrder());
+        when(orderQuery.in(any(), anyCollection())).thenReturn(orderQuery);
+        when(orderQuery.list()).thenReturn(List.of(createOrder()));
+
+        LambdaQueryChainWrapper<MallOrderTimeline> timelineQuery = mock(LambdaQueryChainWrapper.class);
+        when(mallOrderTimelineService.lambdaQuery()).thenReturn(timelineQuery);
+        when(timelineQuery.in(any(), anyCollection())).thenReturn(timelineQuery);
+        when(timelineQuery.orderByDesc((SFunction<MallOrderTimeline, ?>) any())).thenReturn(timelineQuery);
+        when(timelineQuery.list()).thenReturn(createTimeline());
+
+        LambdaQueryChainWrapper<MallOrderShipping> shippingQuery = mock(LambdaQueryChainWrapper.class);
+        when(mallOrderShippingService.lambdaQuery()).thenReturn(shippingQuery);
+        when(shippingQuery.in(any(), anyCollection())).thenReturn(shippingQuery);
+        when(shippingQuery.list()).thenReturn(List.of(createShipping()));
 
         LambdaQueryChainWrapper<MallAfterSale> afterSaleQuery = mock(LambdaQueryChainWrapper.class);
         when(mallAfterSaleService.lambdaQuery()).thenReturn(afterSaleQuery);
-        when(afterSaleQuery.eq(any(), any())).thenReturn(afterSaleQuery);
-        when(afterSaleQuery.count()).thenReturn(1L);
+        when(afterSaleQuery.in(any(), anyCollection())).thenReturn(afterSaleQuery);
+        when(afterSaleQuery.list()).thenReturn(List.of(MallAfterSale.builder()
+                .orderNo("O20251108001")
+                .build()));
 
-        when(mallOrderService.orderDetail(1L)).thenReturn(createOrderDetail());
-        when(mallOrderTimelineService.getTimelineByOrderId(1L)).thenReturn(createTimeline());
-        when(mallOrderService.getOrderShipping(1L)).thenReturn(createShipping());
+        when(mallOrderService.getOrderByOrderNo(List.of("O20251108001"))).thenReturn(List.of(createOrderDetail()));
 
         Map<String, OrderContextDto> result = rpcService.getOrderContextsByOrderNos(List.of("O20251108001"));
 
@@ -77,9 +94,10 @@ class AdminAgentOrderRpcServiceImplTests {
         assertEquals(2, context.getTimeline().size());
         assertEquals(2, context.getShippingSummary().getNodes().size());
         assertTrue(context.getAiHints().getHasAfterSale());
-        verify(mallOrderService).orderDetail(1L);
-        verify(mallOrderTimelineService).getTimelineByOrderId(1L);
-        verify(mallOrderService).getOrderShipping(1L);
+        verify(mallOrderService).getOrderByOrderNo(List.of("O20251108001"));
+        verify(mallOrderService, never()).orderDetail(anyLong());
+        verify(mallOrderTimelineService, never()).getTimelineByOrderId(anyLong());
+        verify(mallOrderService, never()).getOrderShipping(anyLong());
     }
 
     /**
@@ -93,7 +111,7 @@ class AdminAgentOrderRpcServiceImplTests {
                 .toList();
 
         assertThrows(ParamException.class, () -> rpcService.getOrderContextsByOrderNos(orderNos));
-        verifyNoInteractions(mallOrderService, mallOrderTimelineService, mallAfterSaleService);
+        verifyNoInteractions(mallOrderService, mallOrderTimelineService, mallOrderShippingService, mallAfterSaleService);
     }
 
     /**
@@ -124,6 +142,9 @@ class AdminAgentOrderRpcServiceImplTests {
      */
     private OrderDetailDto createOrderDetail() {
         return OrderDetailDto.builder()
+                .orderInfo(OrderDetailDto.OrderInfo.builder()
+                        .orderNo("O20251108001")
+                        .build())
                 .deliveryInfo(OrderDetailDto.DeliveryInfo.builder()
                         .deliveryMethod("EXPRESS")
                         .build())
@@ -175,29 +196,21 @@ class AdminAgentOrderRpcServiceImplTests {
     /**
      * 功能描述：构造订单物流模拟数据，供完整物流节点测试复用。
      *
-     * @return 返回订单物流 VO
+     * @return 返回订单物流实体
      */
-    private OrderShippingVo createShipping() {
-        return OrderShippingVo.builder()
+    private MallOrderShipping createShipping() {
+        return MallOrderShipping.builder()
                 .orderId(1L)
-                .orderNo("O20251108001")
-                .logisticsCompany("顺丰速运")
-                .trackingNumber("SF1234567890")
-                .status("IN_TRANSIT")
-                .statusName("运输中")
+                .shippingCompany("顺丰速运")
+                .shippingNo("SF1234567890")
+                .status(ShippingStatusEnum.IN_TRANSIT.getType())
                 .deliverTime(new Date())
-                .nodes(List.of(
-                        OrderShippingVo.ShippingNode.builder()
-                                .time("2026-01-01 10:00:00")
-                                .content("快件已揽收")
-                                .location("上海")
-                                .build(),
-                        OrderShippingVo.ShippingNode.builder()
-                                .time("2026-01-01 12:00:00")
-                                .content("快件已发出")
-                                .location("上海")
-                                .build()
-                ))
+                .shippingInfo("""
+                        [
+                          {"time":"2026-01-01 10:00:00","content":"快件已揽收","location":"上海"},
+                          {"time":"2026-01-01 12:00:00","content":"快件已发出","location":"上海"}
+                        ]
+                        """)
                 .build();
     }
 }

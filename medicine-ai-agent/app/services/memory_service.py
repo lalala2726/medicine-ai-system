@@ -28,6 +28,12 @@ _DEFAULT_ASSISTANT_MEMORY_WINDOW_LIMIT = 50
 _DEFAULT_ASSISTANT_SUMMARY_TRIGGER_WINDOW = 100
 _DEFAULT_ASSISTANT_SUMMARY_TAIL_WINDOW = 20
 _DEFAULT_ASSISTANT_SUMMARY_MAX_TOKENS = 2000
+_WINDOW_MEMORY_READABLE_STATUSES = [
+    MessageStatus.SUCCESS,
+    MessageStatus.WAITING_INPUT,
+    MessageStatus.STREAMING,
+]
+"""窗口记忆读取的可读消息状态；streaming 只用于保留历史中已写入内容但未正确收尾的 AI 回复。"""
 
 
 def _resolve_positive_int_env(
@@ -295,7 +301,10 @@ def _to_chat_memory_messages(
                 continue
             result.append(HumanMessage(content=user_content))
         else:
-            result.append(AIMessage(content=document.content))
+            assistant_content = str(document.content or "").strip()
+            if not assistant_content:
+                continue
+            result.append(AIMessage(content=assistant_content))
     return result
 
 
@@ -396,7 +405,7 @@ def load_memory_by_window(
         limit=limit,
         ascending=False,
         history_hidden=(None if include_history_hidden else False),
-        statuses=[MessageStatus.SUCCESS, MessageStatus.WAITING_INPUT],
+        statuses=_WINDOW_MEMORY_READABLE_STATUSES,
     )
 
     history_messages = _to_chat_memory_messages(

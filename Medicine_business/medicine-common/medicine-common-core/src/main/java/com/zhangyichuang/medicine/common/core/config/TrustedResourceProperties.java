@@ -20,7 +20,7 @@ public class TrustedResourceProperties {
     /**
      * 可信域名列表（仅域名部分）。
      */
-    private List<String> domains = new ArrayList<>(List.of("localhost", "localhost", "::1"));
+    private List<String> domains = new ArrayList<>(List.of("localhost", "127.0.0.1", "::1"));
 
     /**
      * 允许的文件名列表（精确匹配）。

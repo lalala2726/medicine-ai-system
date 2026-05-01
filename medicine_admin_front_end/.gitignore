@@ -36,3 +36,9 @@ functions/*
 # screenshot
 screenshot
 .firebase
+
+# AI assistant
+build
+.claude
+CLAUDE.md
+.qoder

@@ -37,7 +37,7 @@ public class OpenAPIConfig {
                         .description("提供 Admin 与 Client 智能体工具接口定义，便于外部 AI 工具快速集成与调用。")
                         .contact(new Contact()
                                 .name("Chuang")
-                                .email("example@example.com")
+                                .email("chuang@zhangchuangla.cn")
                                 .url("https://opensource.org/licenses/apache-2-0")));
     }
 }

@@ -6,6 +6,7 @@ import com.zhangyichuang.medicine.admin.service.UserService;
 import com.zhangyichuang.medicine.common.captcha.service.CaptchaService;
 import com.zhangyichuang.medicine.common.core.constants.RolesConstant;
 import com.zhangyichuang.medicine.common.core.exception.LoginException;
+import com.zhangyichuang.medicine.common.core.exception.ServiceException;
 import com.zhangyichuang.medicine.common.security.entity.AuthTokenVo;
 import com.zhangyichuang.medicine.common.security.login.LoginFailureResult;
 import com.zhangyichuang.medicine.common.security.login.LoginLockStatus;
@@ -28,6 +29,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Set;
 
@@ -65,6 +67,9 @@ class AuthServiceImplTests {
 
     @Mock
     private LoginSecurityService loginSecurityService;
+
+    @Mock
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Spy
     @InjectMocks
@@ -171,5 +176,117 @@ class AuthServiceImplTests {
 
         assertEquals(Set.of("system:user:list"), permissions);
         verify(permissionService).getPermissionCodesByUserId(7L);
+    }
+
+    /**
+     * 验证当前用户密码修改成功时会校验验证码、更新加密密码并清理当前用户全部会话。
+     */
+    @Test
+    void changeCurrentUserPassword_WhenValid_ShouldUpdatePasswordAndDeleteUserSessions() {
+        User user = new User();
+        user.setId(10L);
+        user.setPassword("encoded-old-password");
+
+        doReturn(10L).when(authService).getUserId();
+        when(userService.getUserById(10L)).thenReturn(user);
+        when(passwordEncoder.matches("oldPassword123", "encoded-old-password")).thenReturn(true);
+        when(passwordEncoder.encode("newPassword123")).thenReturn("encoded-new-password");
+        when(userService.updateById(any(User.class))).thenReturn(true);
+
+        authService.changeCurrentUserPassword(" oldPassword123 ", " newPassword123 ", " captcha-verification-id ");
+
+        verify(captchaService).validateLoginCaptcha("captcha-verification-id");
+        verify(passwordEncoder).matches("oldPassword123", "encoded-old-password");
+        verify(passwordEncoder).encode("newPassword123");
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userService).updateById(captor.capture());
+        assertEquals(10L, captor.getValue().getId());
+        assertEquals("encoded-new-password", captor.getValue().getPassword());
+        verify(redisTokenStore).deleteSessionsByUserIds(Set.of(10L));
+    }
+
+    /**
+     * 验证原密码不正确时拒绝修改密码。
+     */
+    @Test
+    void changeCurrentUserPassword_WhenOldPasswordIncorrect_ShouldThrowServiceException() {
+        User user = new User();
+        user.setId(10L);
+        user.setPassword("encoded-old-password");
+
+        doReturn(10L).when(authService).getUserId();
+        when(userService.getUserById(10L)).thenReturn(user);
+        when(passwordEncoder.matches("wrongPassword", "encoded-old-password")).thenReturn(false);
+
+        ServiceException exception = assertThrows(
+                ServiceException.class,
+                () -> authService.changeCurrentUserPassword("wrongPassword", "newPassword123", "captcha-verification-id")
+        );
+
+        assertEquals("原密码错误", exception.getMessage());
+        verify(userService, never()).updateById(any(User.class));
+    }
+
+    /**
+     * 验证新旧密码相同时拒绝修改密码。
+     */
+    @Test
+    void changeCurrentUserPassword_WhenSamePassword_ShouldThrowServiceException() {
+        User user = new User();
+        user.setId(10L);
+        user.setPassword("encoded-old-password");
+
+        doReturn(10L).when(authService).getUserId();
+        when(userService.getUserById(10L)).thenReturn(user);
+        when(passwordEncoder.matches("samePassword", "encoded-old-password")).thenReturn(true);
+
+        ServiceException exception = assertThrows(
+                ServiceException.class,
+                () -> authService.changeCurrentUserPassword("samePassword", "samePassword", "captcha-verification-id")
+        );
+
+        assertEquals("新密码不能与原密码相同", exception.getMessage());
+        verify(userService, never()).updateById(any(User.class));
+    }
+
+    /**
+     * 验证当前用户不存在时拒绝修改密码。
+     */
+    @Test
+    void changeCurrentUserPassword_WhenCurrentUserMissing_ShouldThrowServiceException() {
+        doReturn(10L).when(authService).getUserId();
+        when(userService.getUserById(10L)).thenReturn(null);
+
+        ServiceException exception = assertThrows(
+                ServiceException.class,
+                () -> authService.changeCurrentUserPassword("oldPassword123", "newPassword123", "captcha-verification-id")
+        );
+
+        assertEquals("当前用户不存在", exception.getMessage());
+        verify(userService, never()).updateById(any(User.class));
+    }
+
+    /**
+     * 验证密码落库失败时返回明确业务错误。
+     */
+    @Test
+    void changeCurrentUserPassword_WhenUpdateFailed_ShouldThrowServiceException() {
+        User user = new User();
+        user.setId(10L);
+        user.setPassword("encoded-old-password");
+
+        doReturn(10L).when(authService).getUserId();
+        when(userService.getUserById(10L)).thenReturn(user);
+        when(passwordEncoder.matches("oldPassword123", "encoded-old-password")).thenReturn(true);
+        when(passwordEncoder.encode("newPassword123")).thenReturn("encoded-new-password");
+        when(userService.updateById(any(User.class))).thenReturn(false);
+
+        ServiceException exception = assertThrows(
+                ServiceException.class,
+                () -> authService.changeCurrentUserPassword("oldPassword123", "newPassword123", "captcha-verification-id")
+        );
+
+        assertEquals("密码修改失败，请稍后重试", exception.getMessage());
+        verify(redisTokenStore, never()).deleteSessionsByUserIds(any());
     }
 }

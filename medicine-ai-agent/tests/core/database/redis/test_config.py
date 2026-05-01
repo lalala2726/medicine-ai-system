@@ -29,11 +29,11 @@ def _clear_cache_between_tests() -> None:
 
 def test_get_redis_settings_prefers_url(monkeypatch: pytest.MonkeyPatch) -> None:
     """验证 REDIS_URL 配置会被优先读取。"""
-    monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/2")
+    monkeypatch.setenv("REDIS_URL", "redis://127.0.0.1:6379/2")
 
     settings = redis_config_module.get_redis_settings()
 
-    assert settings.url == "redis://localhost:6379/2"
+    assert settings.url == "redis://127.0.0.1:6379/2"
     assert settings.decode_responses is False
 
 
@@ -48,14 +48,14 @@ def test_get_redis_settings_raises_on_invalid_port(monkeypatch: pytest.MonkeyPat
 
 def test_get_redis_connection_uses_from_url(monkeypatch: pytest.MonkeyPatch) -> None:
     """验证 URL 模式会调用 Redis.from_url。"""
-    monkeypatch.setenv("REDIS_URL", "redis://localhost:6379/1")
+    monkeypatch.setenv("REDIS_URL", "redis://127.0.0.1:6379/1")
     monkeypatch.setattr(redis_config_module, "Redis", _FakeRedis)
 
     connection = redis_config_module.get_redis_connection()
 
     assert isinstance(connection, _FakeRedis)
     assert _FakeRedis.from_url_args == {
-        "url": "redis://localhost:6379/1",
+        "url": "redis://127.0.0.1:6379/1",
         "decode_responses": False,
     }
 

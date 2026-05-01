@@ -18,7 +18,6 @@ from app.core.agent.middleware import (
     tool_call_status,
     tool_thinking_redaction,
 )
-from app.core.agent.tool_cache import ADMIN_TOOL_CACHE_PROFILE, tool_cacheable
 from app.schemas.http_response import HttpResponse
 from app.utils.http_client import HttpClient
 
@@ -77,73 +76,6 @@ class OrderNosRequest(BaseModel):
     )
 
 
-def _build_order_list_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造订单列表缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 与真实 HTTP 请求一致的查询参数结构。
-
-    异常说明：
-        无。
-    """
-
-    return {
-        "pageNum": arguments.get("page_num"),
-        "pageSize": arguments.get("page_size"),
-        "orderNo": arguments.get("order_no"),
-        "payType": arguments.get("pay_type"),
-        "orderStatus": arguments.get("order_status"),
-        "deliveryType": arguments.get("delivery_type"),
-        "receiverName": arguments.get("receiver_name"),
-        "receiverPhone": arguments.get("receiver_phone"),
-    }
-
-
-def _build_order_detail_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造订单详情缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 标准化后的订单编号数组。
-
-    异常说明：
-        ValueError: 当 `order_nos` 非法时抛出。
-    """
-
-    raw_order_nos = arguments.get("order_nos")
-    normalized_order_nos = normalize_string_list(raw_order_nos, field_name="order_nos")
-    return {"order_nos": normalized_order_nos}
-
-
-def _build_order_context_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造订单聚合上下文缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 标准化且数量合法的订单编号数组。
-
-    异常说明：
-        ValueError: 当 `order_nos` 非法或超过批量上限时抛出。
-    """
-
-    cache_input = _build_order_detail_cache_input(arguments)
-    validate_context_batch_size(cache_input["order_nos"], field_name="order_nos")
-    return cache_input
-
-
 @tool(
     args_schema=OrderListRequest,
     description=(
@@ -157,11 +89,6 @@ def _build_order_context_cache_input(arguments: dict[str, object]) -> dict[str, 
     start_message="正在查询订单列表",
     error_message="获取订单列表失败",
     timely_message="订单列表正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="order_list",
-    input_builder=_build_order_list_cache_input,
 )
 async def order_list(
         page_num: int = 1,
@@ -229,11 +156,6 @@ async def order_list(
     error_message="获取订单上下文失败",
     timely_message="订单上下文正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="order_context",
-    input_builder=_build_order_context_cache_input,
-)
 async def order_context(order_nos: list[str]) -> dict:
     """
     功能描述：
@@ -270,11 +192,6 @@ async def order_context(order_nos: list[str]) -> dict:
     start_message="正在查询订单详情",
     error_message="获取订单详情失败",
     timely_message="订单详情正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="order_detail",
-    input_builder=_build_order_detail_cache_input,
 )
 async def order_detail(order_nos: list[str]) -> dict:
     """

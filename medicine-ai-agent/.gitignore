@@ -5,6 +5,11 @@ tmp
 .langgraph_api
 .env
 
+# AI
+GEMINI.md
+CLAUDE.md
+AGENTS.md
+
 # MACOS
 .DS_Store
 __MACOSX

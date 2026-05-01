@@ -36,6 +36,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -73,6 +74,21 @@ public class AuthServiceImpl implements AuthService, BaseService {
      * 资料更新失败提示语。
      */
     private static final String UPDATE_PROFILE_FAIL_MESSAGE = "个人资料修改失败，请稍后重试";
+
+    /**
+     * 原密码错误提示语。
+     */
+    private static final String OLD_PASSWORD_INCORRECT_MESSAGE = "原密码错误";
+
+    /**
+     * 新旧密码相同提示语。
+     */
+    private static final String SAME_PASSWORD_MESSAGE = "新密码不能与原密码相同";
+
+    /**
+     * 密码修改失败提示语。
+     */
+    private static final String CHANGE_PASSWORD_FAIL_MESSAGE = "密码修改失败，请稍后重试";
 
     /**
      * 手机号格式正则。
@@ -139,6 +155,7 @@ public class AuthServiceImpl implements AuthService, BaseService {
     private final LoginLogPublisher loginLogPublisher;
     private final CaptchaService captchaService;
     private final LoginSecurityService loginSecurityService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
 
     @Override
@@ -334,6 +351,47 @@ public class AuthServiceImpl implements AuthService, BaseService {
         }
 
         redisCache.deleteObject(verificationCodeKey);
+    }
+
+    /**
+     * 修改当前登录用户密码。
+     *
+     * @param oldPassword           原登录密码
+     * @param newPassword           新登录密码
+     * @param captchaVerificationId 滑动验证码校验凭证
+     * @return 无返回值
+     */
+    @Override
+    public void changeCurrentUserPassword(String oldPassword, String newPassword, String captchaVerificationId) {
+        Assert.hasText(oldPassword, "原密码不能为空");
+        Assert.hasText(newPassword, "新密码不能为空");
+        Assert.hasText(captchaVerificationId, "验证码校验凭证不能为空");
+
+        String trimmedOldPassword = oldPassword.trim();
+        String trimmedNewPassword = newPassword.trim();
+        captchaService.validateLoginCaptcha(captchaVerificationId.trim());
+
+        Long userId = getUserId();
+        User currentUser = userService.getUserById(userId);
+        if (currentUser == null) {
+            throw new ServiceException(ResponseCode.RESULT_IS_NULL, CURRENT_USER_NOT_FOUND_MESSAGE);
+        }
+        if (!passwordEncoder.matches(trimmedOldPassword, currentUser.getPassword())) {
+            throw new ServiceException(ResponseCode.OPERATION_ERROR, OLD_PASSWORD_INCORRECT_MESSAGE);
+        }
+        if (trimmedOldPassword.equals(trimmedNewPassword)) {
+            throw new ServiceException(ResponseCode.PARAM_ERROR, SAME_PASSWORD_MESSAGE);
+        }
+
+        User updateUser = new User();
+        updateUser.setId(userId);
+        updateUser.setPassword(passwordEncoder.encode(trimmedNewPassword));
+        boolean updateResult = userService.updateById(updateUser);
+        if (!updateResult) {
+            throw new ServiceException(ResponseCode.OPERATION_ERROR, CHANGE_PASSWORD_FAIL_MESSAGE);
+        }
+
+        redisTokenStore.deleteSessionsByUserIds(Set.of(userId));
     }
 
     @Override

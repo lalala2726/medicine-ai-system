@@ -70,9 +70,14 @@ export function AssistantBubble({ children, variant = 'text', tone = 'assistant'
   return <div className={bubbleClassName}>{children}</div>
 }
 
+/** 用于判断滚动条是否处于贴底状态的容差（单位：px）。 */
+const ASSISTANT_THINKING_SCROLL_BOTTOM_THRESHOLD = 24
+
 /**
  * Assistant 思考区容器。
  * 根据状态自动折叠/展开，也支持用户自行切换。
+ * 内部内容超过最大高度时出现滚动条，流式输出会自动贴底，
+ * 用户手动向上滚动后则停止自动贴底，避免打断阅读。
  *
  * @param props - 组件属性
  * @returns 思考区节点
@@ -80,6 +85,10 @@ export function AssistantBubble({ children, variant = 'text', tone = 'assistant'
 export function AssistantThinking({ children, isDone = false, className }: AssistantThinkingProps) {
   // 仅在初始挂载时，根据 isDone 决定是否展开。历史记录默认折叠，正在进行默认展开。
   const [expanded, setExpanded] = useState(!isDone)
+  /** 滚动容器 ref，用于读取滚动状态并触发自动贴底。 */
+  const bodyRef = useRef<HTMLDivElement>(null)
+  /** 当前滚动条是否仍贴在底部，用户上滑后置为 false。 */
+  const stickToBottomRef = useRef(true)
 
   /** 思考区标题文案。 */
   const thinkingTitle = isDone ? '已深度思考' : '深度思考中...'
@@ -91,6 +100,54 @@ export function AssistantThinking({ children, isDone = false, className }: Assis
   ]
     .filter(Boolean)
     .join(' ')
+
+  /**
+   * 监听用户在思考区内的滚动行为，记录当前是否贴底。
+   *
+   * @returns 无返回值
+   */
+  const handleBodyScroll = () => {
+    const bodyElement = bodyRef.current
+    if (!bodyElement) {
+      return
+    }
+    const distanceFromBottom = bodyElement.scrollHeight - bodyElement.scrollTop - bodyElement.clientHeight
+    stickToBottomRef.current = distanceFromBottom <= ASSISTANT_THINKING_SCROLL_BOTTOM_THRESHOLD
+  }
+
+  /**
+   * 流式输出新增内容时，若用户仍处于贴底状态，则保持滚动条贴底。
+   */
+  useEffect(() => {
+    if (!expanded) {
+      return
+    }
+    const bodyElement = bodyRef.current
+    if (!bodyElement) {
+      return
+    }
+
+    bodyElement.scrollTop = bodyElement.scrollHeight
+    stickToBottomRef.current = true
+
+    if (typeof ResizeObserver === 'undefined') {
+      return
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (!stickToBottomRef.current) {
+        return
+      }
+      bodyElement.scrollTop = bodyElement.scrollHeight
+    })
+
+    resizeObserver.observe(bodyElement)
+    Array.from(bodyElement.children).forEach(child => resizeObserver.observe(child))
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [expanded])
 
   return (
     <div className={thinkingClassName}>
@@ -104,7 +161,11 @@ export function AssistantThinking({ children, isDone = false, className }: Assis
           <ChevronDown className={styles.thinkingArrow} size={14} />
         )}
       </button>
-      {expanded ? <div className={styles.thinkingBody}>{children}</div> : null}
+      {expanded ? (
+        <div ref={bodyRef} className={styles.thinkingBody} onScroll={handleBodyScroll}>
+          {children}
+        </div>
+      ) : null}
     </div>
   )
 }

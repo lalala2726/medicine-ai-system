@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ASSISTANT_MESSAGE_TYPES, type AssistantTypes } from '@/api/assistant/contract'
 import type { AssistantChatSubmitCardPayload } from '@/api/assistant/agent'
+import { showWarningNotify } from '@/utils/notify'
 import { ASSISTANT_REQUEST_START_RESULT_TYPES, type AssistantRequestStartResult } from '../stream/useAssistantStream'
 import {
   type ChatMessage,
@@ -18,6 +19,9 @@ import {
   buildConsultationQuestionnaireRequestPayload,
   buildSelectionCardRequestPayload
 } from './interactiveCardPayloads'
+
+/** 商品购买卡多商品直购暂不支持的提示文案。 */
+const ASSISTANT_MULTI_PRODUCT_PURCHASE_UNSUPPORTED_TEXT = '多商品请先加入购物车后再统一结算'
 
 /** useMessageCallbacks Hook 的配置项 */
 interface UseMessageCallbacksOptions {
@@ -136,13 +140,19 @@ export function useMessageCallbacks({
 
   /**
    * 处理商品购买卡"立即购买"点击事件。
-   * 将商品数据转换为 CartItem 格式后跳转到结算页。
+   * 单商品沿用直购结算；多商品当前后端直购接口不支持，避免进入结算页后只提交第一件。
    *
    * @param products - 购买商品列表
+   * @returns 无返回值
    */
   const handlePurchaseClick = useCallback(
     (products: PurchaseProductDisplayItem[]) => {
       if (products.length === 0) return
+
+      if (products.length > 1) {
+        showWarningNotify(ASSISTANT_MULTI_PRODUCT_PURCHASE_UNSUPPORTED_TEXT)
+        return
+      }
 
       const cartItems = products.map(product => ({
         id: 0,

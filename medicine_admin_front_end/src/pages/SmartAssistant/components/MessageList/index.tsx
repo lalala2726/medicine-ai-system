@@ -511,7 +511,7 @@ const MessageList: React.FC<MessageListProps> = ({
    */
   const createUserContentRender = useCallback(
     (item: MessageItem) => () => {
-      const imgRegex = /!\[.*?\]\((.*?)\)/g;
+      const imgRegex = /!\[[^\]]*\]\((.*?)\)/g;
       const imageUrls: string[] = [];
       let match;
       while ((match = imgRegex.exec(item.content)) !== null) {

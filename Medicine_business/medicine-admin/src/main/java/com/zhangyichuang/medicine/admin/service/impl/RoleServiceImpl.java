@@ -24,11 +24,15 @@ import com.zhangyichuang.medicine.model.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.CollectionUtils;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -131,6 +135,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
      * @return true 表示更新成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateRolePermission(RolePermissionUpdateRequest request) {
         Assert.notNull(request, "角色权限信息不能为空");
         if (RolesConstant.SUPER_ADMIN_ROLE_ID.equals(request.getRoleId())) {
@@ -139,9 +144,37 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         boolean updated = rolePermissionService.updateRolePermission(request);
         if (updated) {
             Set<Long> userIds = userRoleService.getUserIdsByRoleId(request.getRoleId());
-            redisTokenStore.deleteSessionsByUserIds(userIds);
+            clearRoleUserSessionsAfterCommit(userIds);
         }
         return updated;
+    }
+
+    /**
+     * 注册角色绑定用户会话清理动作，保证角色权限提交成功后旧权限立即失效。
+     *
+     * @param userIds 绑定该角色的用户ID集合
+     */
+    private void clearRoleUserSessionsAfterCommit(Set<Long> userIds) {
+        if (CollectionUtils.isEmpty(userIds)) {
+            return;
+        }
+        Set<Long> normalizedUserIds = userIds.stream()
+                .filter(Objects::nonNull)
+                .filter(userId -> userId > 0)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        if (normalizedUserIds.isEmpty()) {
+            return;
+        }
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    redisTokenStore.deleteSessionsByUserIds(normalizedUserIds);
+                }
+            });
+            return;
+        }
+        redisTokenStore.deleteSessionsByUserIds(normalizedUserIds);
     }
 
     @Override

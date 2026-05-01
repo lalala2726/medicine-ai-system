@@ -10,7 +10,7 @@ from langchain_core.messages import HumanMessage
 
 from app.agent.client.state import CardActionState
 from app.agent.client.workflow import build_graph
-from app.core.agent.agent_orchestrator import AssistantStreamConfig
+from app.core.agent.agent_orchestrator import AgentTraceRunConfig, AssistantStreamConfig
 from app.core.agent.run_event_store import LocalRunHandle
 from app.core.codes import ResponseCode
 from app.core.config_sync import AgentChatModelSlot, get_current_agent_config_snapshot
@@ -1158,6 +1158,14 @@ async def assistant_chat(
                 or RUN_EVENT_STORE.is_cancel_requested(
             conversation_uuid=context.conversation_uuid,
         )
+        ),
+        trace_config=AgentTraceRunConfig(
+            graph_name=resolved_run_name,
+            conversation_uuid=context.conversation_uuid,
+            assistant_message_uuid=context.assistant_message_uuid,
+            user_id=current_user_id,
+            conversation_type=ConversationType.CLIENT.value,
+            entrypoint="api.client_assistant.chat",
         ),
     )
     background_task = asyncio.create_task(

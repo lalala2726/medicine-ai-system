@@ -30,8 +30,12 @@ from app.services.admin_assistant_service import (
 
 router = APIRouter(prefix="/admin/assistant", tags=["智能助手"])
 
-# 管理端智能助手统一访问权限码，与后台前端 `system:smart_assistant` 保持一致。
+# 管理端智能助手访问权限码，与后台前端 `system:smart_assistant` 保持一致。
 ADMIN_ASSISTANT_ACCESS_PERMISSION = "system:smart_assistant"
+# 管理端智能助手会话标题修改权限码，用于限制写操作。
+ADMIN_ASSISTANT_UPDATE_PERMISSION = "admin:assistant:update"
+# 管理端智能助手会话删除权限码，用于限制破坏性操作。
+ADMIN_ASSISTANT_DELETE_PERMISSION = "admin:assistant:delete"
 
 # 聊天率限制规则
 CHAT_RATE_LIMIT_RULES = (
@@ -333,7 +337,7 @@ async def conversation_list(
 
 @router.delete("/conversation/{conversation_uuid}", summary="删除管理助手会话")
 @pre_authorize(
-    lambda: has_role(RoleCode.SUPER_ADMIN) or has_permission(ADMIN_ASSISTANT_ACCESS_PERMISSION)
+    lambda: has_role(RoleCode.SUPER_ADMIN) or has_permission(ADMIN_ASSISTANT_DELETE_PERMISSION)
 )
 async def delete_conversation(
         conversation_uuid: str = Path(..., min_length=1, description="会话UUID"),
@@ -348,7 +352,7 @@ async def delete_conversation(
 
 @router.put("/conversation/{conversation_uuid}", summary="修改管理助手会话标题")
 @pre_authorize(
-    lambda: has_role(RoleCode.SUPER_ADMIN) or has_permission(ADMIN_ASSISTANT_ACCESS_PERMISSION)
+    lambda: has_role(RoleCode.SUPER_ADMIN) or has_permission(ADMIN_ASSISTANT_UPDATE_PERMISSION)
 )
 async def update_conversation_title(
         request: UpdateConversationTitleRequest,

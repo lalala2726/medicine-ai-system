@@ -133,7 +133,7 @@ export interface SliderCaptchaCheckPayload {
 export async function requestCaptcha<TResponseData = unknown, TRequestData = unknown>(
   payload: CaptchaRequestPayload<TRequestData>,
 ): Promise<TianaiCaptchaResponse<TResponseData>> {
-  const response = await baseRequestClient.request<any>(payload.url, {
+  const response = await baseRequestClient.request<TResponseData>(payload.url, {
     method: payload.method ?? 'GET',
     data: payload.data,
     headers: payload.headers,

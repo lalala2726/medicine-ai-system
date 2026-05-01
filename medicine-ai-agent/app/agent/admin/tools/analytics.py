@@ -13,7 +13,6 @@ from app.core.agent.middleware import (
     tool_call_status,
     tool_thinking_redaction,
 )
-from app.core.agent.tool_cache import ADMIN_TOOL_CACHE_PROFILE, tool_cacheable
 from app.schemas.http_response import HttpResponse
 from app.utils.http_client import HttpClient
 
@@ -99,10 +98,6 @@ async def request_analytics_data(
     error_message="获取实时运营总览失败",
     timely_message="实时运营总览正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_realtime_overview",
-)
 async def analytics_realtime_overview() -> dict:
     """
     功能描述：
@@ -137,10 +132,6 @@ async def analytics_realtime_overview() -> dict:
     start_message="正在查询经营结果汇总",
     error_message="获取经营结果汇总失败",
     timely_message="经营结果汇总正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_range_summary",
 )
 async def analytics_range_summary(days: int = 30) -> dict:
     """
@@ -178,10 +169,6 @@ async def analytics_range_summary(days: int = 30) -> dict:
     error_message="获取支付转化汇总失败",
     timely_message="支付转化汇总正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_conversion_summary",
-)
 async def analytics_conversion_summary(days: int = 30) -> dict:
     """
     功能描述：
@@ -217,10 +204,6 @@ async def analytics_conversion_summary(days: int = 30) -> dict:
     start_message="正在查询履约时效汇总",
     error_message="获取履约时效汇总失败",
     timely_message="履约时效汇总正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_fulfillment_summary",
 )
 async def analytics_fulfillment_summary(days: int = 30) -> dict:
     """
@@ -258,10 +241,6 @@ async def analytics_fulfillment_summary(days: int = 30) -> dict:
     error_message="获取售后处理时效汇总失败",
     timely_message="售后处理时效汇总正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_after_sale_efficiency_summary",
-)
 async def analytics_after_sale_efficiency_summary(days: int = 30) -> dict:
     """
     功能描述：
@@ -297,10 +276,6 @@ async def analytics_after_sale_efficiency_summary(days: int = 30) -> dict:
     start_message="正在查询售后状态分布",
     error_message="获取售后状态分布失败",
     timely_message="售后状态分布正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_after_sale_status_distribution",
 )
 async def analytics_after_sale_status_distribution(days: int = 30) -> dict:
     """
@@ -338,10 +313,6 @@ async def analytics_after_sale_status_distribution(days: int = 30) -> dict:
     error_message="获取售后原因分布失败",
     timely_message="售后原因分布正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_after_sale_reason_distribution",
-)
 async def analytics_after_sale_reason_distribution(days: int = 30) -> dict:
     """
     功能描述：
@@ -377,10 +348,6 @@ async def analytics_after_sale_reason_distribution(days: int = 30) -> dict:
     start_message="正在查询热销商品排行",
     error_message="获取热销商品排行失败",
     timely_message="热销商品排行正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_top_selling_products",
 )
 async def analytics_top_selling_products(days: int = 30, limit: int = 10) -> dict:
     """
@@ -419,10 +386,6 @@ async def analytics_top_selling_products(days: int = 30, limit: int = 10) -> dic
     error_message="获取退货退款风险商品排行失败",
     timely_message="退货退款风险商品排行正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_return_refund_risk_products",
-)
 async def analytics_return_refund_risk_products(days: int = 30, limit: int = 10) -> dict:
     """
     功能描述：
@@ -460,10 +423,6 @@ async def analytics_return_refund_risk_products(days: int = 30, limit: int = 10)
     error_message="获取成交趋势失败",
     timely_message="成交趋势正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_sales_trend",
-)
 async def analytics_sales_trend(days: int = 30) -> dict:
     """
     功能描述：
@@ -499,10 +458,6 @@ async def analytics_sales_trend(days: int = 30) -> dict:
     start_message="正在查询售后趋势",
     error_message="获取售后趋势失败",
     timely_message="售后趋势正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="analytics_after_sale_trend",
 )
 async def analytics_after_sale_trend(days: int = 30) -> dict:
     """

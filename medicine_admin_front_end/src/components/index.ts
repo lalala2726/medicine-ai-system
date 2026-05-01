@@ -30,6 +30,9 @@ import AppIcon from './AppIcon';
 import RichTextEditor from './Editor';
 import PermissionButton from './PermissionButton';
 import PermissionGate from './PermissionGate';
+import ResizeHandle from './ResizeHandle';
+import ResizableDrawer from './ResizableDrawer';
+import ResizableSplitPane from './ResizableSplitPane';
 import SecondaryMenu from './SecondaryMenu';
 
 export {
@@ -56,6 +59,9 @@ export {
   PictureListUpload,
   PermissionButton,
   PermissionGate,
+  ResizeHandle,
+  ResizableDrawer,
+  ResizableSplitPane,
   RichTextEditor,
   RestrictedUpload,
   RoundPhotoWall,
@@ -65,5 +71,8 @@ export {
 export type { AppIconProps } from './AppIcon';
 export type { PermissionButtonProps } from './PermissionButton';
 export type { PermissionGateProps } from './PermissionGate';
+export type { ResizeHandleProps } from './ResizeHandle';
+export type { ResizableDrawerProps } from './ResizableDrawer';
+export type { ResizableSplitPaneProps } from './ResizableSplitPane';
 export type { RichTextContentFormat, RichTextEditorOptions, RichTextEditorProps } from './Editor';
 export type { SecondaryMenuItem, SecondaryMenuProps } from './SecondaryMenu';

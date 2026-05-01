@@ -42,12 +42,12 @@ def test_cors_simple_request_allows_127_origin(monkeypatch):
 
     response = client.post(
         "/image_parse/drug",
-        headers={"Origin": "http://localhost:5173", **_auth_headers()},
+        headers={"Origin": "http://127.0.0.1:5173", **_auth_headers()},
         json={"images": []},
     )
 
     assert response.status_code == 400
-    assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
+    assert response.headers["access-control-allow-origin"] == "http://127.0.0.1:5173"
     assert response.headers["access-control-allow-credentials"] == "true"
 
 

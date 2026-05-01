@@ -18,6 +18,7 @@ from app.agent.client.domain.diagnosis.tools import (
     search_symptom_candidates,
     send_consultation_questionnaire_card,
 )
+from app.agent.tools import get_current_time
 from app.agent.client.domain.tools.navigation_tools import open_user_patient_list
 from app.agent.client.domain.prescription.tools import (
     build_product_search_tag_prompt_text,
@@ -38,22 +39,17 @@ from app.core.agent.agent_runtime import _run_async, agent_stream
 from app.core.agent.agent_tool_trace import resolve_final_output_text
 from app.core.agent.middleware import (
     BasePromptMiddleware,
+    DashScopeExplicitCacheMiddleware,
     SkillMiddleware,
     ToolCallLimitMiddleware,
     ToolTracePromptMiddleware,
     build_tool_status_middleware,
 )
-from app.core.agent.tool_cache import (
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    DIAGNOSIS_TOOL_CACHE_PROFILE,
-    bind_tool_cache_conversation,
-    render_tool_cache_prompt,
-    reset_tool_cache_conversation,
-)
 from app.core.agent.tool_trace import (
     bind_tool_trace_context,
     reset_tool_trace_context,
 )
+from app.core.agent.tracing import TraceModelMiddleware, agent_trace, build_trace_tool_middleware
 from app.core.config_sync import (
     AgentChatModelSlot,
     create_agent_chat_llm,
@@ -66,7 +62,7 @@ from app.utils.chat_image_utils import (
     normalize_chat_image_urls,
 )
 from app.utils.assistant_message_utils import PATIENT_CARD_WORKFLOW_PREFIX
-from app.utils.prompt_utils import append_current_time_to_prompt, load_managed_prompt
+from app.utils.prompt_utils import load_managed_prompt
 
 # 医疗节点系统提示词业务键。
 _MEDICAL_SYSTEM_PROMPT_KEY = "client_medical_node_system_prompt"
@@ -486,6 +482,7 @@ def _build_medical_runtime_tools() -> list[Any]:
     """
 
     return [
+        get_current_time,
         search_symptom_candidates,
         query_disease_candidates_by_symptoms,
         query_disease_detail,
@@ -516,7 +513,7 @@ def _build_medical_system_prompt(
         prescription_consent_status (PrescriptionConsentStatus | None): 最近一次开药确认状态。
 
     返回值：
-        str: 拼接缓存与标签目录后的完整提示词。
+        str: 拼接交互状态、就诊人状态与标签目录后的完整提示词。
 
     异常说明：
         Exception: 读取商品标签目录失败时直接向上抛出。
@@ -525,14 +522,6 @@ def _build_medical_system_prompt(
     final_prompt = load_managed_prompt(
         _MEDICAL_SYSTEM_PROMPT_KEY,
         local_prompt_path=_MEDICAL_SYSTEM_PROMPT_LOCAL_PATH,
-    )
-    diagnosis_cache_prompt = render_tool_cache_prompt(
-        DIAGNOSIS_TOOL_CACHE_PROFILE,
-        conversation_uuid,
-    )
-    commerce_cache_prompt = render_tool_cache_prompt(
-        CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-        conversation_uuid,
     )
     tag_prompt_text = _run_async(_get_cached_tag_filters())
 
@@ -546,22 +535,13 @@ def _build_medical_system_prompt(
         section_title="当前就诊人资料状态",
         section_content=_build_patient_info_prompt(patient_info_status),
     )
-    final_prompt = _append_prompt_section(
-        base_prompt=final_prompt,
-        section_title="当前已知疾病资料",
-        section_content=diagnosis_cache_prompt,
-    )
-    final_prompt = _append_prompt_section(
-        base_prompt=final_prompt,
-        section_title="当前已知药品资料",
-        section_content=commerce_cache_prompt,
-    )
     if tag_prompt_text:
         final_prompt = f"{final_prompt.rstrip()}\n\n{tag_prompt_text}"
-    return append_current_time_to_prompt(final_prompt)
+    return final_prompt
 
 
 @traceable(name="Client Assistant Medical Agent Node", run_type="chain")
+@agent_trace(name="Client Assistant Medical Agent Node")
 def medical_agent(state: AgentState) -> dict[str, Any]:
     """
     功能描述：
@@ -604,20 +584,15 @@ def medical_agent(state: AgentState) -> dict[str, Any]:
             BasePromptMiddleware(),
             ToolTracePromptMiddleware(),
             SkillMiddleware(scope=_MEDICAL_SKILL_SCOPE),
+            DashScopeExplicitCacheMiddleware(),
+            TraceModelMiddleware(slot=AgentChatModelSlot.CLIENT_DIAGNOSIS.value),
+            build_trace_tool_middleware(),
             build_tool_status_middleware(),
             ToolCallLimitMiddleware(
                 thread_limit=_MEDICAL_TOOL_CALL_THREAD_LIMIT,
                 run_limit=_MEDICAL_TOOL_CALL_RUN_LIMIT,
             ),
         ],
-    )
-    diagnosis_cache_token = bind_tool_cache_conversation(
-        DIAGNOSIS_TOOL_CACHE_PROFILE,
-        conversation_uuid,
-    )
-    commerce_cache_token = bind_tool_cache_conversation(
-        CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-        conversation_uuid,
     )
     tool_trace_token = bind_tool_trace_context(
         conversation_uuid=conversation_uuid,
@@ -633,14 +608,6 @@ def medical_agent(state: AgentState) -> dict[str, Any]:
         )
     finally:
         reset_tool_trace_context(tool_trace_token)
-        reset_tool_cache_conversation(
-            CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-            commerce_cache_token,
-        )
-        reset_tool_cache_conversation(
-            DIAGNOSIS_TOOL_CACHE_PROFILE,
-            diagnosis_cache_token,
-        )
     text = resolve_final_output_text(
         payload=stream_result,
         fallback_text=str(stream_result.get("streamed_text") or ""),

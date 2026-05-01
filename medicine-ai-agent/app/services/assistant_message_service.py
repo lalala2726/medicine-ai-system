@@ -234,17 +234,11 @@ def build_assistant_message_callback(
             "cards": resolved_cards,
             "status": resolved_status,
         }
-        if has_cards:
-            await asyncio.to_thread(
-                persist_assistant_message,
-                **persist_kwargs,
-            )
-            return
-
-        _schedule_background_task(
-            task_name="persist_assistant_message",
-            func=persist_assistant_message,
-            kwargs=persist_kwargs,
+        # 终态 AI 消息必须在 run 收尾前落库，避免用户快速发下一轮时，
+        # Trace 从历史消息中读不到上一轮 AI 回复。
+        await asyncio.to_thread(
+            persist_assistant_message,
+            **persist_kwargs,
         )
 
     return _callback

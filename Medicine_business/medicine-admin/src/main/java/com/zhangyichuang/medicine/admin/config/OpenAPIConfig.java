@@ -37,7 +37,7 @@ public class OpenAPIConfig {
                         .description("提供完整的API接口定义与交互说明，便于快速集成和使用。")
                         .contact(new Contact()
                                 .name("Chuang")
-                                .email("example@example.com")
+                                .email("chuang@zhangchuangla.cn")
                                 .name("Apache 2.0")
                                 .url("https://opensource.org/licenses/apache-2-0")));
     }

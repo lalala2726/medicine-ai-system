@@ -88,7 +88,7 @@ export interface AssistantComposerProps {
   /** 输入框内容更新回调。 */
   onValueChange: (value: string) => void
   /** 输入区图片 URL 列表更新回调。 */
-  onImageUrlsChange: (imageUrls: string[]) => void
+  onImageUrlsChange: (imageUrls: string[] | ((_currentImageUrls: string[]) => string[])) => void
   /** 点击发送回调。 */
   onSend: () => void | Promise<void>
   /** 点击停止回调。 */
@@ -551,10 +551,12 @@ const AssistantComposer = ({
           return
         }
 
-        onImageUrlsChange([...imageUrls, ...uploadedImageUrls].slice(0, ASSISTANT_IMAGE_MAX_COUNT))
+        onImageUrlsChange(currentImageUrls =>
+          [...currentImageUrls, ...uploadedImageUrls].slice(0, ASSISTANT_IMAGE_MAX_COUNT)
+        )
       })()
     },
-    [imageUploadBlocked, imageUploadDisabledText, imageUrls, onImageUrlsChange]
+    [imageUploadBlocked, imageUploadDisabledText, imageUrls.length, onImageUrlsChange]
   )
 
   /**

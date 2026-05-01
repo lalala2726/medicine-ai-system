@@ -14,6 +14,7 @@ from loguru import logger
 from app.agent.admin.state import ChatHistoryMessage
 from app.agent.admin.workflow import build_graph
 from app.core.agent.agent_orchestrator import (
+    AgentTraceRunConfig,
     AssistantStreamConfig,
     build_answer_response,
     iterate_assistant_responses,
@@ -201,7 +202,7 @@ def _build_initial_state(
 
     Args:
         question: 当前用户问题文本；当前实现仅用于接口语义占位，不参与状态构造。
-        conversation_uuid: 当前会话 UUID，用于会话级工具缓存隔离。
+        conversation_uuid: 当前会话 UUID，用于标记本轮所属会话。
         assistant_message_uuid: 当前轮 AI 占位消息 UUID。
         history_messages: 会话历史消息列表；为空时默认空列表。
         current_question: 当前轮用户原始问题文本。
@@ -865,12 +866,7 @@ async def _run_assistant_workflow_in_background(
                 )
             else:
                 final_status = response_status
-                await _flush_stream_snapshot_if_due(
-                    conversation_id=context.conversation_id,
-                    assistant_message_uuid=context.assistant_message_uuid,
-                    aggregate_state=aggregate_state,
-                    force=True,
-                )
+                # 终态消息由 orchestrator 的 on_answer_completed 回调写入，不能再用 streaming 快照覆盖状态。
     finally:
         await asyncio.to_thread(
             RUN_EVENT_STORE.finalize_run,
@@ -884,8 +880,10 @@ def _build_run_stream_config(
         *,
         question: str,
         context: ConversationContext,
+        user_id: int,
         workflow: Any,
         workflow_name: str,
+        entrypoint: str,
         build_stream_config_func: Any,
         invoke_sync_func: Any,
         map_exception_func: Any,
@@ -898,8 +896,10 @@ def _build_run_stream_config(
     Args:
         question: 用户问题文本。
         context: 当前会话上下文。
+        user_id: 当前用户 ID。
         workflow: 已编译 workflow。
         workflow_name: 工作流名称。
+        entrypoint: trace 入口标识。
         build_stream_config_func: tracing 配置构造函数。
         invoke_sync_func: 同步回退执行函数。
         map_exception_func: 异常映射函数。
@@ -938,6 +938,14 @@ def _build_run_stream_config(
                 or RUN_EVENT_STORE.is_cancel_requested(
             conversation_uuid=context.conversation_uuid,
         )
+        ),
+        trace_config=AgentTraceRunConfig(
+            graph_name=workflow_name,
+            conversation_uuid=context.conversation_uuid,
+            assistant_message_uuid=context.assistant_message_uuid,
+            user_id=user_id,
+            conversation_type=ConversationType.ADMIN.value,
+            entrypoint=entrypoint,
         ),
     )
 
@@ -1120,8 +1128,10 @@ def assistant_chat_submit(
     stream_config = _build_run_stream_config(
         question=context.current_question,
         context=context,
+        user_id=current_user_id,
         workflow=ADMIN_WORKFLOW,
         workflow_name=ADMIN_WORKFLOW_NAME,
+        entrypoint="api.admin_assistant.chat",
         build_stream_config_func=_build_stream_config,
         invoke_sync_func=_invoke_admin_workflow,
         map_exception_func=_map_exception,

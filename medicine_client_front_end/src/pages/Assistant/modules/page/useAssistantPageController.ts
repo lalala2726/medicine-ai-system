@@ -6,7 +6,8 @@ import {
   useState,
   type FocusEvent,
   type MouseEvent,
-  type RefObject
+  type RefObject,
+  type SetStateAction
 } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { OrderAfterSaleTypes } from '@/api/orderAfterSale'
@@ -744,7 +745,6 @@ export function useAssistantPageController(): AssistantPageControllerResult {
       if (result.type === ASSISTANT_REQUEST_START_RESULT_TYPES.SUBMITTED) {
         setComposerValue('')
         setComposerImageUrls([])
-        setDeepThinking(false)
         if (consultProductDraft) {
           setAttachedProductDraft(null)
         }
@@ -787,10 +787,10 @@ export function useAssistantPageController(): AssistantPageControllerResult {
   /**
    * 处理输入区图片 URL 列表变化。
    *
-   * @param imageUrls - 最新图片 URL 列表
+   * @param imageUrls - 最新图片 URL 列表或基于当前列表的更新函数
    * @returns 无返回值
    */
-  const handleComposerImageUrlsChange = useCallback((imageUrls: string[]) => {
+  const handleComposerImageUrlsChange = useCallback((imageUrls: SetStateAction<string[]>) => {
     setComposerImageUrls(imageUrls)
   }, [])
 
@@ -851,7 +851,6 @@ export function useAssistantPageController(): AssistantPageControllerResult {
 
         if (result.type === ASSISTANT_REQUEST_START_RESULT_TYPES.SUBMITTED) {
           setComposerImageUrls([])
-          setDeepThinking(false)
           if (consultProductDraft) {
             setAttachedProductDraft(null)
           }
@@ -927,10 +926,7 @@ export function useAssistantPageController(): AssistantPageControllerResult {
       closeOrderSelector()
 
       void (async () => {
-        const result = await startAssistantRequest(payload)
-        if (result.type === ASSISTANT_REQUEST_START_RESULT_TYPES.SUBMITTED) {
-          setDeepThinking(false)
-        }
+        await startAssistantRequest(payload)
       })()
     },
     [closeOrderSelector, startAssistantRequest, userAvatar]
@@ -949,10 +945,7 @@ export function useAssistantPageController(): AssistantPageControllerResult {
       closeAfterSaleSelector()
 
       void (async () => {
-        const result = await startAssistantRequest(payload)
-        if (result.type === ASSISTANT_REQUEST_START_RESULT_TYPES.SUBMITTED) {
-          setDeepThinking(false)
-        }
+        await startAssistantRequest(payload)
       })()
     },
     [closeAfterSaleSelector, startAssistantRequest, userAvatar]
@@ -974,10 +967,7 @@ export function useAssistantPageController(): AssistantPageControllerResult {
       closePatientSelector()
 
       void (async () => {
-        const result = await startAssistantRequest(payload)
-        if (result.type === ASSISTANT_REQUEST_START_RESULT_TYPES.SUBMITTED) {
-          setDeepThinking(false)
-        }
+        await startAssistantRequest(payload)
       })()
     },
     [closePatientSelector, startAssistantRequest, userAvatar]
@@ -1035,7 +1025,6 @@ export function useAssistantPageController(): AssistantPageControllerResult {
 
           if (result.type === ASSISTANT_REQUEST_START_RESULT_TYPES.SUBMITTED) {
             setComposerValue('')
-            setDeepThinking(false)
           }
         })()
       })

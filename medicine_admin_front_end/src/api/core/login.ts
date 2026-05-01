@@ -48,6 +48,18 @@ export interface ChangeAdminPhoneParams {
   verificationCode: string;
 }
 
+/**
+ * 管理端修改当前登录用户密码参数。
+ */
+export interface ChangeAdminPasswordParams {
+  /** 原登录密码。 */
+  oldPassword: string;
+  /** 新登录密码。 */
+  newPassword: string;
+  /** 滑动验证码校验凭证。 */
+  captchaVerificationId: string;
+}
+
 export interface RefreshTokenResult {
   accessToken: string;
   refreshToken?: string | null;
@@ -101,6 +113,20 @@ export async function changeAdminPhone(
   options?: { [key: string]: any },
 ) {
   return requestClient.put<void, ChangeAdminPhoneParams>('/auth/phone', body, options);
+}
+
+/**
+ * 修改当前登录管理员密码。
+ *
+ * @param body 修改密码参数。
+ * @param options 请求配置。
+ * @returns 修改结果。
+ */
+export async function changeAdminPassword(
+  body: ChangeAdminPasswordParams,
+  options?: { [key: string]: any },
+) {
+  return requestClient.put<void, ChangeAdminPasswordParams>('/auth/password', body, options);
 }
 
 /** 发送验证码 POST /api/login/captcha */

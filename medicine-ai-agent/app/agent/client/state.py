@@ -28,7 +28,7 @@ class AgentState(MessagesState, total=False):
 
     字段说明：
     1. `messages` 由 `MessagesState` 提供，兼容 LangGraph 内部消息流；
-    2. `conversation_uuid` 用于会话级工具缓存隔离；
+    2. `conversation_uuid` 标记当前会话；
     3. `routing` 存储 gateway 路由结果或入口直达目标；
     4. `card_action` 存储交互卡片点击后的结构化上下文；
     5. `assistant_message_uuid` 标记当前轮 AI 占位消息；

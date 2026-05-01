@@ -3,6 +3,10 @@ Agent 中间件统一导出入口。
 """
 
 from app.core.agent.middleware.base_prompt import BasePromptMiddleware
+from app.core.agent.middleware.context_cache import (
+    DashScopeExplicitCacheMiddleware,
+    has_dashscope_explicit_cache_control,
+)
 from app.core.agent.middleware.dynamic_tool import (
     DynamicToolMiddleware,
     DynamicToolRegistryProtocol,
@@ -18,7 +22,6 @@ from app.core.agent.middleware.dynamic_tool import (
 )
 from app.core.agent.middleware.skill import SkillMiddleware
 from app.core.agent.middleware.tool_call_limit import ToolCallLimitMiddleware
-from app.core.agent.middleware.tool_cache_prompt import ToolCachePromptMiddleware
 from app.core.agent.middleware.tool_trace_prompt import ToolTracePromptMiddleware
 from app.core.agent.middleware.tool_trace_record import tool_trace_record
 from app.core.agent.middleware.tool_thinking_redaction import (
@@ -31,6 +34,7 @@ from app.core.agent.middleware.tool_status import (
 
 __all__ = [
     "BasePromptMiddleware",
+    "DashScopeExplicitCacheMiddleware",
     "DynamicToolMiddleware",
     "DynamicToolRegistryProtocol",
     "DynamicToolingTextConfig",
@@ -39,12 +43,12 @@ __all__ = [
     "ManagedDynamicToolRegistry",
     "SkillMiddleware",
     "ToolCallLimitMiddleware",
-    "ToolCachePromptMiddleware",
     "ToolTracePromptMiddleware",
     "build_tool_status_middleware",
     "create_list_loadable_tools_tool",
     "create_load_tools_tool",
     "extract_loaded_tool_keys_from_stream_result",
+    "has_dashscope_explicit_cache_control",
     "merge_unique_loaded_tool_keys",
     "normalize_loaded_tool_keys",
     "tool_call_status",

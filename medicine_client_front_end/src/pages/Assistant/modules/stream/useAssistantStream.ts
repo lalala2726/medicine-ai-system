@@ -868,7 +868,7 @@ export function useAssistantStream({
       }
 
       /** 独立 card 事件优先使用后端 card_uuid 作为稳定消息 ID。 */
-      const cardMessageId = cardUuid ? `card-${cardUuid}` : `card-${event.timestamp ?? Date.now()}`
+      const cardMessageId = cardUuid ? `card-${cardUuid}` : `card-${createClientId()}`
 
       appendAssistantMessageImmediately({
         id: cardMessageId,

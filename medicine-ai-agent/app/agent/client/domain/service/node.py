@@ -24,6 +24,7 @@ from app.agent.client.domain.commerce.product import (
     search_products,
 )
 from app.agent.client.domain.tools import (
+    get_current_time,
     open_user_after_sale_list,
     open_user_order_list,
     send_consent_card,
@@ -38,21 +39,17 @@ from app.core.agent.agent_runtime import agent_stream
 from app.core.agent.agent_tool_trace import resolve_final_output_text
 from app.core.agent.middleware import (
     BasePromptMiddleware,
+    DashScopeExplicitCacheMiddleware,
     SkillMiddleware,
     ToolCallLimitMiddleware,
-    ToolCachePromptMiddleware,
     ToolTracePromptMiddleware,
     build_tool_status_middleware,
-)
-from app.core.agent.tool_cache import (
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    bind_tool_cache_conversation,
-    reset_tool_cache_conversation,
 )
 from app.core.agent.tool_trace import (
     bind_tool_trace_context,
     reset_tool_trace_context,
 )
+from app.core.agent.tracing import TraceModelMiddleware, agent_trace, build_trace_tool_middleware
 from app.core.config_sync import (
     AgentChatModelSlot,
     create_agent_chat_llm,
@@ -64,7 +61,7 @@ from app.utils.chat_image_utils import (
     build_multimodal_history_messages,
     normalize_chat_image_urls,
 )
-from app.utils.prompt_utils import append_current_time_to_prompt, load_managed_prompt
+from app.utils.prompt_utils import load_managed_prompt
 
 # service 节点系统提示词业务键。
 _SERVICE_SYSTEM_PROMPT_KEY = "client_service_node_system_prompt"
@@ -83,6 +80,7 @@ _SERVICE_TOOL_CALL_RUN_LIMIT = 12
 
 
 @traceable(name="Client Assistant Service Agent Node", run_type="chain")
+@agent_trace(name="Client Assistant Service Agent Node")
 def service_agent(state: AgentState) -> dict[str, Any]:
     """
     功能描述：
@@ -115,6 +113,7 @@ def service_agent(state: AgentState) -> dict[str, Any]:
 
     runtime_tools = [
         search_client_knowledge_context,
+        get_current_time,
         search_products,
         get_product_details,
         get_order_detail,
@@ -143,28 +142,24 @@ def service_agent(state: AgentState) -> dict[str, Any]:
     agent = create_agent(
         model=llm,
         tools=runtime_tools,
-        system_prompt=SystemMessage(
-            content=append_current_time_to_prompt(system_prompt)
-        ),
+        system_prompt=SystemMessage(content=system_prompt),
         state_schema=_SERVICE_AGENT_STATE_SCHEMA,
         middleware=[
             BasePromptMiddleware(
                 base_prompt_key="client_base_prompt",
                 base_prompt_local_path=_CLIENT_BASE_PROMPT_LOCAL_PATH,
             ),
-            ToolCachePromptMiddleware(profile=CLIENT_COMMERCE_TOOL_CACHE_PROFILE),
             ToolTracePromptMiddleware(),
             SkillMiddleware(scope=_SERVICE_SKILL_SCOPE),
+            DashScopeExplicitCacheMiddleware(),
+            TraceModelMiddleware(slot=AgentChatModelSlot.CLIENT_SERVICE.value),
+            build_trace_tool_middleware(),
             build_tool_status_middleware(),
             ToolCallLimitMiddleware(
                 thread_limit=_SERVICE_TOOL_CALL_THREAD_LIMIT,
                 run_limit=_SERVICE_TOOL_CALL_RUN_LIMIT,
             ),
         ],
-    )
-    cache_token = bind_tool_cache_conversation(
-        CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-        conversation_uuid,
     )
     tool_trace_token = bind_tool_trace_context(
         conversation_uuid=conversation_uuid,
@@ -180,10 +175,6 @@ def service_agent(state: AgentState) -> dict[str, Any]:
         )
     finally:
         reset_tool_trace_context(tool_trace_token)
-        reset_tool_cache_conversation(
-            CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-            cache_token,
-        )
     text = resolve_final_output_text(
         payload=stream_result,
         fallback_text=str(stream_result.get("streamed_text") or ""),

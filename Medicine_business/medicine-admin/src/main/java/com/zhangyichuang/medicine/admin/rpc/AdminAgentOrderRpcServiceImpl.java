@@ -1,29 +1,40 @@
 package com.zhangyichuang.medicine.admin.rpc;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.zhangyichuang.medicine.admin.service.MallAfterSaleService;
 import com.zhangyichuang.medicine.admin.service.MallOrderService;
+import com.zhangyichuang.medicine.admin.service.MallOrderShippingService;
 import com.zhangyichuang.medicine.admin.service.MallOrderTimelineService;
 import com.zhangyichuang.medicine.common.core.base.PageResult;
 import com.zhangyichuang.medicine.common.core.utils.Assert;
+import com.zhangyichuang.medicine.common.core.utils.JSONUtils;
 import com.zhangyichuang.medicine.model.dto.OrderContextDto;
 import com.zhangyichuang.medicine.model.dto.OrderDetailDto;
 import com.zhangyichuang.medicine.model.dto.OrderWithProductDto;
 import com.zhangyichuang.medicine.model.entity.MallAfterSale;
 import com.zhangyichuang.medicine.model.entity.MallOrder;
+import com.zhangyichuang.medicine.model.entity.MallOrderShipping;
 import com.zhangyichuang.medicine.model.entity.MallOrderTimeline;
 import com.zhangyichuang.medicine.model.enums.OrderStatusEnum;
+import com.zhangyichuang.medicine.model.enums.ShippingStatusEnum;
 import com.zhangyichuang.medicine.model.request.MallOrderListRequest;
-import com.zhangyichuang.medicine.model.vo.OrderShippingVo;
 import com.zhangyichuang.medicine.rpc.admin.AdminAgentOrderRpcService;
 import lombok.RequiredArgsConstructor;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 管理端 Agent 订单 RPC Provider。
@@ -44,6 +55,7 @@ public class AdminAgentOrderRpcServiceImpl implements AdminAgentOrderRpcService 
 
     private final MallOrderService mallOrderService;
     private final MallOrderTimelineService mallOrderTimelineService;
+    private final MallOrderShippingService mallOrderShippingService;
     private final MallAfterSaleService mallAfterSaleService;
 
     @Override
@@ -67,27 +79,46 @@ public class AdminAgentOrderRpcServiceImpl implements AdminAgentOrderRpcService 
     @Override
     public Map<String, OrderContextDto> getOrderContextsByOrderNos(List<String> orderNos) {
         validateContextOrderNos(orderNos);
+        List<String> normalizedOrderNos = normalizeOrderNos(orderNos);
+        Assert.notEmpty(normalizedOrderNos, "订单编号不能为空");
+        Map<String, MallOrder> orderMap = loadOrderMap(normalizedOrderNos);
+        Map<String, OrderDetailDto> detailMap = loadOrderDetailMap(normalizedOrderNos);
+        List<Long> orderIds = orderMap.values().stream()
+                .map(MallOrder::getId)
+                .filter(Objects::nonNull)
+                .toList();
+        Map<Long, List<MallOrderTimeline>> timelineMap = loadTimelineMap(orderIds);
+        Map<Long, MallOrderShipping> shippingMap = loadShippingMap(orderIds);
+        Set<String> afterSaleOrderNos = loadAfterSaleOrderNos(normalizedOrderNos);
+
         Map<String, OrderContextDto> result = new LinkedHashMap<>();
-        for (String orderNo : orderNos) {
-            MallOrder order = getOrderByOrderNo(orderNo);
-            result.put(orderNo, buildOrderContext(order));
+        for (String orderNo : normalizedOrderNos) {
+            MallOrder order = orderMap.get(orderNo);
+            Assert.notNull(order, "订单不存在: " + orderNo);
+            result.put(orderNo, buildOrderContext(
+                    order,
+                    detailMap.get(orderNo),
+                    timelineMap.getOrDefault(order.getId(), List.of()),
+                    shippingMap.get(order.getId()),
+                    afterSaleOrderNos.contains(orderNo)
+            ));
         }
         return result;
     }
 
     /**
-     * 根据订单编号查询订单实体。
+     * 归一化订单编号列表。
      *
-     * @param orderNo 订单编号
-     * @return 订单实体
+     * @param orderNos 原始订单编号列表
+     * @return 去空、去重后的订单编号列表
      */
-    private MallOrder getOrderByOrderNo(String orderNo) {
-        Assert.notEmpty(orderNo, "订单编号不能为空");
-        MallOrder order = mallOrderService.lambdaQuery()
-                .eq(MallOrder::getOrderNo, orderNo)
-                .one();
-        Assert.notNull(order, "订单不存在: " + orderNo);
-        return order;
+    private List<String> normalizeOrderNos(List<String> orderNos) {
+        return orderNos.stream()
+                .filter(StringUtils::hasText)
+                .map(String::trim)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .stream()
+                .toList();
     }
 
     /**
@@ -101,16 +132,119 @@ public class AdminAgentOrderRpcServiceImpl implements AdminAgentOrderRpcService 
     }
 
     /**
+     * 批量加载订单实体并按订单编号索引。
+     *
+     * @param orderNos 订单编号列表
+     * @return 订单编号到订单实体的映射
+     */
+    private Map<String, MallOrder> loadOrderMap(List<String> orderNos) {
+        List<MallOrder> orders = mallOrderService.lambdaQuery()
+                .in(MallOrder::getOrderNo, orderNos)
+                .list();
+        if (CollectionUtils.isEmpty(orders)) {
+            return Map.of();
+        }
+        return orders.stream()
+                .filter(order -> StringUtils.hasText(order.getOrderNo()))
+                .collect(Collectors.toMap(MallOrder::getOrderNo, order -> order, (left, right) -> left, LinkedHashMap::new));
+    }
+
+    /**
+     * 批量加载订单详情并按订单编号索引。
+     *
+     * @param orderNos 订单编号列表
+     * @return 订单编号到订单详情 DTO 的映射
+     */
+    private Map<String, OrderDetailDto> loadOrderDetailMap(List<String> orderNos) {
+        List<OrderDetailDto> details = mallOrderService.getOrderByOrderNo(orderNos);
+        if (CollectionUtils.isEmpty(details)) {
+            return Map.of();
+        }
+        return details.stream()
+                .filter(detail -> detail.getOrderInfo() != null)
+                .filter(detail -> StringUtils.hasText(detail.getOrderInfo().getOrderNo()))
+                .collect(Collectors.toMap(detail -> detail.getOrderInfo().getOrderNo(), detail -> detail,
+                        (left, right) -> left, LinkedHashMap::new));
+    }
+
+    /**
+     * 批量加载订单时间线并按订单 ID 分组。
+     *
+     * @param orderIds 订单 ID 列表
+     * @return 订单 ID 到时间线列表的映射
+     */
+    private Map<Long, List<MallOrderTimeline>> loadTimelineMap(List<Long> orderIds) {
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return Map.of();
+        }
+        List<MallOrderTimeline> timelines = mallOrderTimelineService.lambdaQuery()
+                .in(MallOrderTimeline::getOrderId, orderIds)
+                .orderByDesc(MallOrderTimeline::getCreatedTime)
+                .list();
+        if (CollectionUtils.isEmpty(timelines)) {
+            return Map.of();
+        }
+        return timelines.stream()
+                .filter(timeline -> timeline.getOrderId() != null)
+                .collect(Collectors.groupingBy(MallOrderTimeline::getOrderId, LinkedHashMap::new, Collectors.toList()));
+    }
+
+    /**
+     * 批量加载订单物流并按订单 ID 索引。
+     *
+     * @param orderIds 订单 ID 列表
+     * @return 订单 ID 到物流记录的映射
+     */
+    private Map<Long, MallOrderShipping> loadShippingMap(List<Long> orderIds) {
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return Map.of();
+        }
+        List<MallOrderShipping> shippings = mallOrderShippingService.lambdaQuery()
+                .in(MallOrderShipping::getOrderId, orderIds)
+                .list();
+        if (CollectionUtils.isEmpty(shippings)) {
+            return Map.of();
+        }
+        return shippings.stream()
+                .filter(shipping -> shipping.getOrderId() != null)
+                .collect(Collectors.toMap(MallOrderShipping::getOrderId, shipping -> shipping,
+                        (left, right) -> left, LinkedHashMap::new));
+    }
+
+    /**
+     * 批量加载存在售后的订单编号。
+     *
+     * @param orderNos 订单编号列表
+     * @return 已存在售后记录的订单编号集合
+     */
+    private Set<String> loadAfterSaleOrderNos(List<String> orderNos) {
+        List<MallAfterSale> afterSales = mallAfterSaleService.lambdaQuery()
+                .in(MallAfterSale::getOrderNo, orderNos)
+                .list();
+        if (CollectionUtils.isEmpty(afterSales)) {
+            return Set.of();
+        }
+        return afterSales.stream()
+                .map(MallAfterSale::getOrderNo)
+                .filter(StringUtils::hasText)
+                .collect(Collectors.toSet());
+    }
+
+    /**
      * 构建单个订单的智能体上下文。
      *
-     * @param order 订单实体
+     * @param order        订单实体
+     * @param detail       订单详情 DTO
+     * @param timeline     订单时间线列表
+     * @param shipping     订单物流记录
+     * @param hasAfterSale 是否存在售后
      * @return 订单智能体上下文
      */
-    private OrderContextDto buildOrderContext(MallOrder order) {
-        OrderDetailDto detail = mallOrderService.orderDetail(order.getId());
-        List<MallOrderTimeline> timeline = mallOrderTimelineService.getTimelineByOrderId(order.getId());
-        OrderShippingVo shipping = mallOrderService.getOrderShipping(order.getId());
-        boolean hasAfterSale = hasAfterSale(order);
+    private OrderContextDto buildOrderContext(MallOrder order,
+                                              OrderDetailDto detail,
+                                              List<MallOrderTimeline> timeline,
+                                              MallOrderShipping shipping,
+                                              boolean hasAfterSale) {
         OrderStatusEnum statusEnum = OrderStatusEnum.fromCode(order.getOrderStatus());
         return OrderContextDto.builder()
                 .orderNo(order.getOrderNo())
@@ -188,41 +322,116 @@ public class AdminAgentOrderRpcServiceImpl implements AdminAgentOrderRpcService 
     /**
      * 构建订单物流摘要。
      *
-     * @param shipping 订单物流 VO
+     * @param shipping 订单物流记录
      * @return 订单物流摘要
      */
-    private OrderContextDto.ShippingSummary buildShippingSummary(OrderShippingVo shipping) {
+    private OrderContextDto.ShippingSummary buildShippingSummary(MallOrderShipping shipping) {
         boolean shipped = shipping != null && shipping.getDeliverTime() != null;
+        ShippingStatusEnum statusEnum = shipping == null ? null : ShippingStatusEnum.fromCode(shipping.getStatus());
         return OrderContextDto.ShippingSummary.builder()
                 .shipped(shipped)
-                .logisticsCompany(shipping == null ? null : shipping.getLogisticsCompany())
-                .trackingNumber(shipping == null ? null : shipping.getTrackingNumber())
+                .logisticsCompany(shipping == null ? null : shipping.getShippingCompany())
+                .trackingNumber(shipping == null ? null : shipping.getShippingNo())
                 .shipmentNote(shipping == null ? null : shipping.getShipmentNote())
                 .statusCode(shipping == null ? null : shipping.getStatus())
-                .statusText(shipping == null ? null : shipping.getStatusName())
+                .statusText(statusEnum == null ? null : statusEnum.getName())
                 .deliverTime(shipping == null ? null : shipping.getDeliverTime())
                 .receiveTime(shipping == null ? null : shipping.getReceiveTime())
-                .nodes(buildShippingNodes(shipping))
+                .nodes(buildShippingNodes(shipping == null ? null : shipping.getShippingInfo()))
                 .build();
     }
 
     /**
      * 构建完整物流节点列表。
      *
-     * @param shipping 订单物流 VO
+     * @param shippingInfo 物流轨迹 JSON 字符串
      * @return 完整物流节点列表
      */
-    private List<OrderContextDto.ShippingNodeSummary> buildShippingNodes(OrderShippingVo shipping) {
-        if (shipping == null || CollectionUtils.isEmpty(shipping.getNodes())) {
+    private List<OrderContextDto.ShippingNodeSummary> buildShippingNodes(String shippingInfo) {
+        if (!StringUtils.hasText(shippingInfo)) {
             return List.of();
         }
-        return shipping.getNodes().stream()
-                .map(node -> OrderContextDto.ShippingNodeSummary.builder()
-                        .time(node.getTime())
-                        .content(node.getContent())
-                        .location(node.getLocation())
-                        .build())
-                .toList();
+        JsonElement element = JSONUtils.parseLenient(shippingInfo);
+        JsonArray nodeArray = extractShippingNodeArray(element);
+        if (nodeArray == null) {
+            return List.of();
+        }
+        List<OrderContextDto.ShippingNodeSummary> nodes = new ArrayList<>();
+        for (JsonElement nodeElement : nodeArray) {
+            if (!nodeElement.isJsonObject()) {
+                continue;
+            }
+            JsonObject nodeObject = nodeElement.getAsJsonObject();
+            String time = firstNonBlank(nodeObject, "time", "acceptTime", "timestamp", "createTime", "date");
+            String content = firstNonBlank(nodeObject, "content", "description", "status", "remark",
+                    "context", "acceptStation");
+            String location = firstNonBlank(nodeObject, "location", "site", "address", "city", "nodeName");
+            if (!StringUtils.hasText(time) && !StringUtils.hasText(content) && !StringUtils.hasText(location)) {
+                continue;
+            }
+            nodes.add(OrderContextDto.ShippingNodeSummary.builder()
+                    .time(time)
+                    .content(content)
+                    .location(location)
+                    .build());
+        }
+        return nodes;
+    }
+
+    /**
+     * 提取物流节点数组。
+     *
+     * @param element JSON 节点
+     * @return 物流节点数组
+     */
+    private JsonArray extractShippingNodeArray(JsonElement element) {
+        if (element == null || element.isJsonNull()) {
+            return null;
+        }
+        if (element.isJsonArray()) {
+            return element.getAsJsonArray();
+        }
+        if (!element.isJsonObject()) {
+            return null;
+        }
+        JsonObject jsonObject = element.getAsJsonObject();
+        for (String key : List.of("traces", "nodes", "list", "data", "tracks", "shippingNodes")) {
+            JsonElement candidate = jsonObject.get(key);
+            if (candidate == null || candidate.isJsonNull()) {
+                continue;
+            }
+            if (candidate.isJsonArray()) {
+                return candidate.getAsJsonArray();
+            }
+            if (candidate.isJsonObject()) {
+                JsonArray nested = extractShippingNodeArray(candidate);
+                if (nested != null) {
+                    return nested;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 读取 JSON 对象中首个非空文本字段。
+     *
+     * @param jsonObject JSON 对象
+     * @param keys       字段名列表
+     * @return 首个非空文本字段
+     */
+    private String firstNonBlank(JsonObject jsonObject, String... keys) {
+        for (String key : keys) {
+            JsonElement value = jsonObject.get(key);
+            if (value == null || value.isJsonNull()) {
+                continue;
+            }
+            String text = value.getAsString();
+            if (StringUtils.hasText(text)) {
+                return text.trim();
+            }
+        }
+        return null;
     }
 
     /**
@@ -263,18 +472,5 @@ public class AdminAgentOrderRpcServiceImpl implements AdminAgentOrderRpcService 
                 .needsReceipt(statusEnum == OrderStatusEnum.PENDING_RECEIPT)
                 .hasAfterSale(hasAfterSale)
                 .build();
-    }
-
-    /**
-     * 判断订单是否已有售后。
-     *
-     * @param order 订单实体
-     * @return true 表示订单已有售后
-     */
-    private boolean hasAfterSale(MallOrder order) {
-        Long afterSaleCount = mallAfterSaleService.lambdaQuery()
-                .eq(MallAfterSale::getOrderNo, order.getOrderNo())
-                .count();
-        return afterSaleCount != null && afterSaleCount > 0;
     }
 }

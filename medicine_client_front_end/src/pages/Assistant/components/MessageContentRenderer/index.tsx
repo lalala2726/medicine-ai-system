@@ -3,6 +3,7 @@ import { ImagePreview } from '@nutui/nutui-react'
 import MarkdownRenderer from '@/components/MarkdownRenderer'
 import AssistantAiMarkdownMessage from '../AssistantAiMarkdownMessage'
 import AfterSaleCard from '../AfterSaleCard'
+import ConsultProductCard from '../ConsultProductCard'
 import ConsultationQuestionnaireCard from '../ConsultationQuestionnaireCard'
 import ConsentCard from '../ConsentCard'
 import { AssistantBubble, AssistantThinking, AssistantTyping } from '../MessagePrimitives'
@@ -45,6 +46,7 @@ const MessageContentRenderer: React.FC<MessageContentRendererProps> = ({ message
   const { type, content } = message
   const {
     onProductClick,
+    onConsultProductClick,
     onConsentSubmit,
     onConsultationQuestionnaireSubmit,
     onSelectionSubmit,
@@ -150,6 +152,16 @@ const MessageContentRenderer: React.FC<MessageContentRendererProps> = ({ message
         <ProductCard title={content.title} products={productList} tone={bubbleTone} onProductClick={onProductClick} />
       )
     }
+
+    case CHAT_MESSAGE_TYPES.CONSULT_PRODUCT_CARD:
+      return content.consultProductCard ? (
+        <ConsultProductCard
+          title={content.consultProductCard.title}
+          product={content.consultProductCard.product}
+          tone={bubbleTone}
+          onProductClick={onConsultProductClick}
+        />
+      ) : null
 
     case CHAT_MESSAGE_TYPES.PRODUCT_PURCHASE_CARD:
       return content.purchaseCard ? (

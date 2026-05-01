@@ -8,6 +8,7 @@ import com.zhangyichuang.medicine.admin.service.MallProductTagRelService;
 import com.zhangyichuang.medicine.admin.service.MallProductTagService;
 import com.zhangyichuang.medicine.admin.service.MallProductTagTypeService;
 import com.zhangyichuang.medicine.admin.task.MallProductSearchIndexer;
+import com.zhangyichuang.medicine.common.core.constants.RedisConstants;
 import com.zhangyichuang.medicine.common.core.enums.ResponseCode;
 import com.zhangyichuang.medicine.common.core.exception.ServiceException;
 import com.zhangyichuang.medicine.common.core.utils.Assert;
@@ -22,6 +23,7 @@ import com.zhangyichuang.medicine.model.vo.MallProductTagAdminVo;
 import com.zhangyichuang.medicine.model.vo.MallProductTagVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,6 +126,7 @@ public class MallProductTagServiceImpl extends ServiceImpl<MallProductTagMapper,
      * @return 是否成功
      */
     @Override
+    @CacheEvict(cacheNames = RedisConstants.MallProduct.CACHE_NAME, allEntries = true)
     public boolean addTag(MallProductTagAddRequest request) {
         Assert.notNull(request, "标签信息不能为空");
         String normalizedName = normalizeName(request.getName());
@@ -166,6 +169,7 @@ public class MallProductTagServiceImpl extends ServiceImpl<MallProductTagMapper,
      * @return 是否成功
      */
     @Override
+    @CacheEvict(cacheNames = RedisConstants.MallProduct.CACHE_NAME, allEntries = true)
     public boolean updateTag(MallProductTagUpdateRequest request) {
         Assert.notNull(request, "标签信息不能为空");
         MallProductTag existingTag = getTagEntityById(request.getId());
@@ -196,6 +200,7 @@ public class MallProductTagServiceImpl extends ServiceImpl<MallProductTagMapper,
      * @return 是否成功
      */
     @Override
+    @CacheEvict(cacheNames = RedisConstants.MallProduct.CACHE_NAME, allEntries = true)
     public boolean updateTagStatus(MallProductTagStatusUpdateRequest request) {
         Assert.notNull(request, "标签状态信息不能为空");
         MallProductTag existingTag = getTagEntityById(request.getId());

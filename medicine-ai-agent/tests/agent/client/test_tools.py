@@ -4,8 +4,11 @@ from uuid import UUID
 import pytest
 from pydantic import ValidationError
 
-from app.agent.client.domain.after_sale import tools as after_sale_tools_module
-from app.agent.client.domain.after_sale.schema import AfterSaleEligibilityRequest
+from app.agent.client.domain.commerce.after_sale import tools as after_sale_tools_module
+from app.agent.client.domain.commerce.after_sale.schemas import AfterSaleEligibilityRequest
+from app.agent.client.domain.commerce.order import tools as order_tools_module
+from app.agent.client.domain.commerce.product import tools as product_tools_module
+from app.agent.client.domain.commerce.product.schemas import ProductSearchRequest
 from app.agent.client.domain.tools import card_tools as card_tools_module
 from app.agent.client.domain.tools.card_tools import (
     send_consent_card,
@@ -13,28 +16,53 @@ from app.agent.client.domain.tools.card_tools import (
     send_product_purchase_card,
     send_selection_card,
 )
-from app.agent.client.domain.tools.schema import (
+from app.agent.client.domain.tools.navigation_schema import (
     OpenUserAfterSaleListRequest,
     OpenUserOrderListRequest,
+)
+from app.agent.client.domain.tools.navigation_tools import (
+    open_user_after_sale_list,
+    open_user_order_list,
+)
+from app.agent.client.domain.tools.schema import (
     SendConsentCardRequest,
     SendProductCardRequest,
     SendProductPurchaseCardItem,
     SendProductPurchaseCardRequest,
     SendSelectionCardRequest,
 )
-from app.agent.client.domain.tools.action_tools import (
-    open_user_after_sale_list,
-    open_user_order_list,
-)
-from app.agent.client.domain.order import tools as order_tools_module
-from app.agent.client.domain.product import tools as product_tools_module
-from app.agent.client.domain.product.schema import ProductSearchRequest
+import app.core.agent.tool_trace as tool_trace_module
 from app.core.agent.agent_event_bus import (
     drain_final_sse_responses,
     reset_final_response_queue,
     set_final_response_queue,
 )
+from app.core.agent.tool_trace import bind_tool_trace_context, reset_tool_trace_context
+from app.schemas.document.conversation import ConversationType
 from app.schemas.sse_response import Card, MessageType
+
+
+@pytest.fixture(autouse=True)
+def _bind_tool_trace_context(monkeypatch: pytest.MonkeyPatch):
+    """为工具测试绑定轨迹上下文，并拦截真实 Mongo 写入。
+
+    Args:
+        monkeypatch: pytest 提供的动态替换工具。
+
+    Yields:
+        None: 测试执行期间保持上下文有效。
+    """
+
+    monkeypatch.setattr(tool_trace_module, "add_tool_trace", lambda **_kwargs: "tool-trace-id")
+    token = bind_tool_trace_context(
+        conversation_uuid="conversation-test",
+        assistant_message_uuid="assistant-message-test",
+        conversation_type=ConversationType.CLIENT,
+    )
+    try:
+        yield
+    finally:
+        reset_tool_trace_context(token)
 
 
 def test_open_user_order_list_enqueues_action_with_order_status():
@@ -458,14 +486,15 @@ def test_send_selection_card_request_rejects_empty_options():
         )
 
 
-def test_send_selection_card_request_rejects_blank_option():
-    with pytest.raises(ValidationError):
-        SendSelectionCardRequest.model_validate(
-            {
-                "title": "请选择处理方式",
-                "options": ["退款", "   "],
-            }
-        )
+def test_send_selection_card_request_ignores_blank_option():
+    request = SendSelectionCardRequest.model_validate(
+        {
+            "title": "请选择处理方式",
+            "options": ["退款", "   "],
+        }
+    )
+
+    assert request.options == ["退款"]
 
 
 def test_send_selection_card_request_rejects_duplicate_option_after_strip():
@@ -545,13 +574,7 @@ def test_search_products_calls_client_search_endpoint(monkeypatch):
 
     assert captured == {
         "url": "/agent/client/product/search",
-        "params": {
-            "keyword": "维生素",
-            "categoryName": None,
-            "usage": None,
-            "pageNum": 1,
-            "pageSize": 10,
-        },
+        "params": [("keyword", "维生素"), ("pageNum", 1), ("pageSize", 10)],
     }
     assert result == {"rows": []}
 

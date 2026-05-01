@@ -13,7 +13,7 @@ class MinioStorageServiceImplTests {
     /**
      * 默认 MinIO 端点地址。
      */
-    private static final String MINIO_ENDPOINT = "http://localhost:9000/";
+    private static final String MINIO_ENDPOINT = "http://192.168.10.120:9000/";
 
     /**
      * 默认文件桶名称。
@@ -23,7 +23,7 @@ class MinioStorageServiceImplTests {
     /**
      * CDN 公网访问前缀。
      */
-    private static final String CDN_PUBLIC_URL_PREFIX = "http://localhost:9000/medicine/";
+    private static final String CDN_PUBLIC_URL_PREFIX = "https://medicine-cdn.zhangchuangla.cn/";
 
     /**
      * 测试用对象路径。
@@ -36,7 +36,7 @@ class MinioStorageServiceImplTests {
 
         String actualFileUrl = storageService.getFileUrl(BUCKET_NAME, OBJECT_NAME);
 
-        assertEquals("http://localhost:9000/medicine/resources/2026/03/test-file.pdf", actualFileUrl);
+        assertEquals("https://medicine-cdn.zhangchuangla.cn/resources/2026/03/test-file.pdf", actualFileUrl);
     }
 
     @Test
@@ -45,7 +45,7 @@ class MinioStorageServiceImplTests {
 
         String actualFileUrl = storageService.getFileUrl(BUCKET_NAME, OBJECT_NAME);
 
-        assertEquals("http://localhost:9000/medicine/resources/2026/03/test-file.pdf", actualFileUrl);
+        assertEquals("http://192.168.10.120:9000/medicine/resources/2026/03/test-file.pdf", actualFileUrl);
     }
 
     @Test

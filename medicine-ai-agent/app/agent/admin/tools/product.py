@@ -14,7 +14,6 @@ from app.core.agent.middleware import (
     tool_call_status,
     tool_thinking_redaction,
 )
-from app.core.agent.tool_cache import ADMIN_TOOL_CACHE_PROFILE, tool_cacheable
 from app.schemas.http_response import HttpResponse
 from app.utils.http_client import HttpClient
 
@@ -95,53 +94,6 @@ class DrugDetailRequest(BaseModel):
     )
 
 
-def _build_product_list_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造商品列表缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 与真实 HTTP 查询参数一致的结构。
-
-    异常说明：
-        无。
-    """
-
-    return {
-        "pageNum": arguments.get("page_num"),
-        "pageSize": arguments.get("page_size"),
-        "id": arguments.get("id"),
-        "name": arguments.get("name"),
-        "categoryId": arguments.get("category_id"),
-        "status": arguments.get("status"),
-        "minPrice": arguments.get("min_price"),
-        "maxPrice": arguments.get("max_price"),
-    }
-
-
-def _build_product_detail_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造商品详情缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 标准化后的商品 ID 数组。
-
-    异常说明：
-        ValueError: 当 `product_id` 非法时抛出。
-    """
-
-    raw_product_id = arguments.get("product_id")
-    normalized_ids = normalize_id_list(raw_product_id, field_name="product_id")
-    return {"product_id": normalized_ids}
-
-
 @tool(
     args_schema=ProductListRequest,
     description=(
@@ -155,11 +107,6 @@ def _build_product_detail_cache_input(arguments: dict[str, object]) -> dict[str,
     start_message="正在查询商品列表",
     error_message="获取商品列表失败",
     timely_message="商品列表正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="product_list",
-    input_builder=_build_product_list_cache_input,
 )
 async def product_list(
         page_num: int = 1,
@@ -221,11 +168,6 @@ async def product_list(
     error_message="获取商品详情失败",
     timely_message="商品详情正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="product_detail",
-    input_builder=_build_product_detail_cache_input,
-)
 async def product_detail(product_id: list[str]) -> dict:
     """
     功能描述：
@@ -261,11 +203,6 @@ async def product_detail(product_id: list[str]) -> dict:
     start_message="正在查询药品详情",
     error_message="获取药品详情失败",
     timely_message="药品详情正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="drug_detail",
-    input_builder=_build_product_detail_cache_input,
 )
 async def drug_detail(product_id: list[str]) -> dict:
     """

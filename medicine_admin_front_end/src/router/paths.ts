@@ -6,6 +6,8 @@ export type MallCouponSecondaryRouteKey = 'template' | 'activationCode' | 'log' 
 export type SystemConfigSecondaryRouteKey = 'security' | 'agreement' | 'esIndex';
 /** 系统模型配置二级菜单路由 key。 */
 export type LlmSystemModelsSecondaryRouteKey = 'adminConfig' | 'clientConfig' | 'commonCapability';
+/** 智能体观测二级菜单路由 key。 */
+export type LlmAgentObservabilitySecondaryRouteKey = 'monitor' | 'trace';
 
 export const routePaths = {
   login: '/user/login',
@@ -28,6 +30,10 @@ export const routePaths = {
   llmPromptManage: '/llm-manage/prompt-manage',
   llmPromptManageEdit: '/llm-manage/prompt-manage/edit',
   llmPromptManageHistory: '/llm-manage/prompt-manage/history',
+  llmAgentObservability: '/llm-manage/agent-observability',
+  llmAgentMonitor: '/llm-manage/agent-observability/monitor',
+  llmAgentMonitorModelDetail: '/llm-manage/agent-observability/monitor/model-detail',
+  llmAgentTrace: '/llm-manage/agent-observability/trace',
   mall: '/mall',
   mallProductList: '/mall/product-list',
   mallProductCreate: '/mall/product-create',
@@ -64,6 +70,7 @@ export const SECONDARY_MENU_ROUTE_ENABLED_BASE_PATHS = [
   routePaths.mallCoupon,
   routePaths.systemConfig,
   routePaths.llmSystemModels,
+  routePaths.llmAgentObservability,
 ] as const;
 
 /** 优惠券二级菜单路由映射。 */
@@ -88,6 +95,15 @@ const LLM_SYSTEM_MODELS_SECONDARY_ROUTE_PATH_MAP: Record<LlmSystemModelsSecondar
     clientConfig: routePaths.llmSystemModelsClientConfig,
     commonCapability: routePaths.llmSystemModelsCommonCapability,
   };
+
+/** 智能体观测二级菜单路由映射。 */
+const LLM_AGENT_OBSERVABILITY_SECONDARY_ROUTE_PATH_MAP: Record<
+  LlmAgentObservabilitySecondaryRouteKey,
+  string
+> = {
+  monitor: routePaths.llmAgentMonitor,
+  trace: routePaths.llmAgentTrace,
+};
 
 function buildPathWithQuery(pathname: string, query: Record<string, RouteQueryValue>): string {
   const searchParams = new URLSearchParams();
@@ -186,6 +202,38 @@ export function buildLlmSystemModelsSecondaryRoutePath(
   key: LlmSystemModelsSecondaryRouteKey,
 ): string {
   return LLM_SYSTEM_MODELS_SECONDARY_ROUTE_PATH_MAP[key];
+}
+
+/**
+ * 构建智能体观测二级菜单路由路径。
+ * @param key 二级菜单 key。
+ * @returns 二级菜单页面路径。
+ */
+export function buildLlmAgentObservabilitySecondaryRoutePath(
+  key: LlmAgentObservabilitySecondaryRouteKey,
+): string {
+  return LLM_AGENT_OBSERVABILITY_SECONDARY_ROUTE_PATH_MAP[key];
+}
+
+/**
+ * 构建智能体监控单模型详情页面路径。
+ * @param params 页面查询参数。
+ * @returns 单模型详情页面路径。
+ */
+export function buildAgentMonitorModelDetailPath(params: {
+  provider?: string;
+  modelName?: string;
+  startTime?: string;
+  endTime?: string;
+  rangeMinutes?: number;
+  conversationType?: string;
+  slot?: string;
+  status?: string;
+  bucketMinutes?: number;
+  backProvider?: string;
+  backModelName?: string;
+}): string {
+  return buildPathWithQuery(routePaths.llmAgentMonitorModelDetail, params);
 }
 
 /**

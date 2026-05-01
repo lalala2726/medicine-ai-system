@@ -254,11 +254,44 @@ public class RedisTokenStore {
         Set<String> accessTokenIds = getIndexMembers(accessTokenIndexKey);
         Set<String> refreshTokenIds = getIndexMembers(refreshTokenIndexKey);
 
-        refreshTokenIds.forEach(this::deleteSessionByRefreshId);
-        accessTokenIds.forEach(this::deleteSessionByAccessId);
+        Set<String> tokenKeys = buildUserSessionTokenKeys(accessTokenIds, refreshTokenIds);
+        if (!tokenKeys.isEmpty()) {
+            redisCache.deleteObject(tokenKeys);
+        }
 
-        redisCache.deleteObject(accessTokenIndexKey);
-        redisCache.deleteObject(refreshTokenIndexKey);
+        redisCache.deleteObject(Set.of(accessTokenIndexKey, refreshTokenIndexKey));
+    }
+
+    /**
+     * 批量构建用户会话相关 Token Key，避免逐条删除时重复维护用户索引。
+     *
+     * @param accessTokenIds  用户访问令牌ID集合
+     * @param refreshTokenIds 用户刷新令牌ID集合
+     * @return 访问令牌和刷新令牌 Redis Key 集合
+     */
+    private Set<String> buildUserSessionTokenKeys(Set<String> accessTokenIds, Set<String> refreshTokenIds) {
+        Set<String> tokenKeys = new LinkedHashSet<>();
+        for (String accessTokenId : accessTokenIds) {
+            if (!StringUtils.hasText(accessTokenId)) {
+                continue;
+            }
+            tokenKeys.add(buildAccessTokenKey(accessTokenId));
+            OnlineLoginUser onlineLoginUser = getAccessToken(accessTokenId);
+            if (onlineLoginUser != null && StringUtils.hasText(onlineLoginUser.getRefreshTokenId())) {
+                tokenKeys.add(buildRefreshTokenKey(onlineLoginUser.getRefreshTokenId()));
+            }
+        }
+        for (String refreshTokenId : refreshTokenIds) {
+            if (!StringUtils.hasText(refreshTokenId)) {
+                continue;
+            }
+            tokenKeys.add(buildRefreshTokenKey(refreshTokenId));
+            RefreshTokenSession refreshTokenSession = getRefreshTokenSession(refreshTokenId);
+            if (refreshTokenSession != null && StringUtils.hasText(refreshTokenSession.getAccessTokenId())) {
+                tokenKeys.add(buildAccessTokenKey(refreshTokenSession.getAccessTokenId()));
+            }
+        }
+        return tokenKeys;
     }
 
     /**

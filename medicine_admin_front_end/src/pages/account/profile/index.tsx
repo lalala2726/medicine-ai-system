@@ -1,10 +1,11 @@
-import { TEXT_INPUT_AUTOCOMPLETE } from '@/constants/autocomplete';
+import { PASSWORD_INPUT_AUTOCOMPLETE, TEXT_INPUT_AUTOCOMPLETE } from '@/constants/autocomplete';
 import { PageContainer } from '@ant-design/pro-components';
 import { Button, Card, Form, Input, Modal, Space, Spin, Typography, message } from 'antd';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { CaptchaVerificationResult } from '@/api/core/captcha';
 import {
+  changeAdminPassword,
   changeAdminPhone,
   currentUser as queryCurrentUser,
   sendAdminPhoneCode,
@@ -12,6 +13,7 @@ import {
 } from '@/api/core/login';
 import { AvatarUpload } from '@/components';
 import { useThemeContext } from '@/contexts/ThemeContext';
+import { useAuthActions } from '@/hooks/useAuth';
 import { useInitialState } from '@/hooks/useInitialState';
 import SliderCaptchaModal from '@/pages/login/components/SliderCaptchaModal';
 import { routePaths } from '@/router/paths';
@@ -28,6 +30,20 @@ const PHONE_NUMBER_PATTERN = /^1[3-9]\d{9}$/;
  * 手机验证码倒计时秒数。
  */
 const PHONE_CODE_COUNTDOWN_SECONDS = 60;
+
+/**
+ * 密码修改输入框禁用常见密码管理器识别的属性。
+ */
+const PASSWORD_CHANGE_DISABLE_AUTOFILL_PROPS = {
+  'data-lpignore': 'true',
+  'data-1p-ignore': 'true',
+  'data-form-type': 'other',
+} as const;
+
+/**
+ * 滑动验证码动作类型。
+ */
+type CaptchaAction = 'send-phone-code' | 'change-password';
 
 /**
  * 个人资料表单值。
@@ -52,6 +68,18 @@ interface PhoneFormValues {
 }
 
 /**
+ * 密码修改表单值。
+ */
+interface PasswordFormValues {
+  /** 原登录密码。 */
+  oldPassword: string;
+  /** 新登录密码。 */
+  newPassword: string;
+  /** 确认新登录密码。 */
+  confirmPassword: string;
+}
+
+/**
  * 规范化可选文本值。
  *
  * @param value 原始文本值。
@@ -70,18 +98,22 @@ function normalizeOptionalText(value?: string): string | undefined {
 const AccountProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { isDark } = useThemeContext();
+  const { clearAuth } = useAuthActions();
   const { initialState, setInitialState } = useInitialState();
   const [messageApi, contextHolder] = message.useMessage();
   const [profileForm] = Form.useForm<ProfileFormValues>();
   const [phoneForm] = Form.useForm<PhoneFormValues>();
+  const [passwordForm] = Form.useForm<PasswordFormValues>();
   const hasInitializedRef = useRef(false);
   const [profileEditing, setProfileEditing] = useState(false);
   const [phoneModalOpen, setPhoneModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [profileSaving, setProfileSaving] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
   const [phoneSaving, setPhoneSaving] = useState(false);
-  const [captchaOpen, setCaptchaOpen] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [captchaAction, setCaptchaAction] = useState<CaptchaAction | null>(null);
   const [pendingPhoneNumber, setPendingPhoneNumber] = useState<string | null>(null);
   const [countdownSeconds, setCountdownSeconds] = useState(0);
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
@@ -272,7 +304,7 @@ const AccountProfilePage: React.FC = () => {
   const handleCancelPhoneEdit = useCallback((): void => {
     setPhoneModalOpen(false);
     setCountdownSeconds(0);
-    setCaptchaOpen(false);
+    setCaptchaAction(null);
     setPendingPhoneNumber(null);
     phoneForm.setFieldsValue({
       phoneNumber: '',
@@ -292,7 +324,7 @@ const AccountProfilePage: React.FC = () => {
         return;
       }
       setPendingPhoneNumber(normalizedPhoneNumber);
-      setCaptchaOpen(true);
+      setCaptchaAction('send-phone-code');
     } catch (error: any) {
       if (error?.errorFields) {
         return;
@@ -307,20 +339,119 @@ const AccountProfilePage: React.FC = () => {
    * @returns 无返回值。
    */
   const handleCaptchaCancel = useCallback((): void => {
-    setCaptchaOpen(false);
+    setCaptchaAction(null);
     setPendingPhoneNumber(null);
   }, []);
 
   /**
-   * 滑动验证通过后发送手机验证码。
+   * 打开密码修改弹窗。
+   *
+   * @returns 无返回值。
+   */
+  const handleOpenPasswordModal = useCallback((): void => {
+    setPasswordModalOpen(true);
+  }, []);
+
+  /**
+   * 关闭密码修改弹窗并清空临时状态。
+   *
+   * @returns 无返回值。
+   */
+  const handleCancelPasswordEdit = useCallback((): void => {
+    setPasswordModalOpen(false);
+    setCaptchaAction(null);
+    passwordForm.resetFields();
+  }, [passwordForm]);
+
+  /**
+   * 构建密码修改成功后的登录页地址。
+   *
+   * @returns 带个人资料页 redirect 参数的登录页地址。
+   */
+  const buildPasswordChangeLoginPath = useCallback((): string => {
+    const searchParams = new URLSearchParams({
+      redirect: routePaths.accountProfile,
+    });
+    return `${routePaths.login}?${searchParams.toString()}`;
+  }, []);
+
+  /**
+   * 清理本地登录态并跳转登录页。
+   *
+   * @returns 无返回值。
+   */
+  const clearAuthAndRedirectToLogin = useCallback((): void => {
+    clearAuth();
+    setInitialState({ currentUser: undefined });
+    navigate(buildPasswordChangeLoginPath(), { replace: true });
+  }, [buildPasswordChangeLoginPath, clearAuth, navigate, setInitialState]);
+
+  /**
+   * 提交密码修改前打开滑动验证码。
+   *
+   * @returns 无返回值。
+   */
+  const handleSubmitPassword = useCallback(async (): Promise<void> => {
+    try {
+      await passwordForm.validateFields();
+      setCaptchaAction('change-password');
+    } catch (error: any) {
+      if (error?.errorFields) {
+        return;
+      }
+      console.error('打开密码修改验证码失败:', error);
+    }
+  }, [passwordForm]);
+
+  /**
+   * 滑动验证通过后提交密码修改。
+   *
+   * @param captchaVerificationResult 滑动验证码校验结果。
+   * @returns 无返回值。
+   */
+  const handlePasswordCaptchaVerified = useCallback(
+    async (captchaVerificationResult: CaptchaVerificationResult): Promise<void> => {
+      try {
+        const values = await passwordForm.validateFields();
+        setPasswordSaving(true);
+        await changeAdminPassword({
+          oldPassword: values.oldPassword.trim(),
+          newPassword: values.newPassword.trim(),
+          captchaVerificationId: captchaVerificationResult.id,
+        });
+        passwordForm.resetFields();
+        setPasswordModalOpen(false);
+        messageApi.success('密码修改成功，请重新登录');
+        clearAuthAndRedirectToLogin();
+      } catch (error: any) {
+        if (error?.errorFields) {
+          return;
+        }
+        console.error('修改密码失败:', error);
+      } finally {
+        setPasswordSaving(false);
+        setCaptchaAction(null);
+      }
+    },
+    [clearAuthAndRedirectToLogin, messageApi, passwordForm],
+  );
+
+  /**
+   * 滑动验证通过后按当前动作继续执行。
    *
    * @param captchaVerificationResult 滑动验证码校验结果。
    * @returns 无返回值。
    */
   const handleCaptchaVerified = useCallback(
     async (captchaVerificationResult: CaptchaVerificationResult): Promise<void> => {
-      if (!pendingPhoneNumber) {
-        setCaptchaOpen(false);
+      if (captchaAction === 'change-password') {
+        await handlePasswordCaptchaVerified(captchaVerificationResult);
+        return;
+      }
+
+      if (captchaAction !== 'send-phone-code' || !pendingPhoneNumber) {
+        setCaptchaAction(null);
+        setPendingPhoneNumber(null);
         return;
       }
 
@@ -336,11 +467,11 @@ const AccountProfilePage: React.FC = () => {
         console.error('发送手机号验证码失败:', error);
       } finally {
         setSendingCode(false);
-        setCaptchaOpen(false);
+        setCaptchaAction(null);
         setPendingPhoneNumber(null);
       }
     },
-    [messageApi, pendingPhoneNumber],
+    [captchaAction, handlePasswordCaptchaVerified, messageApi, pendingPhoneNumber],
   );
 
   /**
@@ -395,7 +526,7 @@ const AccountProfilePage: React.FC = () => {
     <PageContainer title="个人资料" onBack={() => navigate(routePaths.analytics)}>
       {contextHolder}
       <Spin spinning={pageLoading}>
-        <Card bordered={false}>
+        <Card variant="borderless">
           <Space direction="vertical" size={18} style={{ width: '100%' }}>
             <div
               style={{
@@ -410,7 +541,7 @@ const AccountProfilePage: React.FC = () => {
                   资料设置
                 </Title>
                 <Text type="secondary">
-                  默认只读，点击编辑后才可修改资料；手机号通过单独弹窗修改。
+                  默认只读，点击编辑后才可修改资料；手机号和登录密码通过单独弹窗修改。
                 </Text>
               </div>
               {!profileEditing && (
@@ -486,6 +617,16 @@ const AccountProfilePage: React.FC = () => {
                   <Button onClick={handleOpenPhoneModal}>修改手机号</Button>
                 </Space.Compact>
               </Form.Item>
+              <Form.Item label="登录密码">
+                <Space.Compact style={{ width: '100%' }}>
+                  <Input
+                    autoComplete={PASSWORD_INPUT_AUTOCOMPLETE}
+                    value="已设置登录密码"
+                    disabled
+                  />
+                  <Button onClick={handleOpenPasswordModal}>修改密码</Button>
+                </Space.Compact>
+              </Form.Item>
               {profileEditing && (
                 <Space>
                   <Button onClick={handleCancelProfileEdit}>取消</Button>
@@ -508,6 +649,7 @@ const AccountProfilePage: React.FC = () => {
         open={phoneModalOpen}
         onCancel={handleCancelPhoneEdit}
         footer={null}
+        forceRender
         destroyOnHidden
       >
         <Space direction="vertical" size={16} style={{ width: '100%' }}>
@@ -568,8 +710,93 @@ const AccountProfilePage: React.FC = () => {
         </Space>
       </Modal>
 
+      <Modal
+        title="修改登录密码"
+        open={passwordModalOpen}
+        onCancel={handleCancelPasswordEdit}
+        footer={null}
+        forceRender
+        destroyOnHidden
+      >
+        <Space direction="vertical" size={16} style={{ width: '100%' }}>
+          <Text type="secondary">修改成功后当前账号会退出登录，需要使用新密码重新登录。</Text>
+          <Form form={passwordForm} layout="vertical">
+            <Form.Item
+              label="原密码"
+              name="oldPassword"
+              rules={[
+                { required: true, message: '请输入原密码' },
+                { min: 6, max: 20, message: '密码长度为6-20个字符' },
+              ]}
+            >
+              <Input.Password
+                autoComplete={PASSWORD_INPUT_AUTOCOMPLETE}
+                {...PASSWORD_CHANGE_DISABLE_AUTOFILL_PROPS}
+                id="medicine-account-password-field-1"
+                name="medicine_account_password_field_1"
+                placeholder="请输入原密码"
+                maxLength={20}
+              />
+            </Form.Item>
+            <Form.Item
+              label="新密码"
+              name="newPassword"
+              rules={[
+                { required: true, message: '请输入新密码' },
+                { min: 6, max: 20, message: '密码长度为6-20个字符' },
+              ]}
+            >
+              <Input.Password
+                autoComplete={PASSWORD_INPUT_AUTOCOMPLETE}
+                {...PASSWORD_CHANGE_DISABLE_AUTOFILL_PROPS}
+                id="medicine-account-password-field-2"
+                name="medicine_account_password_field_2"
+                placeholder="请输入新密码"
+                maxLength={20}
+              />
+            </Form.Item>
+            <Form.Item
+              label="确认新密码"
+              name="confirmPassword"
+              dependencies={['newPassword']}
+              rules={[
+                { required: true, message: '请再次输入新密码' },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('newPassword') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('两次输入的密码不一致'));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                autoComplete={PASSWORD_INPUT_AUTOCOMPLETE}
+                {...PASSWORD_CHANGE_DISABLE_AUTOFILL_PROPS}
+                id="medicine-account-password-field-3"
+                name="medicine_account_password_field_3"
+                placeholder="请再次输入新密码"
+                maxLength={20}
+              />
+            </Form.Item>
+            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+              <Button onClick={handleCancelPasswordEdit}>取消</Button>
+              <Button
+                type="primary"
+                loading={passwordSaving}
+                disabled={captchaAction === 'change-password'}
+                onClick={() => void handleSubmitPassword()}
+              >
+                确定
+              </Button>
+            </Space>
+          </Form>
+        </Space>
+      </Modal>
+
       <SliderCaptchaModal
-        open={captchaOpen}
+        open={captchaAction !== null}
         onCancel={handleCaptchaCancel}
         onVerified={handleCaptchaVerified}
         isDark={isDark}

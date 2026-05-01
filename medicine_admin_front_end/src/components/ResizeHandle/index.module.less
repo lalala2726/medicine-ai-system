@@ -1,0 +1,39 @@
+.resizeHandle {
+  cursor: col-resize;
+  touch-action: none;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: transparent;
+    content: '';
+    transition: background 0.2s ease;
+  }
+
+  &:hover::after {
+    background: var(--ant-color-primary);
+  }
+}
+
+.edge::after {
+  left: 0;
+}
+
+.center::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.active::after {
+  background: var(--ant-color-primary);
+}
+
+.disabled {
+  cursor: default;
+
+  &::after {
+    display: none;
+  }
+}

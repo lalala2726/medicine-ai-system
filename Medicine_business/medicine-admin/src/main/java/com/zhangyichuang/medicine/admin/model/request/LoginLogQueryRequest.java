@@ -28,7 +28,7 @@ public class LoginLogQueryRequest extends PageRequest {
     @Schema(description = "登录方式", example = "password")
     private String loginType;
 
-    @Schema(description = "IP地址", example = "localhost")
+    @Schema(description = "IP地址", example = "127.0.0.1")
     private String ipAddress;
 
     @Schema(description = "开始时间", example = "2026-02-12 00:00:00")

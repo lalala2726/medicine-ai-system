@@ -167,7 +167,19 @@ export const ADMIN_PERMISSIONS = {
     sync: 'system:agent_prompt:sync',
     delete: 'system:agent_prompt:delete',
   },
+  agentTrace: {
+    list: 'system:agent_trace:list',
+    query: 'system:agent_trace:query',
+    delete: 'system:agent_trace:delete',
+    monitor: 'system:agent_trace:monitor',
+  },
 } as const;
+
+/** 智能体观测二级菜单入口权限集合。 */
+export const AGENT_OBSERVABILITY_ROUTE_PERMISSIONS = [
+  ADMIN_PERMISSIONS.agentTrace.list,
+  ADMIN_PERMISSIONS.agentTrace.monitor,
+];
 
 /** 优惠券二级菜单入口权限集合。 */
 export const COUPON_ROUTE_PERMISSIONS = [

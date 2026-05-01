@@ -30,7 +30,7 @@ app/core/mq/
 在 `.env` 中配置以下变量即可启用 MQ：
 
 ```dotenv
-RABBITMQ_HOST=localhost
+RABBITMQ_HOST=192.168.10.110
 RABBITMQ_PORT=5672
 RABBITMQ_USERNAME=guest
 RABBITMQ_PASSWORD=guest

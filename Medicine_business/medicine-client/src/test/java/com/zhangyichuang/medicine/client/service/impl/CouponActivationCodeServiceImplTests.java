@@ -111,7 +111,7 @@ class CouponActivationCodeServiceImplTests {
                 });
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr("localhost");
+        request.setRemoteAddr("127.0.0.1");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }
 

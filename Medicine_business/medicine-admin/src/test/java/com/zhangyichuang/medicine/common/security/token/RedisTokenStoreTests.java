@@ -15,6 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -44,9 +45,13 @@ class RedisTokenStoreTests {
         RedisTokenStore redisTokenStore = createRedisTokenStore();
         String accessTokenId = "access-1";
         String accessTokenKey = RedisConstants.Auth.USER_ACCESS_TOKEN + accessTokenId;
+        Long userId = 10L;
+        String accessIndexKey = String.format(RedisConstants.Auth.USER_ACCESS_TOKEN_INDEX, userId);
+        String refreshIndexKey = String.format(RedisConstants.Auth.USER_REFRESH_TOKEN_INDEX, userId);
 
         OnlineLoginUser onlineLoginUser = OnlineLoginUser.builder()
                 .accessTokenId(accessTokenId)
+                .userId(userId)
                 .createTime(123456L)
                 .build();
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -60,6 +65,9 @@ class RedisTokenStoreTests {
         assertNotNull(onlineLoginUser.getAccessTime());
         assertNotNull(onlineLoginUser.getUpdateTime());
         verify(valueOperations).set(eq(accessTokenKey), eq(onlineLoginUser), eq(600L), eq(TimeUnit.SECONDS));
+        verify(redisTemplate, never()).expire(eq(accessIndexKey), anyLong(), eq(TimeUnit.SECONDS));
+        verify(redisTemplate, never()).expire(eq(refreshIndexKey), anyLong(), eq(TimeUnit.SECONDS));
+        verify(redisTemplate, never()).opsForSet();
     }
 
     @Test
@@ -67,9 +75,11 @@ class RedisTokenStoreTests {
         RedisTokenStore redisTokenStore = createRedisTokenStore();
         String accessTokenId = "access-legacy";
         String accessTokenKey = RedisConstants.Auth.USER_ACCESS_TOKEN + accessTokenId;
+        Long userId = 10L;
 
         OnlineLoginUser onlineLoginUser = OnlineLoginUser.builder()
                 .accessTokenId(accessTokenId)
+                .userId(userId)
                 .build();
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(accessTokenKey)).thenReturn(onlineLoginUser);
@@ -84,6 +94,7 @@ class RedisTokenStoreTests {
         assertEquals(onlineLoginUser.getCreateTime(), onlineLoginUser.getUpdateTime());
         assertEquals(onlineLoginUser.getCreateTime(), onlineLoginUser.getAccessTime());
         verify(valueOperations).set(eq(accessTokenKey), eq(onlineLoginUser), eq(600L), eq(TimeUnit.SECONDS));
+        verify(redisTemplate, never()).opsForSet();
     }
 
     @Test
@@ -96,6 +107,8 @@ class RedisTokenStoreTests {
         String refreshTokenKey = RedisConstants.Auth.USER_REFRESH_TOKEN + refreshTokenId;
         String accessIndexKey = String.format(RedisConstants.Auth.USER_ACCESS_TOKEN_INDEX, userId);
         String refreshIndexKey = String.format(RedisConstants.Auth.USER_REFRESH_TOKEN_INDEX, userId);
+        assertEquals("auth:token:user:access:" + userId, accessIndexKey);
+        assertEquals("auth:token:user:refresh:" + userId, refreshIndexKey);
         OnlineLoginUser onlineLoginUser = OnlineLoginUser.builder()
                 .accessTokenId(accessTokenId)
                 .refreshTokenId(refreshTokenId)
@@ -176,6 +189,40 @@ class RedisTokenStoreTests {
         verify(redisTemplate).expire(refreshIndexKey, 600L, TimeUnit.SECONDS);
     }
 
+    /**
+     * 验证通过访问令牌删除会话时会同步删除刷新令牌和用户索引。
+     */
+    @Test
+    void deleteSessionByAccessId_ShouldDeleteAccessRefreshAndUserIndexes() {
+        RedisTokenStore redisTokenStore = createRedisTokenStore();
+        String accessTokenId = "access-1";
+        String refreshTokenId = "refresh-1";
+        Long userId = 10L;
+        String accessTokenKey = RedisConstants.Auth.USER_ACCESS_TOKEN + accessTokenId;
+        String refreshTokenKey = RedisConstants.Auth.USER_REFRESH_TOKEN + refreshTokenId;
+        String accessIndexKey = String.format(RedisConstants.Auth.USER_ACCESS_TOKEN_INDEX, userId);
+        String refreshIndexKey = String.format(RedisConstants.Auth.USER_REFRESH_TOKEN_INDEX, userId);
+        OnlineLoginUser onlineLoginUser = OnlineLoginUser.builder()
+                .accessTokenId(accessTokenId)
+                .refreshTokenId(refreshTokenId)
+                .userId(userId)
+                .username("alice")
+                .build();
+
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(redisTemplate.opsForSet()).thenReturn(setOperations);
+        when(valueOperations.get(accessTokenKey)).thenReturn(onlineLoginUser);
+
+        redisTokenStore.deleteSessionByAccessId(accessTokenId);
+
+        verify(redisTemplate).delete(accessTokenKey);
+        verify(redisTemplate).delete(refreshTokenKey);
+        verify(setOperations).remove(accessIndexKey, accessTokenId);
+        verify(setOperations).remove(refreshIndexKey, refreshTokenId);
+        verify(redisTemplate).delete(accessIndexKey);
+        verify(redisTemplate).delete(refreshIndexKey);
+    }
+
     @Test
     void deleteSessionByRefreshId_ShouldDeleteAccessRefreshAndUserIndexes() {
         RedisTokenStore redisTokenStore = createRedisTokenStore();
@@ -240,12 +287,18 @@ class RedisTokenStoreTests {
 
         redisTokenStore.deleteSessionsByUserIds(Set.of(userId));
 
-        verify(redisTemplate).delete(RedisConstants.Auth.USER_ACCESS_TOKEN + boundAccessTokenId);
-        verify(redisTemplate).delete(refreshTokenKey);
-        verify(redisTemplate).delete(RedisConstants.Auth.USER_ACCESS_TOKEN + orphanAccessTokenId);
-        verify(redisTemplate).delete(RedisConstants.Auth.USER_REFRESH_TOKEN + orphanRefreshTokenId);
-        verify(redisTemplate, atLeastOnce()).delete(accessIndexKey);
-        verify(redisTemplate, atLeastOnce()).delete(refreshIndexKey);
+        ArgumentCaptor<Collection> deleteKeysCaptor = ArgumentCaptor.forClass(Collection.class);
+        verify(redisTemplate, times(2)).delete(deleteKeysCaptor.capture());
+        assertTrue(deleteKeysCaptor.getAllValues().stream()
+                .anyMatch(keys -> keys.containsAll(Set.of(
+                        RedisConstants.Auth.USER_ACCESS_TOKEN + boundAccessTokenId,
+                        refreshTokenKey,
+                        RedisConstants.Auth.USER_ACCESS_TOKEN + orphanAccessTokenId,
+                        RedisConstants.Auth.USER_REFRESH_TOKEN + orphanRefreshTokenId
+                ))));
+        assertTrue(deleteKeysCaptor.getAllValues().stream()
+                .anyMatch(keys -> keys.containsAll(Set.of(accessIndexKey, refreshIndexKey))));
+        verify(setOperations, never()).remove(any(), any());
     }
 
     /**

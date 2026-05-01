@@ -1,8 +1,8 @@
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { message, Popconfirm, Space, Tag } from 'antd';
-import React, { useRef, useState } from 'react';
+import { message, Modal, Popconfirm, Space, Tag } from 'antd';
+import React, { type Key, useRef, useState } from 'react';
 import { deletePermission, listPermission, type PermissionTreeVo } from '@/api/system/permission';
 import PermissionButton from '@/components/PermissionButton';
 import TableActionGroup from '@/components/TableActionGroup';
@@ -16,7 +16,9 @@ const PermissionManagement: React.FC = () => {
   const [currentRow, setCurrentRow] = useState<PermissionTreeVo>();
 
   /**
-   * 删除权限
+   * 删除单个权限。
+   * @param id 权限ID。
+   * @returns 删除是否成功。
    */
   const handleDelete = async (id: string) => {
     const hide = message.loading('正在删除');
@@ -34,16 +36,24 @@ const PermissionManagement: React.FC = () => {
   };
 
   /**
-   * 批量删除权限
+   * 批量删除权限。
+   * @param selectedRowKeys 表格已选中的权限ID列表。
+   * @param onCleanSelected 删除成功后的清空选择回调。
+   * @returns 删除是否成功。
    */
-  const handleBatchDelete = async (selectedRows: PermissionTreeVo[]) => {
+  const handleBatchDelete = async (selectedRowKeys: Key[], onCleanSelected?: () => void) => {
+    if (selectedRowKeys.length === 0) {
+      message.warning('请选择要删除的权限');
+      return false;
+    }
+
+    const permissionIds = selectedRowKeys.map((key) => String(key));
     const hide = message.loading('正在删除');
-    if (!selectedRows || selectedRows.length === 0) return true;
     try {
-      const ids = selectedRows.map((row) => row.id).filter((id): id is string => !!id);
-      await deletePermission(ids);
+      await deletePermission(permissionIds);
       hide();
       message.success('删除成功');
+      onCleanSelected?.();
       actionRef.current?.reload();
       return true;
     } catch {
@@ -51,6 +61,25 @@ const PermissionManagement: React.FC = () => {
       message.error('删除失败，请重试');
       return false;
     }
+  };
+
+  /**
+   * 打开批量删除确认弹窗。
+   * @param selectedRowKeys 表格已选中的权限ID列表。
+   * @param onCleanSelected 删除成功后的清空选择回调。
+   * @returns 无返回值。
+   */
+  const openBatchDeleteConfirm = (selectedRowKeys: Key[], onCleanSelected?: () => void) => {
+    Modal.confirm({
+      title: '确认批量删除',
+      content: `确定要删除选中的 ${selectedRowKeys.length} 个权限吗？`,
+      okText: '确定',
+      cancelText: '取消',
+      okButtonProps: {
+        danger: true,
+      },
+      onOk: () => handleBatchDelete(selectedRowKeys, onCleanSelected),
+    });
   };
 
   const columns: ProColumns<PermissionTreeVo>[] = [
@@ -224,23 +253,19 @@ const PermissionManagement: React.FC = () => {
             <span>已选 {selectedRowKeys.length} 项</span>
           </Space>
         )}
-        tableAlertOptionRender={({ selectedRows }) => {
+        tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
           return (
             <Space size={16}>
-              <Popconfirm
-                title="确定要删除选中的权限吗？"
-                onConfirm={() => handleBatchDelete(selectedRows)}
-                okText="确定"
-                cancelText="取消"
+              <PermissionButton
+                type="link"
+                danger
+                access={ADMIN_PERMISSIONS.systemPermission.delete}
+                onClick={() => {
+                  openBatchDeleteConfirm(selectedRowKeys, onCleanSelected);
+                }}
               >
-                <PermissionButton
-                  type="link"
-                  danger
-                  access={ADMIN_PERMISSIONS.systemPermission.delete}
-                >
-                  批量删除
-                </PermissionButton>
-              </Popconfirm>
+                批量删除
+              </PermissionButton>
             </Space>
           );
         }}

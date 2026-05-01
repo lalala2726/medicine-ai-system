@@ -11,7 +11,6 @@ from app.agent.client.domain.commerce.after_sale.schemas import (
     AfterSaleNoRequest,
 )
 from app.core.agent.middleware import tool_thinking_redaction
-from app.core.agent.tool_cache import CLIENT_COMMERCE_TOOL_CACHE_PROFILE, tool_cacheable
 from app.schemas.http_response import HttpResponse
 from app.utils.http_client import HttpClient
 
@@ -23,10 +22,6 @@ from app.utils.http_client import HttpClient
     ),
 )
 @tool_thinking_redaction(display_name="获取售后详情")
-@tool_cacheable(
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    tool_name="get_after_sale_detail",
-)
 async def get_after_sale_detail(after_sale_no: str) -> dict:
     """
     功能描述：
@@ -57,10 +52,6 @@ async def get_after_sale_detail(after_sale_no: str) -> dict:
     ),
 )
 @tool_thinking_redaction(display_name="校验售后资格")
-@tool_cacheable(
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    tool_name="check_after_sale_eligibility",
-)
 async def check_after_sale_eligibility(
         order_no: str,
         order_item_id: int | None = None,

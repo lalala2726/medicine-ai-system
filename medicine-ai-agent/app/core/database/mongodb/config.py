@@ -18,6 +18,9 @@ MONGODB_MESSAGES_COLLECTION = "messages"  # MongoDB 消息集合固定名称
 MONGODB_MESSAGE_TTS_USAGES_COLLECTION = "message_tts_usages"  # MongoDB 语音用量集合固定名称
 MONGODB_CONVERSATION_SUMMARIES_COLLECTION = "conversation_summaries"  # MongoDB 会话摘要集合固定名称
 MONGODB_TOOL_TRACES_COLLECTION = "tool_traces"  # MongoDB 工具轨迹集合固定名称
+MONGODB_AGENT_TRACE_RUNS_COLLECTION = "agent_trace_runs"  # MongoDB Agent Trace 运行汇总集合固定名称
+MONGODB_AGENT_TRACE_SPANS_COLLECTION = "agent_trace_spans"  # MongoDB Agent Trace 明细 span 集合固定名称
+MONGODB_AGENT_MODEL_TOKEN_USAGE_COLLECTION = "agent_model_token_usage"  # MongoDB 模型 Token 用量明细集合固定名称
 DEFAULT_MONGODB_STARTUP_PING_ENABLED = False  # 启动期是否执行 MongoDB ping
 
 

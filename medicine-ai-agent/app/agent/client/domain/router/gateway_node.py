@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field, ValidationError
 from app.agent.client.state import AgentState
 from app.core.agent.agent_runtime import agent_invoke
 from app.core.agent.middleware import BasePromptMiddleware
+from app.core.agent.tracing import TraceModelMiddleware, agent_trace
 from app.core.config_sync import AgentChatModelSlot, create_agent_chat_llm
 from app.core.langsmith import traceable
 from app.utils.prompt_utils import load_managed_prompt
@@ -108,6 +109,7 @@ def _resolve_gateway_routing_result(raw_payload: Any) -> dict[str, Any]:
 
 
 @traceable(name="Client Assistant Gateway Router Node", run_type="chain")
+@agent_trace(name="Client Assistant Gateway Router Node")
 def gateway_router(state: AgentState) -> dict[str, Any]:
     """执行 client gateway 路由节点。"""
 
@@ -125,7 +127,10 @@ def gateway_router(state: AgentState) -> dict[str, Any]:
                 local_prompt_path=_GATEWAY_PROMPT_LOCAL_PATH,
             )
         ),
-        middleware=[BasePromptMiddleware()],
+        middleware=[
+            BasePromptMiddleware(),
+            TraceModelMiddleware(slot=AgentChatModelSlot.CLIENT_ROUTE.value),
+        ],
     )
     history_messages = list(state.get("history_messages") or [])
     result = agent_invoke(agent, history_messages[-20:])

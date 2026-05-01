@@ -28,7 +28,7 @@ def _build_websocket(path: str) -> WebSocket:
             "path": path,
             "headers": [],
             "query_string": b"",
-            "client": ("localhost", 12345),
+            "client": ("127.0.0.1", 12345),
             "server": ("testserver", 80),
             "scheme": "ws",
             "subprotocols": [],
@@ -176,7 +176,7 @@ def test_build_request_context_handles_none_request():
 def test_build_request_context_handles_websocket():
     websocket = _build_websocket("/ws/speech/stt/stream")
     context = ExceptionHandlers._build_request_context(websocket)
-    assert context == "method=websocket path=/ws/speech/stt/stream client=localhost:12345"
+    assert context == "method=websocket path=/ws/speech/stt/stream client=127.0.0.1:12345"
 
 
 def test_request_validation_exception_handler_logs_detail(monkeypatch):

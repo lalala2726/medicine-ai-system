@@ -57,7 +57,7 @@ class TokenServiceTests {
     void createToken_ShouldSplitRolesAndPermissionsIntoSession() {
         TokenService tokenService = new TokenService(jwtTokenProvider, redisTokenStore, userDetailsServices);
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr("localhost");
+        request.setRemoteAddr("127.0.0.1");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         AuthUser authUser = AuthUser.builder()
@@ -127,7 +127,7 @@ class TokenServiceTests {
         when(jwtTokenProvider.createJwt(anyString(), eq("alice"))).thenReturn("new-access-token");
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr("localhost");
+        request.setRemoteAddr("127.0.0.1");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         var token = tokenService.refreshToken("refresh-jwt");

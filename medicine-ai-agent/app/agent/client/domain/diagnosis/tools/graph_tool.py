@@ -15,15 +15,6 @@ from app.core.agent.middleware import (
     tool_call_status,
     tool_thinking_redaction,
 )
-from app.core.agent.tool_cache import (
-    DIAGNOSIS_CACHE_FIELD_QUERY_DISEASE_CANDIDATES,
-    DIAGNOSIS_CACHE_FIELD_QUERY_DISEASE_DETAIL,
-    DIAGNOSIS_CACHE_FIELD_QUERY_DISEASE_DETAILS,
-    DIAGNOSIS_CACHE_FIELD_QUERY_FOLLOWUP_SYMPTOMS,
-    DIAGNOSIS_CACHE_FIELD_SEARCH_SYMPTOM_CANDIDATES,
-    DIAGNOSIS_TOOL_CACHE_PROFILE,
-    tool_cacheable,
-)
 from app.core.database.neo4j.client import get_neo4j_client
 from app.utils.list_utils import TextListUtils
 
@@ -243,71 +234,6 @@ def _parse_graph_result_one(
     return schema_type.model_validate(raw_row)
 
 
-def _should_cache_diagnosis_result(tool_output: Any) -> bool:
-    """在工具成功返回有效结果后写入诊断工具缓存。
-
-    Args:
-        tool_output: 当前工具成功返回结果。
-
-    Returns:
-        bool: `True` 表示写缓存，`False` 表示跳过。
-    """
-
-    if tool_output is None:
-        return False
-    if isinstance(tool_output, list) and not tool_output:
-        return False
-    return True
-
-
-def _build_query_disease_candidates_cache_input(arguments: dict[str, Any]) -> dict[str, Any]:
-    """构造候选疾病召回工具缓存入参。"""
-
-    normalized_symptoms = TextListUtils.normalize_required(
-        arguments.get("symptoms"),
-        field_name="symptoms",
-    )
-    return {
-        "symptoms": normalized_symptoms,
-        "limit": arguments.get("limit"),
-    }
-
-
-def _build_query_disease_detail_cache_input(arguments: dict[str, Any]) -> dict[str, Any]:
-    """构造单疾病详情工具缓存入参。"""
-
-    normalized_disease_name = _normalize_required_text(
-        str(arguments.get("disease_name") or ""),
-        field_name="disease_name",
-    )
-    return {"disease_name": normalized_disease_name}
-
-
-def _build_query_disease_details_cache_input(arguments: dict[str, Any]) -> dict[str, Any]:
-    """构造批量疾病详情工具缓存入参。"""
-
-    normalized_disease_names = TextListUtils.normalize_required(
-        arguments.get("disease_names"),
-        field_name="disease_names",
-    )
-    return {"disease_names": normalized_disease_names}
-
-
-def _build_query_followup_cache_input(arguments: dict[str, Any]) -> dict[str, Any]:
-    """构造追问症状候选工具缓存入参。"""
-
-    normalized_candidate_diseases = TextListUtils.normalize_required(
-        arguments.get("candidate_diseases"),
-        field_name="candidate_diseases",
-    )
-    normalized_known_symptoms = TextListUtils.normalize(arguments.get("known_symptoms"))
-    return {
-        "candidate_diseases": normalized_candidate_diseases,
-        "known_symptoms": normalized_known_symptoms,
-        "limit": arguments.get("limit"),
-    }
-
-
 class SearchSymptomCandidatesRequest(BaseModel):
     """症状候选检索工具入参。"""
 
@@ -411,11 +337,6 @@ class QueryFollowupSymptomCandidatesRequest(BaseModel):
     error_message="症状归类检索失败",
     timely_message="症状归类仍在处理中",
 )
-@tool_cacheable(
-    DIAGNOSIS_TOOL_CACHE_PROFILE,
-    tool_name=DIAGNOSIS_CACHE_FIELD_SEARCH_SYMPTOM_CANDIDATES,
-    should_cache=_should_cache_diagnosis_result,
-)
 def search_symptom_candidates(
         keywords: list[str],
         limit: int = DEFAULT_GRAPH_QUERY_LIMIT,
@@ -461,12 +382,6 @@ def search_symptom_candidates(
     start_message="正在查询医药数据库，缩小可能范围",
     error_message="候选疾病检索失败",
     timely_message="候选疾病检索仍在处理中",
-)
-@tool_cacheable(
-    DIAGNOSIS_TOOL_CACHE_PROFILE,
-    tool_name=DIAGNOSIS_CACHE_FIELD_QUERY_DISEASE_CANDIDATES,
-    input_builder=_build_query_disease_candidates_cache_input,
-    should_cache=_should_cache_diagnosis_result,
 )
 def query_disease_candidates_by_symptoms(
         symptoms: list[str],
@@ -516,12 +431,6 @@ def query_disease_candidates_by_symptoms(
     error_message="疾病详情查询失败",
     timely_message="疾病详情仍在处理中",
 )
-@tool_cacheable(
-    DIAGNOSIS_TOOL_CACHE_PROFILE,
-    tool_name=DIAGNOSIS_CACHE_FIELD_QUERY_DISEASE_DETAIL,
-    input_builder=_build_query_disease_detail_cache_input,
-    should_cache=_should_cache_diagnosis_result,
-)
 def query_disease_detail(disease_name: str) -> DiseaseDetail | None:
     """查询疾病详情快照。
 
@@ -560,12 +469,6 @@ def query_disease_detail(disease_name: str) -> DiseaseDetail | None:
     error_message="批量疾病详情查询失败",
     timely_message="候选疾病详情仍在处理中",
 )
-@tool_cacheable(
-    DIAGNOSIS_TOOL_CACHE_PROFILE,
-    tool_name=DIAGNOSIS_CACHE_FIELD_QUERY_DISEASE_DETAILS,
-    input_builder=_build_query_disease_details_cache_input,
-    should_cache=_should_cache_diagnosis_result,
-)
 def query_disease_details(disease_names: list[str]) -> list[DiseaseDetail]:
     """批量查询多个候选疾病的详情快照。
 
@@ -603,12 +506,6 @@ def query_disease_details(disease_names: list[str]) -> list[DiseaseDetail]:
     start_message="正在分析哪些症状最有区分度",
     error_message="差异症状分析失败",
     timely_message="差异症状分析仍在处理中",
-)
-@tool_cacheable(
-    DIAGNOSIS_TOOL_CACHE_PROFILE,
-    tool_name=DIAGNOSIS_CACHE_FIELD_QUERY_FOLLOWUP_SYMPTOMS,
-    input_builder=_build_query_followup_cache_input,
-    should_cache=_should_cache_diagnosis_result,
 )
 def query_followup_symptom_candidates(
         candidate_diseases: list[str],

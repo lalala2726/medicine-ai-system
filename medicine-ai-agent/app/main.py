@@ -10,6 +10,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.main import api_router
 from app.core.config_sync import initialize_agent_config_snapshot
+from app.core.agent.tracing import start_agent_tracing, stop_agent_tracing
 from app.core.database import clear_neo4j_connection_cache, verify_neo4j_connection
 from app.core.database.neo4j.config import is_neo4j_startup_ping_enabled
 from app.core.exception.exception_handlers import ExceptionHandlers
@@ -87,6 +88,7 @@ async def lifespan(_app: FastAPI):
     else:
         initialize_agent_config_snapshot()
         initialize_agent_prompt_snapshot()
+    start_agent_tracing()
 
     # 启动 MQ broker（有配置时才启动）
     _broker = None
@@ -102,7 +104,10 @@ async def lifespan(_app: FastAPI):
             if _broker is not None:
                 await _broker.close()
         finally:
-            clear_neo4j_connection_cache()
+            try:
+                stop_agent_tracing()
+            finally:
+                clear_neo4j_connection_cache()
 
 
 app = FastAPI(

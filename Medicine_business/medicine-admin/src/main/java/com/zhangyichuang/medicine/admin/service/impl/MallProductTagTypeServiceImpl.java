@@ -8,6 +8,7 @@ import com.zhangyichuang.medicine.admin.mapper.MallProductTagTypeMapper;
 import com.zhangyichuang.medicine.admin.service.MallProductTagRelService;
 import com.zhangyichuang.medicine.admin.service.MallProductTagTypeService;
 import com.zhangyichuang.medicine.admin.task.MallProductSearchIndexer;
+import com.zhangyichuang.medicine.common.core.constants.RedisConstants;
 import com.zhangyichuang.medicine.common.core.enums.ResponseCode;
 import com.zhangyichuang.medicine.common.core.exception.ServiceException;
 import com.zhangyichuang.medicine.common.core.utils.Assert;
@@ -23,6 +24,7 @@ import com.zhangyichuang.medicine.model.vo.MallProductTagTypeAdminVo;
 import com.zhangyichuang.medicine.model.vo.MallProductTagTypeVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -181,6 +183,7 @@ public class MallProductTagTypeServiceImpl extends ServiceImpl<MallProductTagTyp
      * @return 是否成功
      */
     @Override
+    @CacheEvict(cacheNames = RedisConstants.MallProduct.CACHE_NAME, allEntries = true)
     public boolean updateType(MallProductTagTypeUpdateRequest request) {
         Assert.notNull(request, "标签类型信息不能为空");
         MallProductTagType existingType = getTypeEntityById(request.getId());
@@ -206,6 +209,7 @@ public class MallProductTagTypeServiceImpl extends ServiceImpl<MallProductTagTyp
      * @return 是否成功
      */
     @Override
+    @CacheEvict(cacheNames = RedisConstants.MallProduct.CACHE_NAME, allEntries = true)
     public boolean updateTypeStatus(MallProductTagTypeStatusUpdateRequest request) {
         Assert.notNull(request, "标签类型状态信息不能为空");
         MallProductTagType existingType = getTypeEntityById(request.getId());

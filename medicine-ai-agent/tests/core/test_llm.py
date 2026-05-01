@@ -26,7 +26,7 @@ class _FakeChatClient:
         **kwargs (Any): 构造时接收的关键字参数。
 
     返回值:
-        None: 仅缓存入参，不执行业务逻辑。
+        None: 仅记录入参，不执行业务逻辑。
 
     异常说明:
         无。
@@ -384,6 +384,51 @@ def test_create_aliyun_chat_model_reads_env_and_enables_stream_usage(monkeypatch
     assert model.kwargs["base_url"] == "https://dashscope.example.com/v1"
     assert model.kwargs["extra_body"] == {"enable_thinking": True}
     assert model.kwargs["stream_usage"] is True
+
+
+def test_chat_qwen_preserves_dashscope_cache_usage_metadata(monkeypatch: pytest.MonkeyPatch) -> None:
+    """测试目的：验证 ChatQwen 会保留百炼 OpenAI-compatible 返回的缓存 Token 明细；预期结果：response_metadata.token_usage 包含官方缓存字段。"""
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "dashscope-key")
+    chat_model = aliyun_provider.ChatQwen(
+        model="qwen3-coder-plus",
+        api_key="dashscope-key",
+        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    )
+    response = {
+        "id": "chatcmpl-test",
+        "model": "qwen3-coder-plus",
+        "object": "chat.completion",
+        "created": 1,
+        "choices": [
+            {
+                "index": 0,
+                "finish_reason": "stop",
+                "message": {
+                    "role": "assistant",
+                    "content": "缓存命中",
+                },
+            }
+        ],
+        "usage": {
+            "prompt_tokens": 3019,
+            "completion_tokens": 104,
+            "total_tokens": 3123,
+            "prompt_tokens_details": {
+                "cached_tokens": 2048,
+                "cache_creation_input_tokens": 0,
+            },
+        },
+    }
+
+    result = chat_model._create_chat_result(response)
+    message = result.generations[0].message
+
+    assert message.response_metadata["token_usage"]["prompt_tokens"] == 3019
+    assert message.response_metadata["token_usage"]["prompt_tokens_details"] == {
+        "cached_tokens": 2048,
+        "cache_creation_input_tokens": 0,
+    }
+    assert message.response_metadata["usage"]["prompt_tokens_details"]["cached_tokens"] == 2048
 
 
 def test_create_aliyun_chat_model_raises_without_api_key(monkeypatch: pytest.MonkeyPatch) -> None:

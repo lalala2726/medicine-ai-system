@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   /** AI 服务反向代理目标地址。 */
   const aiAgentProxyTarget = env.AI_AGENT_PROXY_TARGET?.trim() || 'http://localhost:8000'
   /** Vite 开发服务器允许访问的自定义 Host 白名单。 */
-  const allowedHosts = ['localhost']
+  const allowedHosts = ['medicine-admin.zhangchuangla.cn', 'medicine-client.zhangchuangla.cn']
 
   return {
     plugins: [react()],

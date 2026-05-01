@@ -68,7 +68,7 @@ public final class IpAddressUtils {
             }
         }
         if (isValidIPv4(normalizedIp)) {
-            return !"0.0.0.0".equals(normalizedIp) && !"localhost".equals(normalizedIp);
+            return !"0.0.0.0".equals(normalizedIp) && !"127.0.0.1".equals(normalizedIp);
         }
         return isValidIPv6(normalizedIp);
     }

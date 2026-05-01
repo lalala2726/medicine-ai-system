@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhangyichuang.medicine.admin.mapper.MallCategoryMapper;
 import com.zhangyichuang.medicine.admin.service.MallCategoryService;
 import com.zhangyichuang.medicine.common.core.base.Option;
+import com.zhangyichuang.medicine.common.core.constants.RedisConstants;
 import com.zhangyichuang.medicine.common.core.exception.ServiceException;
 import com.zhangyichuang.medicine.common.security.utils.SecurityUtils;
 import com.zhangyichuang.medicine.model.entity.MallCategory;
@@ -12,6 +13,7 @@ import com.zhangyichuang.medicine.model.request.MallCategoryAddRequest;
 import com.zhangyichuang.medicine.model.request.MallCategoryUpdateRequest;
 import com.zhangyichuang.medicine.model.vo.MallCategoryTree;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -105,6 +107,7 @@ public class MallCategoryServiceImpl extends ServiceImpl<MallCategoryMapper, Mal
     }
 
     @Override
+    @CacheEvict(cacheNames = RedisConstants.MallProduct.CACHE_NAME, allEntries = true)
     public boolean updateCategory(MallCategoryUpdateRequest request) {
         // 检查分类是否存在
         MallCategory existingCategory = getById(request.getId());
@@ -133,6 +136,7 @@ public class MallCategoryServiceImpl extends ServiceImpl<MallCategoryMapper, Mal
     }
 
     @Override
+    @CacheEvict(cacheNames = RedisConstants.MallProduct.CACHE_NAME, allEntries = true)
     public boolean deleteCategory(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
             throw new ServiceException("请选择要删除的分类");
@@ -202,4 +206,3 @@ public class MallCategoryServiceImpl extends ServiceImpl<MallCategoryMapper, Mal
                 }).toList();
     }
 }
-

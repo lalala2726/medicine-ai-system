@@ -117,8 +117,8 @@ const ConsultationQuestionnaireCard: React.FC<ConsultationQuestionnaireCardProps
 
     optionLabels.forEach(label => {
       let visualLength = 0
-      for (let index = 0; index < label.length; index += 1) {
-        visualLength += label.charCodeAt(index) > 255 ? 1 : 0.5
+      for (const char of label) {
+        visualLength += char.charCodeAt(0) > 255 ? 1 : 0.5
       }
       if (visualLength > maxVisualLength) {
         maxVisualLength = visualLength

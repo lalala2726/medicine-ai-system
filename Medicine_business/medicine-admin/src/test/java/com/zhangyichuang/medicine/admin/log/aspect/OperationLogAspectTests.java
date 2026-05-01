@@ -61,7 +61,7 @@ class OperationLogAspectTests {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setMethod("POST");
         request.setRequestURI("/system/user");
-        request.setRemoteAddr("localhost");
+        request.setRemoteAddr("127.0.0.1");
         request.addHeader("User-Agent", "Mozilla/5.0 Chrome/120.0");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 

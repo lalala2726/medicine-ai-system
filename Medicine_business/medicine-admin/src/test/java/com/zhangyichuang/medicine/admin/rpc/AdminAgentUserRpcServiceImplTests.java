@@ -1,11 +1,12 @@
 package com.zhangyichuang.medicine.admin.rpc;
 
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.zhangyichuang.medicine.admin.service.UserService;
+import com.zhangyichuang.medicine.admin.service.UserWalletService;
 import com.zhangyichuang.medicine.common.core.exception.ParamException;
 import com.zhangyichuang.medicine.model.dto.UserContextDto;
-import com.zhangyichuang.medicine.model.dto.UserDetailDto;
-import com.zhangyichuang.medicine.model.dto.UserWalletDto;
 import com.zhangyichuang.medicine.model.entity.User;
+import com.zhangyichuang.medicine.model.entity.UserWallet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +20,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +29,9 @@ class AdminAgentUserRpcServiceImplTests {
     @Mock
     private UserService userService;
 
+    @Mock
+    private UserWalletService userWalletService;
+
     @InjectMocks
     private AdminAgentUserRpcServiceImpl rpcService;
 
@@ -34,11 +39,18 @@ class AdminAgentUserRpcServiceImplTests {
      * 测试目的：验证用户 context 聚合会组合用户详情和钱包摘要。
      * 预期结果：返回 map key 为用户 ID，并正确生成风险标记和 AI 提示。
      */
+    @SuppressWarnings("unchecked")
     @Test
     void getUserContextsByIds_ShouldBuildContext() {
-        when(userService.getUserById(1L)).thenReturn(createUser());
-        when(userService.getUserDetailById(1L)).thenReturn(createUserDetail());
-        when(userService.getUserWallet(1L)).thenReturn(createUserWallet());
+        LambdaQueryChainWrapper<User> userQuery = mock(LambdaQueryChainWrapper.class);
+        when(userService.lambdaQuery()).thenReturn(userQuery);
+        when(userQuery.in(any(), anyCollection())).thenReturn(userQuery);
+        when(userQuery.list()).thenReturn(List.of(createUser()));
+
+        LambdaQueryChainWrapper<UserWallet> walletQuery = mock(LambdaQueryChainWrapper.class);
+        when(userWalletService.lambdaQuery()).thenReturn(walletQuery);
+        when(walletQuery.in(any(), anyCollection())).thenReturn(walletQuery);
+        when(walletQuery.list()).thenReturn(List.of(createUserWallet()));
 
         Map<Long, UserContextDto> result = rpcService.getUserContextsByIds(List.of(1L));
 
@@ -47,13 +59,14 @@ class AdminAgentUserRpcServiceImplTests {
         UserContextDto context = result.get(1L);
         assertEquals("张三", context.getBasicSummary().getNickName());
         assertEquals(new BigDecimal("1000.00"), context.getWalletSummary().getBalance());
+        assertNull(context.getOrderSummary());
         assertTrue(context.getRiskSummary().getAccountDisabled());
         assertTrue(context.getRiskSummary().getWalletFrozen());
         assertFalse(context.getRiskSummary().getMissingBasicProfile());
         assertFalse(context.getAiHints().getCanOperateWallet());
-        verify(userService).getUserById(1L);
-        verify(userService).getUserDetailById(1L);
-        verify(userService).getUserWallet(1L);
+        verify(userService, never()).getUserById(anyLong());
+        verify(userService, never()).getUserDetailById(anyLong());
+        verify(userService, never()).getUserWallet(anyLong());
     }
 
     /**
@@ -67,7 +80,7 @@ class AdminAgentUserRpcServiceImplTests {
                 .toList();
 
         assertThrows(ParamException.class, () -> rpcService.getUserContextsByIds(userIds));
-        verifyNoInteractions(userService);
+        verifyNoInteractions(userService, userWalletService);
     }
 
     /**
@@ -79,48 +92,27 @@ class AdminAgentUserRpcServiceImplTests {
         User user = new User();
         user.setId(1L);
         user.setNickname("张三");
+        user.setPhoneNumber("13800000000");
         user.setStatus(1);
+        user.setCreateTime(new Date());
+        user.setLastLoginTime(new Date());
         return user;
-    }
-
-    /**
-     * 功能描述：构造用户详情模拟数据，供 context 聚合测试复用。
-     *
-     * @return 返回用户详情 DTO
-     */
-    private UserDetailDto createUserDetail() {
-        UserDetailDto detail = new UserDetailDto();
-        detail.setNickName("张三");
-        detail.setTotalOrders(10);
-        detail.setTotalConsume(new BigDecimal("5000.00"));
-
-        UserDetailDto.BasicInfo basicInfo = new UserDetailDto.BasicInfo();
-        basicInfo.setUserId(1L);
-        basicInfo.setPhoneNumber("13800000000");
-        detail.setBasicInfo(basicInfo);
-
-        UserDetailDto.SecurityInfo securityInfo = new UserDetailDto.SecurityInfo();
-        securityInfo.setStatus(1);
-        securityInfo.setRegisterTime(new Date());
-        securityInfo.setLastLoginTime(new Date());
-        detail.setSecurityInfo(securityInfo);
-        return detail;
     }
 
     /**
      * 功能描述：构造用户钱包模拟数据，供钱包摘要和风险标记测试复用。
      *
-     * @return 返回用户钱包 DTO
+     * @return 返回用户钱包实体
      */
-    private UserWalletDto createUserWallet() {
-        UserWalletDto wallet = new UserWalletDto();
-        wallet.setUserId(1L);
-        wallet.setBalance(new BigDecimal("1000.00"));
-        wallet.setStatus(1);
-        wallet.setFreezeReason("风控冻结");
-        wallet.setFreezeTime(new Date());
-        wallet.setTotalIncome(new BigDecimal("5000.00"));
-        wallet.setTotalExpend(new BigDecimal("4000.00"));
-        return wallet;
+    private UserWallet createUserWallet() {
+        return UserWallet.builder()
+                .userId(1L)
+                .balance(new BigDecimal("1000.00"))
+                .status(1)
+                .freezeReason("风控冻结")
+                .freezeTime(new Date())
+                .totalIncome(new BigDecimal("5000.00"))
+                .totalExpend(new BigDecimal("4000.00"))
+                .build();
     }
 }

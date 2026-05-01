@@ -59,6 +59,7 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
     private final MallOrderItemService mallOrderItemService;
     private final MallProductTagService mallProductTagService;
     private final MallProductSearchService mallProductSearchService;
+    private final MallProductDetailCacheService mallProductDetailCacheService;
 
     @Override
     public List<RecommendListVo> recommend() {
@@ -137,38 +138,15 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
             throw new ServiceException(ResponseCode.PARAM_ERROR, "商品ID不能为空");
         }
 
-        // 查询商品详情（包含图片和药品详情）
-        MallProductWithImageDto productWithImages = mallProductMapper.getProductWithImagesById(id);
-        if (productWithImages == null) {
+        MallProductVo cachedProductDetail = mallProductDetailCacheService.getCachedMallProductDetail(id);
+        MallProduct latestProduct = getById(id);
+        if (latestProduct == null) {
             throw new ServiceException(ResponseCode.RESULT_IS_NULL, "商品不存在");
         }
 
-        productWithImages.setSales(mallOrderItemService.getCompletedSalesByProductId(id));
-
-        // 构建返回VO
-        com.zhangyichuang.medicine.client.model.vo.MallProductVo productVo =
-                new com.zhangyichuang.medicine.client.model.vo.MallProductVo();
-        productVo.setId(productWithImages.getId());
-        productVo.setName(productWithImages.getName());
-        productVo.setUnit(productWithImages.getUnit());
-        productVo.setPrice(productWithImages.getPrice());
-        productVo.setStock(productWithImages.getStock());
-        productVo.setCouponEnabled(productWithImages.getCouponEnabled());
-        productVo.setSales(productWithImages.getSales());
-        productVo.setDrugDetail(productWithImages.getDrugDetail());
-        productVo.setTags(mallProductTagService.listEnabledTagVoMapByProductIds(List.of(id)).getOrDefault(id, List.of()));
-        MallProductDetailDto categoryDetail = buildCategoryDetail(id);
-        productVo.setCategoryIds(categoryDetail.getCategoryIds());
-        productVo.setCategoryNames(categoryDetail.getCategoryNames());
-
-        // 提取图片URL列表
-        if (productWithImages.getProductImages() != null && !productWithImages.getProductImages().isEmpty()) {
-            List<String> imageUrls = productWithImages.getProductImages().stream()
-                    .map(MallProductImage::getImageUrl)
-                    .toList();
-            productVo.setImages(imageUrls);
-        }
-
+        MallProductVo productVo = copyProductDetail(cachedProductDetail);
+        productVo.setStock(latestProduct.getStock());
+        productVo.setSales(mallOrderItemService.getCompletedSalesByProductId(id));
         return productVo;
     }
 
@@ -381,6 +359,27 @@ public class MallProductServiceImpl extends ServiceImpl<MallProductMapper, MallP
      */
     public Double calculateProductViews(int views, long timeMillis) {
         return views + 1 - timeMillis / 1e13;
+    }
+
+    /**
+     * 复制商品详情响应对象，避免直接修改缓存对象。
+     *
+     * @param source 缓存中的商品详情
+     * @return 可安全补充动态字段的商品详情副本
+     */
+    private MallProductVo copyProductDetail(MallProductVo source) {
+        MallProductVo target = new MallProductVo();
+        target.setId(source.getId());
+        target.setName(source.getName());
+        target.setCategoryIds(source.getCategoryIds());
+        target.setCategoryNames(source.getCategoryNames());
+        target.setUnit(source.getUnit());
+        target.setPrice(source.getPrice());
+        target.setCouponEnabled(source.getCouponEnabled());
+        target.setImages(source.getImages());
+        target.setDrugDetail(source.getDrugDetail());
+        target.setTags(source.getTags());
+        return target;
     }
 
     private AssistantProductPurchaseCardsVo emptyAssistantProductPurchaseCards() {

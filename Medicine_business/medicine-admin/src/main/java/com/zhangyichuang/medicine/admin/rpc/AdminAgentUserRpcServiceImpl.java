@@ -2,19 +2,25 @@ package com.zhangyichuang.medicine.admin.rpc;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zhangyichuang.medicine.admin.service.UserService;
+import com.zhangyichuang.medicine.admin.service.UserWalletService;
 import com.zhangyichuang.medicine.common.core.base.PageRequest;
 import com.zhangyichuang.medicine.common.core.utils.Assert;
+import com.zhangyichuang.medicine.common.core.utils.BeanCotyUtils;
 import com.zhangyichuang.medicine.model.dto.*;
 import com.zhangyichuang.medicine.model.entity.User;
+import com.zhangyichuang.medicine.model.entity.UserWallet;
 import com.zhangyichuang.medicine.model.request.UserListQueryRequest;
 import com.zhangyichuang.medicine.rpc.admin.AdminAgentUserRpcService;
 import lombok.RequiredArgsConstructor;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 管理端 Agent 用户 RPC Provider。
@@ -39,6 +45,7 @@ public class AdminAgentUserRpcServiceImpl implements AdminAgentUserRpcService {
     private static final int WALLET_STATUS_FROZEN = 1;
 
     private final UserService userService;
+    private final UserWalletService userWalletService;
 
     @Override
     public Page<UserListDto> listUsers(UserListQueryRequest query) {
@@ -68,12 +75,15 @@ public class AdminAgentUserRpcServiceImpl implements AdminAgentUserRpcService {
     @Override
     public Map<Long, UserContextDto> getUserContextsByIds(List<Long> userIds) {
         validateContextUserIds(userIds);
+        List<Long> normalizedUserIds = normalizeUserIds(userIds);
+        Assert.notEmpty(normalizedUserIds, "用户ID不能为空");
+        Map<Long, User> userMap = loadUserMap(normalizedUserIds);
+        Map<Long, UserWalletDto> walletMap = loadWalletMap(normalizedUserIds);
         Map<Long, UserContextDto> result = new LinkedHashMap<>();
-        for (Long userId : userIds) {
-            ensureUserExists(userId);
-            UserDetailDto detail = userService.getUserDetailById(userId);
-            UserWalletDto wallet = userService.getUserWallet(userId);
-            result.put(userId, buildUserContext(userId, detail, wallet));
+        for (Long userId : normalizedUserIds) {
+            User user = userMap.get(userId);
+            Assert.notNull(user, "用户不存在: " + userId);
+            result.put(userId, buildUserContext(user, walletMap.get(userId)));
         }
         return result;
     }
@@ -87,8 +97,15 @@ public class AdminAgentUserRpcServiceImpl implements AdminAgentUserRpcService {
     @Override
     public List<UserWalletDto> getUserWalletsByUserIds(List<Long> userIds) {
         Assert.notEmpty(userIds, "用户ID不能为空");
-        return userIds.stream()
-                .map(userService::getUserWallet)
+        List<Long> normalizedUserIds = normalizeUserIds(userIds);
+        Assert.notEmpty(normalizedUserIds, "用户ID不能为空");
+        Map<Long, UserWalletDto> walletMap = loadWalletMap(normalizedUserIds);
+        return normalizedUserIds.stream()
+                .map(userId -> {
+                    UserWalletDto wallet = walletMap.get(userId);
+                    Assert.notNull(wallet, "用户钱包不存在: " + userId);
+                    return wallet;
+                })
                 .toList();
     }
 
@@ -115,33 +132,73 @@ public class AdminAgentUserRpcServiceImpl implements AdminAgentUserRpcService {
     }
 
     /**
-     * 确认用户存在并输出具体不存在的用户 ID。
+     * 归一化用户 ID 列表。
      *
-     * @param userId 用户 ID
+     * @param userIds 原始用户 ID 列表
+     * @return 去空、去重后的用户 ID 列表
      */
-    private void ensureUserExists(Long userId) {
-        Assert.notNull(userId, "用户ID不能为空");
-        User user = userService.getUserById(userId);
-        Assert.notNull(user, "用户不存在: " + userId);
+    private List<Long> normalizeUserIds(List<Long> userIds) {
+        return userIds.stream()
+                .filter(userId -> userId != null && userId > 0)
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .stream()
+                .toList();
+    }
+
+    /**
+     * 批量加载用户基础信息并按用户 ID 索引。
+     *
+     * @param userIds 用户 ID 列表
+     * @return 用户 ID 到用户实体的映射
+     */
+    private Map<Long, User> loadUserMap(List<Long> userIds) {
+        List<User> users = userService.lambdaQuery()
+                .in(User::getId, userIds)
+                .list();
+        if (CollectionUtils.isEmpty(users)) {
+            return Map.of();
+        }
+        return users.stream()
+                .filter(user -> user.getId() != null)
+                .collect(Collectors.toMap(User::getId, user -> user, (left, right) -> left, LinkedHashMap::new));
+    }
+
+    /**
+     * 批量加载用户钱包基础信息并按用户 ID 索引。
+     *
+     * @param userIds 用户 ID 列表
+     * @return 用户 ID 到钱包 DTO 的映射
+     */
+    private Map<Long, UserWalletDto> loadWalletMap(List<Long> userIds) {
+        List<UserWallet> wallets = userWalletService.lambdaQuery()
+                .in(UserWallet::getUserId, userIds)
+                .list();
+        if (CollectionUtils.isEmpty(wallets)) {
+            return Map.of();
+        }
+        return wallets.stream()
+                .filter(wallet -> wallet.getUserId() != null)
+                .map(wallet -> BeanCotyUtils.copyProperties(wallet, UserWalletDto.class))
+                .collect(Collectors.toMap(UserWalletDto::getUserId, wallet -> wallet,
+                        (left, right) -> left, LinkedHashMap::new));
     }
 
     /**
      * 构建单个用户的智能体上下文。
      *
-     * @param userId 用户 ID
-     * @param detail 用户详情 DTO
+     * @param user   用户实体
      * @param wallet 用户钱包 DTO
      * @return 用户智能体上下文
      */
-    private UserContextDto buildUserContext(Long userId, UserDetailDto detail, UserWalletDto wallet) {
-        UserContextDto.BasicSummary basicSummary = buildBasicSummary(detail);
+    private UserContextDto buildUserContext(User user, UserWalletDto wallet) {
+        UserContextDto.BasicSummary basicSummary = buildBasicSummary(user);
         boolean accountDisabled = isAccountDisabled(basicSummary);
         boolean walletFrozen = wallet != null && Integer.valueOf(WALLET_STATUS_FROZEN).equals(wallet.getStatus());
         boolean missingBasicProfile = isMissingBasicProfile(basicSummary);
         return UserContextDto.builder()
-                .userId(userId)
+                .userId(user.getId())
                 .basicSummary(basicSummary)
-                .orderSummary(buildOrderSummary(detail))
+                .orderSummary(null)
                 .walletSummary(buildWalletSummary(wallet))
                 .riskSummary(UserContextDto.RiskSummary.builder()
                         .accountDisabled(accountDisabled)
@@ -160,32 +217,16 @@ public class AdminAgentUserRpcServiceImpl implements AdminAgentUserRpcService {
     /**
      * 构建用户基础摘要。
      *
-     * @param detail 用户详情 DTO
+     * @param user 用户实体
      * @return 用户基础摘要
      */
-    private UserContextDto.BasicSummary buildBasicSummary(UserDetailDto detail) {
-        UserDetailDto.BasicInfo basicInfo = detail == null ? null : detail.getBasicInfo();
-        UserDetailDto.SecurityInfo securityInfo = detail == null ? null : detail.getSecurityInfo();
+    private UserContextDto.BasicSummary buildBasicSummary(User user) {
         return UserContextDto.BasicSummary.builder()
-                .nickName(detail == null ? null : detail.getNickName())
-                .phoneNumber(basicInfo == null ? null : basicInfo.getPhoneNumber())
-                .status(securityInfo == null ? null : securityInfo.getStatus())
-                .registerTime(securityInfo == null ? null : securityInfo.getRegisterTime())
-                .lastLoginTime(securityInfo == null ? null : securityInfo.getLastLoginTime())
-                .build();
-    }
-
-    /**
-     * 构建用户订单摘要。
-     *
-     * @param detail 用户详情 DTO
-     * @return 用户订单摘要
-     */
-    private UserContextDto.OrderSummary buildOrderSummary(UserDetailDto detail) {
-        return UserContextDto.OrderSummary.builder()
-                .totalOrders(detail == null ? null : detail.getTotalOrders())
-                .totalConsume(detail == null ? null : detail.getTotalConsume())
-                .recentOrderOverview(null)
+                .nickName(user.getNickname())
+                .phoneNumber(user.getPhoneNumber())
+                .status(user.getStatus())
+                .registerTime(user.getCreateTime())
+                .lastLoginTime(user.getLastLoginTime())
                 .build();
     }
 

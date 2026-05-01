@@ -92,11 +92,30 @@ function getImagePreviewUrl(file: UploadFile): string | undefined {
   // 服务器响应中的 fileUrl
   const response = file.response as FileUploadTypes.FileUploadVo | undefined;
   if (response?.fileUrl) return response.fileUrl;
-  // 本地 blob 预览
-  if (file.originFileObj) {
-    return URL.createObjectURL(file.originFileObj);
+  // 本地 blob 预览 URL 在文件选择时创建，避免渲染阶段重复创建。
+  return file.thumbUrl;
+}
+
+/**
+ * 判断是否为本地创建的图片预览 URL。
+ *
+ * @param url 图片预览 URL。
+ * @returns 是否需要主动释放。
+ */
+function isLocalPreviewUrl(url?: string): url is string {
+  return Boolean(url?.startsWith('blob:'));
+}
+
+/**
+ * 释放图片文件对应的本地预览 URL。
+ *
+ * @param file antd UploadFile。
+ * @returns 无返回值。
+ */
+function revokeImagePreviewUrl(file?: UploadFile): void {
+  if (isLocalPreviewUrl(file?.thumbUrl)) {
+    URL.revokeObjectURL(file.thumbUrl);
   }
-  return undefined;
 }
 
 const ChatInput: React.FC<ChatInputProps> = ({
@@ -128,9 +147,26 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   // 用 ref 保存最新的 imageFileList，在异步上传回调中读取
   const imageFileListRef = useRef(imageFileList);
+  const previousImageFileListRef = useRef(imageFileList);
   useEffect(() => {
     imageFileListRef.current = imageFileList;
   });
+
+  useEffect(() => {
+    const currentFileUids = new Set(imageFileList.map((file) => file.uid));
+    previousImageFileListRef.current.forEach((file) => {
+      if (!currentFileUids.has(file.uid)) {
+        revokeImagePreviewUrl(file);
+      }
+    });
+    previousImageFileListRef.current = imageFileList;
+  }, [imageFileList]);
+
+  useEffect(() => {
+    return () => {
+      imageFileListRef.current.forEach((file) => revokeImagePreviewUrl(file));
+    };
+  }, []);
 
   // 组件加载后自动聚焦
   useEffect(() => {
@@ -239,6 +275,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         uid: `upload-${Date.now()}-${index}`,
         name: file.name,
         status: 'uploading' as const,
+        thumbUrl: URL.createObjectURL(file),
         originFileObj: file as any,
       }));
 
@@ -252,10 +289,18 @@ const ChatInput: React.FC<ChatInputProps> = ({
           const result = (await upload(file)) as FileUploadTypes.FileUploadVo;
           // 从 ref 取最新列表并更新
           const latestList = imageFileListRef.current;
+          const currentFile = latestList.find((f) => f.uid === uid);
+          revokeImagePreviewUrl(currentFile);
           onImageFileListChange(
             latestList.map((f) =>
               f.uid === uid
-                ? { ...f, status: 'done' as const, url: result.fileUrl, response: result }
+                ? {
+                    ...f,
+                    status: 'done' as const,
+                    url: result.fileUrl,
+                    response: result,
+                    thumbUrl: undefined,
+                  }
                 : f,
             ),
           );

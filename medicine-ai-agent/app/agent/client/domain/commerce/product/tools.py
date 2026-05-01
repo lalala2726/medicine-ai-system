@@ -14,7 +14,6 @@ from app.core.agent.middleware import (
     tool_call_status,
     tool_thinking_redaction,
 )
-from app.core.agent.tool_cache import CLIENT_COMMERCE_TOOL_CACHE_PROFILE, tool_cacheable
 from app.schemas.http_response import HttpResponse
 from app.utils.http_client import HttpClient
 
@@ -35,10 +34,6 @@ PRODUCT_DETAILS_URL = "/agent/client/product/details"
     start_message="正在搜索候选药品",
     error_message="商品搜索失败",
     timely_message="商品搜索仍在处理中",
-)
-@tool_cacheable(
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    tool_name="search_products",
 )
 async def search_products(
         keyword: str | None = None,
@@ -104,10 +99,6 @@ async def search_products(
     start_message="正在查询药品详情",
     error_message="药品详情查询失败",
     timely_message="药品详情仍在处理中",
-)
-@tool_cacheable(
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    tool_name="get_product_details",
 )
 async def get_product_details(product_ids: list[int]) -> list[dict]:
     """

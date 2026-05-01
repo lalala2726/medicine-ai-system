@@ -10,6 +10,7 @@ import AppLayout from '../layouts/AppLayout';
 import AuthGuard from '../layouts/AuthGuard';
 import PermissionRoute from '../layouts/PermissionRoute';
 import {
+  AGENT_OBSERVABILITY_ROUTE_PERMISSIONS,
   ADMIN_PERMISSIONS,
   COUPON_ROUTE_PERMISSIONS,
   LLM_SYSTEM_MODELS_ROUTE_PERMISSIONS,
@@ -43,6 +44,11 @@ const LlmSystemModelsCommonCapability = lazy(
 const LlmPromptManage = lazy(() => import('@/pages/llm-manage/prompt-manage'));
 const LlmPromptManageEdit = lazy(() => import('@/pages/llm-manage/prompt-manage/edit'));
 const LlmPromptManageHistory = lazy(() => import('@/pages/llm-manage/prompt-manage/history'));
+const LlmAgentTrace = lazy(() => import('@/pages/llm-manage/agent-trace'));
+const LlmAgentMonitor = lazy(() => import('@/pages/llm-manage/agent-monitor'));
+const LlmAgentMonitorModelDetail = lazy(
+  () => import('@/pages/llm-manage/agent-monitor/model-detail'),
+);
 const ProductManage = lazy(() => import('@/pages/mall/product-list'));
 const ProductEdit = lazy(() => import('@/pages/mall/product-form'));
 const ProductCategory = lazy(() => import('@/pages/mall/product-category'));
@@ -387,6 +393,12 @@ export const menuRoutes: MenuRoute[] = [
         hideInMenu: true,
         access: ADMIN_PERMISSIONS.agentPrompt.query,
       },
+      {
+        path: routePaths.llmAgentObservability,
+        name: '智能体观测',
+        icon: 'dashboard',
+        access: AGENT_OBSERVABILITY_ROUTE_PERMISSIONS,
+      },
     ],
   },
 ];
@@ -535,6 +547,18 @@ const LLM_SYSTEM_MODEL_REDIRECT_OPTIONS: PermissionRedirectOption[] = [
   {
     path: routePaths.llmSystemModelsCommonCapability,
     access: ADMIN_PERMISSIONS.agentConfig.commonQuery,
+  },
+];
+
+/** 智能体观测默认跳转选项。 */
+const LLM_AGENT_OBSERVABILITY_REDIRECT_OPTIONS: PermissionRedirectOption[] = [
+  {
+    path: routePaths.llmAgentMonitor,
+    access: ADMIN_PERMISSIONS.agentTrace.monitor,
+  },
+  {
+    path: routePaths.llmAgentTrace,
+    access: ADMIN_PERMISSIONS.agentTrace.list,
   },
 ];
 
@@ -696,6 +720,36 @@ export const router = createBrowserRouter([
               <LlmPromptManageHistory />,
               ADMIN_PERMISSIONS.agentPrompt.query,
             ),
+          },
+          {
+            path: 'agent-observability',
+            children: [
+              {
+                index: true,
+                element: <PermissionRedirect options={LLM_AGENT_OBSERVABILITY_REDIRECT_OPTIONS} />,
+              },
+              {
+                path: 'monitor',
+                element: buildPermissionElement(
+                  <LlmAgentMonitor />,
+                  ADMIN_PERMISSIONS.agentTrace.monitor,
+                ),
+              },
+              {
+                path: 'monitor/model-detail',
+                element: buildPermissionElement(
+                  <LlmAgentMonitorModelDetail />,
+                  ADMIN_PERMISSIONS.agentTrace.monitor,
+                ),
+              },
+              {
+                path: 'trace',
+                element: buildPermissionElement(
+                  <LlmAgentTrace />,
+                  ADMIN_PERMISSIONS.agentTrace.list,
+                ),
+              },
+            ],
           },
         ],
       },

@@ -11,16 +11,13 @@ from langchain_core.language_models import FakeListChatModel
 from langchain_core.messages import AIMessage, SystemMessage
 from loguru import logger
 
-import app.core.agent.base_prompt_middleware as base_prompt_module
+import app.core.agent.middleware.base_prompt as base_prompt_module
 import app.core.agent.skill.discovery.scope as scope_module
-from app.core.agent.base_prompt_middleware import BasePromptMiddleware
-from app.core.agent.skill import (
-    SkillMiddleware,
-    create_list_skill_resources_tool,
-    create_load_skill_resource_tool,
-    create_load_skill_tool,
-    discover_skills,
-)
+from app.core.agent.middleware.base_prompt import BasePromptMiddleware
+from app.core.agent.middleware.skill import SkillMiddleware
+from app.core.agent.skill import discover_skills
+from app.core.agent.skill.tool.list_skill_resources import create_list_skill_resources_tool
+from app.core.agent.skill.tool.load_skill import create_load_skill_resource_tool, create_load_skill_tool
 
 
 class _ToolFriendlyFakeListChatModel(FakeListChatModel):
@@ -234,8 +231,6 @@ def test_discover_skills_finds_repo_chart_skill_in_direct_skill_mode() -> None:
         {
             "name": "chart",
             "description": "图表模板技能，提供 18 种图表类型的模板规范、字段说明与标准输出格式，基于 GPT-Vis (AntV) 规范。",
-            "license": "Apache-2.0",
-            "metadata": {"author": "Chuang", "version": "1.0"},
         }
     ]
 
@@ -930,7 +925,11 @@ def test_base_and_skill_middlewares_keep_expected_order_and_idempotency(
         首次注入后顺序正确；再次注入时 base/skills 段均只出现一次。
     """
 
-    monkeypatch.setattr(base_prompt_module, "load_prompt", lambda _path: "BASE RULES")
+    monkeypatch.setattr(
+        base_prompt_module,
+        "load_managed_prompt",
+        lambda *_args, **_kwargs: "BASE RULES",
+    )
     base_middleware = BasePromptMiddleware()
     skill_middleware = SkillMiddleware(scope="supervisor")
     request = ModelRequest(

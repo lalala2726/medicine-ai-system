@@ -33,7 +33,7 @@ public class LoginLogVo {
     @Schema(description = "登录方式", example = "password")
     private String loginType;
 
-    @Schema(description = "IP地址", example = "localhost")
+    @Schema(description = "IP地址", example = "127.0.0.1")
     private String ipAddress;
 
     @Schema(description = "User-Agent")

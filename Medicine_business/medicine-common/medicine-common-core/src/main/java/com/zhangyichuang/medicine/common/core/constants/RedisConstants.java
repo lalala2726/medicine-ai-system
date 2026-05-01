@@ -81,19 +81,25 @@ public interface RedisConstants {
          */
         String LOGIN_SECURITY_CONFIG_KEY = "auth:login:security:config";
 
+        /**
+         * 用户访问令牌 Key 前缀，后接访问令牌会话ID。
+         */
         String USER_ACCESS_TOKEN = "auth:token:access:";
 
+        /**
+         * 用户刷新令牌 Key 前缀，后接刷新令牌会话ID。
+         */
         String USER_REFRESH_TOKEN = "auth:token:refresh:";
 
         /**
-         * 用户访问令牌索引 Key 模板，参数为用户ID。
+         * 用户访问令牌索引 Key 模板，参数为用户ID，用于按用户清理访问令牌。
          */
-        String USER_ACCESS_TOKEN_INDEX = "auth:token:user:%s:access";
+        String USER_ACCESS_TOKEN_INDEX = "auth:token:user:access:%s";
 
         /**
-         * 用户刷新令牌索引 Key 模板，参数为用户ID。
+         * 用户刷新令牌索引 Key 模板，参数为用户ID，用于按用户清理刷新令牌。
          */
-        String USER_REFRESH_TOKEN_INDEX = "auth:token:user:%s:refresh";
+        String USER_REFRESH_TOKEN_INDEX = "auth:token:user:refresh:%s";
 
         String ROLE_KEY = "auth:role:";
 

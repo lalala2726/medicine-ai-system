@@ -7,9 +7,12 @@ from app.agent.tools.rag_query import (
     search_client_knowledge_context,
     search_knowledge_context,
 )
+from app.agent.tools.time_tool import CurrentTimeInfo, get_current_time
 
 __all__ = [
+    "CurrentTimeInfo",
     "KnowledgeSearchToolRequest",
+    "get_current_time",
     "search_client_knowledge_context",
     "search_knowledge_context",
 ]

@@ -25,8 +25,6 @@ type CouponSelectionMode = 'AUTO' | 'NONE' | 'MANUAL'
 interface BuyNowData {
   isBuyNow: boolean
   product?: CartItem
-  /** 多商品立即购买（来自 AI 助手购买卡片）。 */
-  products?: CartItem[]
 }
 
 /**
@@ -157,9 +155,8 @@ const Checkout: React.FC = () => {
 
         if (buyNowData?.isBuyNow) {
           setIsBuyNow(true)
-          const buyNowProducts = buyNowData.products || (buyNowData.product ? [buyNowData.product] : [])
-          if (buyNowProducts.length > 0) {
-            setSelectedItems(buyNowProducts)
+          if (buyNowData.product) {
+            setSelectedItems([buyNowData.product])
           } else {
             showNotify('商品数据错误')
             navigate(-1)

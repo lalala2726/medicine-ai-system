@@ -165,9 +165,9 @@
 
 .markdown :global(pre) {
   margin: 0;
-  padding: 12px 14px;
-  background: rgba(15, 23, 42, 0.05);
-  border-radius: 12px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
   overflow-x: auto;
 }
 
@@ -183,27 +183,157 @@
   border-left: 3px solid rgba(20, 147, 209, 0.25);
 }
 
+/* 代码块：保留外层浅灰底色与复制/下载工具栏，仅去掉里层 pre/code 自带的额外底色，
+   让代码文字背景与外层容器完全一致，避免出现双重灰色叠加，并禁用行号区。 */
+.markdown :global([data-streamdown='code-block']) {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin: 8px 0;
+  border: none !important;
+  border-radius: 12px;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.markdown :global([data-streamdown='code-block-body']) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding-top: 2px;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.markdown :global([data-streamdown='code-block-body'] pre) {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+  overflow: visible;
+  background: transparent !important;
+  white-space: pre !important;
+}
+
+.markdown :global([data-streamdown='code-block-body'] code),
+.markdown :global([data-streamdown='code-block-body'] pre code) {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  background: transparent !important;
+  color: #374151;
+  white-space: pre !important;
+}
+
+.markdown :global([data-streamdown='code-block-body'] code > span) {
+  display: block !important;
+  width: max-content;
+  min-width: 100%;
+  white-space: inherit !important;
+}
+
+.markdown :global([data-streamdown='code-block-body'] code *),
+.markdown :global([data-streamdown='code-block-body'] code > span > span) {
+  white-space: inherit !important;
+}
+
+/* 顶部下载/复制工具栏背景与代码块外层保持一致，避免出现一块白色区域，
+   并紧贴代码块顶部，避免占用过多上方留白。 */
+.markdown :global([data-streamdown='code-block-header']) {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 8px 68px 2px 12px !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.markdown :global([data-streamdown='code-block-header'] + div) {
+  position: absolute !important;
+  top: 6px !important;
+  right: 8px !important;
+  left: auto !important;
+  z-index: 2 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+}
+
+.markdown :global([data-streamdown='code-block-actions']) {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  z-index: auto !important;
+  display: inline-flex !important;
+  align-items: flex-start !important;
+  flex-shrink: 0;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.markdown :global([data-streamdown='code-block-actions'] button),
+.markdown :global([data-streamdown='code-block-header'] button) {
+  padding: 4px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #6b7280 !important;
+}
+
+.markdown :global([data-streamdown='code-block-actions'] button:hover),
+.markdown :global([data-streamdown='code-block-header'] button:hover) {
+  background: rgba(15, 23, 42, 0.06) !important;
+  color: #374151 !important;
+}
+
+/* 表格：让外层容器自由横向滚动，内部表格按内容尺寸生长，避免移动端被压缩。 */
 .markdown :global([data-streamdown='table-wrapper']) {
-  gap: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 8px 0;
   padding: 0;
   background: transparent;
   border: none !important;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .markdown :global([data-streamdown='table-wrapper'] > div) {
+  min-width: 100%;
+  width: max-content;
   background: transparent;
   border: none !important;
 }
 
 .markdown :global(table) {
-  width: 100%;
+  width: max-content;
+  max-width: none;
+  min-width: 100%;
   margin: 0;
   border-collapse: separate;
   border-spacing: 0;
-  table-layout: fixed;
   background: #ffffff;
   border-radius: 12px;
   overflow: hidden;
+  table-layout: auto;
 }
 
 .markdown :global(th),

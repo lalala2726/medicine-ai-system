@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useThemeContext } from '@/contexts/ThemeContext';
 
 interface ChartContainerProps {
   /** 图表高度 */
@@ -24,7 +23,6 @@ const ChartContainer: React.FC<ChartContainerProps> = ({ height = 500, className
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const prevWidthRef = useRef(0);
-  const { isDark } = useThemeContext();
 
   useEffect(() => {
     const el = containerRef.current;

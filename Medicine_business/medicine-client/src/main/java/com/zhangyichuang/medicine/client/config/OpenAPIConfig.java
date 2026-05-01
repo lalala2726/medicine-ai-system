@@ -37,7 +37,7 @@ public class OpenAPIConfig {
                         .description("提供完整的客户端API接口定义，包括商城、订单、用户、AI咨询等功能模块")
                         .contact(new Contact()
                                 .name("Chuang")
-                                .email("example@example.com")
+                                .email("chuang@zhangchuangla.cn")
                                 .url("https://opensource.org/licenses/apache-2-0")));
     }
 }

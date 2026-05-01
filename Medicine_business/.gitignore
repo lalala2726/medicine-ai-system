@@ -3,6 +3,11 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+CLAUDE.md
+AGENTS.md
+.java-version
+tmp
+.env
 
 ### STS ###
 .apt_generated

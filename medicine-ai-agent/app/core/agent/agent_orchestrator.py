@@ -34,6 +34,13 @@ from app.core.agent.agent_event_bus import (
     set_final_response_queue,
     set_status_emitter,
 )
+from app.core.agent.tracing import (
+    bind_trace_state,
+    finish_trace_run,
+    reset_trace_state,
+    start_trace_run,
+)
+from app.core.agent.tracing.serializer import serialize_exception, serialize_trace_message_view
 from app.core.agent.agent_tool_trace import extract_text
 from app.core.agent.thinking_redaction import (
     ThinkingRedactionState,
@@ -41,6 +48,7 @@ from app.core.agent.thinking_redaction import (
     flush_thinking_text,
 )
 from app.schemas.assistant_run import AssistantRunStatus
+from app.schemas.document.agent_trace import AgentTraceStatus
 from app.schemas.sse_response import Action, AssistantResponse, Card, Content, MessageType
 
 StreamEvent = tuple[str, Any]
@@ -124,6 +132,30 @@ class AssistantStreamConfig:
     cancel_check_interval_ms: int = 200
     # 可选中断响应构造器；当 graph values 中出现 `__interrupt__` 时，用于转换为前端响应。
     build_interrupt_responses: BuildInterruptResponsesCallback | None = None
+    # 可选 Agent Trace 配置；为空时不创建 trace run。
+    trace_config: "AgentTraceRunConfig | None" = None
+
+
+@dataclass(frozen=True)
+class AgentTraceRunConfig:
+    """
+    Agent Trace 运行配置。
+
+    Attributes:
+        graph_name: 当前 LangGraph 名称。
+        conversation_uuid: 会话 UUID。
+        assistant_message_uuid: 当前 AI 消息 UUID。
+        user_id: 用户 ID。
+        conversation_type: 会话类型。
+        entrypoint: 入口标识。
+    """
+
+    graph_name: str
+    conversation_uuid: str
+    assistant_message_uuid: str
+    user_id: int | None
+    conversation_type: str
+    entrypoint: str
 
 
 @dataclass
@@ -1001,6 +1033,65 @@ async def _invoke_answer_completed_callback(
         await callback_result
 
 
+def _map_trace_status(finish_status: AssistantRunStatus) -> AgentTraceStatus:
+    """
+    将助手运行态映射成 Agent Trace 状态。
+
+    Args:
+        finish_status: 助手运行最终状态。
+
+    Returns:
+        AgentTraceStatus: trace 使用的最终状态。
+    """
+
+    if finish_status == AssistantRunStatus.CANCELLED:
+        return AgentTraceStatus.CANCELLED
+    if finish_status == AssistantRunStatus.ERROR:
+        return AgentTraceStatus.ERROR
+    return AgentTraceStatus.SUCCESS
+
+
+def _extract_trace_history_messages(state: Any) -> list[Any] | None:
+    """
+    功能描述：
+        从 LangGraph 初始 state 中提取 Trace 消息视图需要的历史消息。
+
+    参数说明：
+        state (Any): `build_initial_state(...)` 返回的初始状态对象。
+
+    返回值：
+        list[Any] | None: 历史消息列表；state 不包含可用消息时返回 None。
+    """
+
+    if not isinstance(state, dict):
+        return None
+    history_messages = state.get("history_messages")
+    if isinstance(history_messages, list):
+        return history_messages
+    messages = state.get("messages")
+    if isinstance(messages, list):
+        return messages
+    return None
+
+
+def _build_trace_message_view_from_state(state: Any) -> dict[str, Any] | None:
+    """
+    功能描述：
+        基于实际进入 graph 的 state 构建顶层 Trace 消息视图快照。
+
+    参数说明：
+        state (Any): `build_initial_state(...)` 返回的初始状态对象。
+
+    返回值：
+        dict[str, Any] | None: 可写入 root graph span 的消息视图；无消息时返回 None。
+    """
+
+    history_messages = _extract_trace_history_messages(state)
+    if history_messages is None:
+        return None
+    return serialize_trace_message_view(history_messages)
+
+
 async def iterate_assistant_responses(
         *,
         question: str,
@@ -1018,6 +1109,21 @@ async def iterate_assistant_responses(
     """
 
     state = config.build_initial_state(question)
+    trace_state = None
+    trace_token = None
+    trace_error_payload: dict[str, Any] | None = None
+    if config.trace_config is not None:
+        trace_state = start_trace_run(
+            graph_name=config.trace_config.graph_name,
+            conversation_uuid=config.trace_config.conversation_uuid,
+            assistant_message_uuid=config.trace_config.assistant_message_uuid,
+            user_id=config.trace_config.user_id,
+            conversation_type=config.trace_config.conversation_type,
+            entrypoint=config.trace_config.entrypoint,
+            message_view=_build_trace_message_view_from_state(state),
+        )
+        if trace_state is not None:
+            trace_token = bind_trace_state(trace_state)
     runtime_state = StreamRuntimeState(latest_state=state if isinstance(state, dict) else {})
     final_responses: list[AssistantResponse] = []
     finish_status = AssistantRunStatus.SUCCESS
@@ -1090,6 +1196,8 @@ async def iterate_assistant_responses(
             )
             if event_type == EVENT_ERROR:
                 finish_status = AssistantRunStatus.ERROR
+                if isinstance(payload, BaseException):
+                    trace_error_payload = serialize_exception(payload)
 
             for rendered_item in event_result.rendered_responses:
                 yield rendered_item
@@ -1164,6 +1272,15 @@ async def iterate_assistant_responses(
             )
         except Exception as exc:  # pragma: no cover - 防御性兜底
             logger.opt(exception=exc).warning("Assistant stream finalize callback failed")
+        if trace_state is not None:
+            finish_trace_run(
+                state=trace_state,
+                status=_map_trace_status(finish_status),
+                final_text=runtime_state.aggregated_answer_text,
+                error_payload=trace_error_payload,
+            )
+        if trace_token is not None:
+            reset_trace_state(trace_token)
         reset_final_response_queue(final_response_queue_token)
         end_event = await _finalize_stream(
             emitter_token,

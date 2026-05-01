@@ -1,15 +1,42 @@
 from __future__ import annotations
 
+import os
+from collections.abc import Mapping
 from typing import Any
 
 from langchain_core.messages import AIMessageChunk
 from langchain_core.outputs import ChatGenerationChunk
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from loguru import logger
 from pydantic import SecretStr
 
 from app.core.llms.common import prepare_chat_client_kwargs, resolve_llm_value
 
 DEFAULT_DASHSCOPE_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+DASHSCOPE_CHAT_RESPONSE_LOG_ENABLED_ENV = "DASHSCOPE_CHAT_RESPONSE_LOG_ENABLED"
+
+
+def _is_dashscope_chat_response_log_enabled() -> bool:
+    """
+    功能描述:
+        判断是否开启千问原始响应日志。
+
+    参数说明:
+        无。
+
+    返回值:
+        bool: 环境变量 `DASHSCOPE_CHAT_RESPONSE_LOG_ENABLED=true` 时返回 True。
+
+    异常说明:
+        无。
+    """
+
+    return os.getenv(DASHSCOPE_CHAT_RESPONSE_LOG_ENABLED_ENV, "false").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
 
 
 class ChatQwen(ChatOpenAI):
@@ -27,6 +54,131 @@ class ChatQwen(ChatOpenAI):
     异常说明:
         无（异常由父类模型请求链路抛出）。
     """
+
+    @staticmethod
+    def _dump_provider_value(value: Any) -> Any:
+        """
+        功能描述:
+            将 OpenAI SDK / DashScope 兼容响应里的 Pydantic 对象递归转换为普通 Python 数据。
+
+        参数说明:
+            value (Any): 供应商返回的任意原始字段值，可能是 dict、list、Pydantic 对象或普通标量。
+
+        返回值:
+            Any: 可被 trace 序列化和 MongoDB 写入的普通 Python 数据。
+
+        异常说明:
+            不主动抛出异常；无法结构化的数据会尽量保留原值。
+        """
+
+        if isinstance(value, Mapping):
+            return {
+                str(key): ChatQwen._dump_provider_value(item)
+                for key, item in value.items()
+            }
+        if isinstance(value, list | tuple):
+            return [ChatQwen._dump_provider_value(item) for item in value]
+        if hasattr(value, "model_dump"):
+            return ChatQwen._dump_provider_value(value.model_dump())
+        if hasattr(value, "dict"):
+            return ChatQwen._dump_provider_value(value.dict())
+        return value
+
+    @staticmethod
+    def _extract_response_usage(response: dict | Any) -> dict[str, Any]:
+        """
+        功能描述:
+            从千问 OpenAI-compatible 响应中提取完整 usage 结构，保留缓存明细字段。
+
+        参数说明:
+            response (dict | Any): 原始模型响应对象或响应字典。
+
+        返回值:
+            dict[str, Any]: 原始 usage 字典；不存在 usage 时返回空字典。
+
+        异常说明:
+            不主动抛出异常；响应结构异常时返回空字典。
+        """
+
+        if isinstance(response, Mapping):
+            response_dict = response
+        elif hasattr(response, "model_dump"):
+            response_dict = response.model_dump()
+        else:
+            response_dict = {}
+        usage = response_dict.get("usage") if isinstance(response_dict, Mapping) else None
+        dumped_usage = ChatQwen._dump_provider_value(usage)
+        return dumped_usage if isinstance(dumped_usage, dict) else {}
+
+    @staticmethod
+    def _attach_response_usage_metadata(message: Any, usage: dict[str, Any]) -> None:
+        """
+        功能描述:
+            将原始 usage 结构挂载到 LangChain 消息的 response_metadata 上。
+
+        参数说明:
+            message (Any): LangChain 消息对象。
+            usage (dict[str, Any]): 已结构化的供应商原始 usage 字典。
+
+        返回值:
+            None: 原地更新消息元数据。
+
+        异常说明:
+            不主动抛出异常；消息对象不支持元数据时跳过。
+        """
+
+        if not usage:
+            return
+        response_metadata = getattr(message, "response_metadata", None)
+        if not isinstance(response_metadata, dict):
+            response_metadata = {}
+        response_metadata["token_usage"] = usage
+        response_metadata["usage"] = usage
+        try:
+            message.response_metadata = response_metadata
+        except (AttributeError, TypeError, ValueError):
+            return
+
+    def _log_provider_response(
+            self,
+            *,
+            stage: str,
+            response: dict | Any,
+            usage: dict[str, Any],
+    ) -> None:
+        """
+        功能描述:
+            打印千问 OpenAI-compatible 原始响应，便于排查服务端是否返回缓存字段。
+
+        参数说明:
+            stage (str): 响应阶段，取值示例 `stream_chunk` / `chat_result`。
+            response (dict | Any): 原始响应对象或响应字典。
+            usage (dict[str, Any]): 已提取的原始 usage 字典。
+
+        返回值:
+            None。
+
+        异常说明:
+            日志序列化异常会被吞掉，避免影响主模型调用。
+        """
+
+        if not _is_dashscope_chat_response_log_enabled():
+            return
+        try:
+            dumped_response = self._dump_provider_value(response)
+            logger.info(
+                "DashScope ChatQwen raw response | stage={} model={} usage={} response={}",
+                stage,
+                getattr(self, "model_name", None) or getattr(self, "model", None),
+                usage,
+                dumped_response,
+            )
+        except Exception as exc:
+            logger.warning(
+                "DashScope ChatQwen raw response log failed | stage={} error={}",
+                stage,
+                repr(exc),
+            )
 
     def _convert_chunk_to_generation_chunk(
             self,
@@ -61,6 +213,17 @@ class ChatQwen(ChatOpenAI):
                 reasoning_content = top.get("delta", {}).get("reasoning_content")
                 if reasoning_content:
                     generation_chunk.message.additional_kwargs["reasoning_content"] = reasoning_content
+        if generation_chunk:
+            raw_usage = self._extract_response_usage(chunk)
+            self._log_provider_response(
+                stage="stream_chunk",
+                response=chunk,
+                usage=raw_usage,
+            )
+            self._attach_response_usage_metadata(
+                generation_chunk.message,
+                raw_usage,
+            )
 
         return generation_chunk
 
@@ -82,12 +245,20 @@ class ChatQwen(ChatOpenAI):
         """
 
         result = super()._create_chat_result(response, generation_info)
+        raw_usage = self._extract_response_usage(response)
+        self._log_provider_response(
+            stage="chat_result",
+            response=response,
+            usage=raw_usage,
+        )
 
         if hasattr(response, "choices") and response.choices:
             if hasattr(response.choices[0].message, "reasoning_content"):
                 result.generations[0].message.additional_kwargs["reasoning_content"] = (
                     response.choices[0].message.reasoning_content
                 )
+        for generation in result.generations:
+            self._attach_response_usage_metadata(generation.message, raw_usage)
 
         return result
 

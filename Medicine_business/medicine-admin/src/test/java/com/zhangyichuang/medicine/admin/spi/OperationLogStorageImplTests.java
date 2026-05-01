@@ -34,7 +34,7 @@ class OperationLogStorageImplTests {
         info.setMethodName("UserController.addUser");
         info.setUserId(100L);
         info.setUsername("admin");
-        info.setIp("localhost");
+        info.setIp("127.0.0.1");
         info.setUserAgent("Mozilla/5.0");
         info.setRequestParams("{\"name\":\"alice\"}");
         info.setResponseResult("{\"code\":200}");
@@ -58,7 +58,7 @@ class OperationLogStorageImplTests {
             assertEquals("UserController.addUser", message.getMethodName());
             assertEquals(100L, message.getUserId());
             assertEquals("admin", message.getUsername());
-            assertEquals("localhost", message.getIp());
+            assertEquals("127.0.0.1", message.getIp());
             assertEquals("Mozilla/5.0", message.getUserAgent());
             assertEquals("{\"name\":\"alice\"}", message.getRequestParams());
             assertEquals("{\"code\":200}", message.getResponseResult());

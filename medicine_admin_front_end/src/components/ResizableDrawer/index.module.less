@@ -1,0 +1,42 @@
+.resizableDrawerRoot {
+  :global(.ant-drawer-content-wrapper) {
+    max-width: calc(100vw - 80px);
+  }
+}
+
+.resizableDrawer {
+  position: relative;
+
+  :global(.ant-drawer-content) {
+    overflow: hidden;
+  }
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  width: 8px;
+}
+
+.resizingRoot {
+  :global(.ant-drawer-content-wrapper) {
+    transition: none !important;
+    will-change: width;
+  }
+}
+
+@media (max-width: 768px) {
+  .resizableDrawerRoot {
+    :global(.ant-drawer-content-wrapper) {
+      width: 100vw !important;
+      max-width: 100vw;
+    }
+  }
+
+  .resizeHandle {
+    display: none;
+  }
+}

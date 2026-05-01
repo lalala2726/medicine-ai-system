@@ -76,12 +76,12 @@ export class SttRecorder {
       // 根据文档，连接地址为 /ws/speech/stt/stream，并通过 query 传 token
       // 为了支持 vite 开发环境的代理或者未来的网关，我们先拼接当前 host。
       // 如果是在 vite 开发环境下，可以在 vite.config.ts 配置代理，但根据最新要求直接用下面的方式连。
-      // 我们将其指向当前 origin 并代理，或者直接连 localhost:8000。
-      // 根据文档示例：ws://localhost:8000/ws/speech/stt/stream?access_token=...
+      // 我们将其指向当前 origin 并代理，或者直接连 127.0.0.1:8000。
+      // 根据文档示例：ws://127.0.0.1:8000/ws/speech/stt/stream?access_token=...
       // 为了代码灵活性，我们在开发环境可以直接连目标，生产环境连当前域。这里先按照相对当前域或者通过环境变量配置处理。
       // 如果需要连本地 8000：
       const isDev = process.env.NODE_ENV === 'development';
-      const wsHost = isDev ? 'localhost:8000' : host;
+      const wsHost = isDev ? '127.0.0.1:8000' : host;
 
       const wsUrl = `${protocol}//${wsHost}/ws/speech/stt/stream?access_token=${encodeURIComponent(token)}`;
 

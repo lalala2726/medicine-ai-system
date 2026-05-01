@@ -110,7 +110,7 @@ public class ActivationLogVo {
     /**
      * 客户端IP。
      */
-    @Schema(description = "客户端IP", example = "localhost")
+    @Schema(description = "客户端IP", example = "127.0.0.1")
     private String clientIp;
 
     /**

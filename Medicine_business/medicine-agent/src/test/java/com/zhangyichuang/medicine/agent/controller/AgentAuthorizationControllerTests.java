@@ -79,7 +79,7 @@ class AgentAuthorizationControllerTests {
                 .realName("智能体")
                 .idCard("310101199001010011")
                 .lastLoginTime(now)
-                .lastLoginIp("localhost")
+                .lastLoginIp("127.0.0.1")
                 .createTime(now)
                 .updateTime(now)
                 .createBy("system")

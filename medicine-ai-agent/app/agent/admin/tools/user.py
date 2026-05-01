@@ -14,7 +14,6 @@ from app.core.agent.middleware import (
     tool_call_status,
     tool_thinking_redaction,
 )
-from app.core.agent.tool_cache import ADMIN_TOOL_CACHE_PROFILE, tool_cacheable
 from app.schemas.http_response import HttpResponse
 from app.utils.http_client import HttpClient
 
@@ -114,56 +113,6 @@ class UserIdPageRequest(UserIdRequest):
     page_size: int = Field(default=10, ge=1, le=200, description="每页数量，范围 1-200")
 
 
-def _build_user_list_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造用户列表缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 与真实 HTTP 查询参数一致的结构。
-
-    异常说明：
-        无。
-    """
-
-    return {
-        "pageNum": arguments.get("page_num"),
-        "pageSize": arguments.get("page_size"),
-        "id": arguments.get("id"),
-        "username": arguments.get("username"),
-        "nickname": arguments.get("nickname"),
-        "avatar": arguments.get("avatar"),
-        "roles": arguments.get("roles"),
-        "status": arguments.get("status"),
-        "createBy": arguments.get("create_by"),
-    }
-
-
-def _build_user_page_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造用户分页子资源缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 当前工具缓存入参。
-
-    异常说明：
-        无。
-    """
-
-    return {
-        "user_id": arguments.get("user_id"),
-        "page_num": arguments.get("page_num"),
-        "page_size": arguments.get("page_size"),
-    }
-
-
 def _normalize_user_ids(user_ids: list[int]) -> list[int]:
     """
     功能描述：
@@ -209,46 +158,6 @@ def _format_user_ids_to_path(user_ids: list[int]) -> str:
     return ",".join(str(user_id) for user_id in user_ids)
 
 
-def _build_user_ids_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造批量用户详情与钱包缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 标准化后的用户 ID 数组。
-
-    异常说明：
-        ValueError: 当 `user_ids` 非法时抛出。
-    """
-
-    raw_user_ids = arguments.get("user_ids")
-    normalized_user_ids = _normalize_user_ids(raw_user_ids)
-    return {"user_ids": normalized_user_ids}
-
-
-def _build_user_context_cache_input(arguments: dict[str, object]) -> dict[str, object]:
-    """
-    功能描述：
-        构造用户聚合上下文缓存入参。
-
-    参数说明：
-        arguments (dict[str, object]): 绑定后的函数参数映射。
-
-    返回值：
-        dict[str, object]: 标准化且数量合法的用户 ID 数组。
-
-    异常说明：
-        ValueError: 当 `user_ids` 非法或超过批量上限时抛出。
-    """
-
-    cache_input = _build_user_ids_cache_input(arguments)
-    validate_context_batch_size(cache_input["user_ids"], field_name="user_ids")
-    return cache_input
-
-
 @tool(
     args_schema=UserListRequest,
     description=(
@@ -262,11 +171,6 @@ def _build_user_context_cache_input(arguments: dict[str, object]) -> dict[str, o
     start_message="正在查询用户列表",
     error_message="查询用户列表失败",
     timely_message="用户列表正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="user_list",
-    input_builder=_build_user_list_cache_input,
 )
 async def user_list(
         page_num: int = 1,
@@ -336,11 +240,6 @@ async def user_list(
     error_message="查询用户上下文失败",
     timely_message="用户上下文正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="user_context",
-    input_builder=_build_user_context_cache_input,
-)
 async def user_context(user_ids: list[int]) -> dict:
     """
     功能描述：
@@ -378,11 +277,6 @@ async def user_context(user_ids: list[int]) -> dict:
     error_message="查询用户详情失败",
     timely_message="用户详情正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="user_detail",
-    input_builder=_build_user_ids_cache_input,
-)
 async def user_detail(user_ids: list[int]) -> dict:
     """
     功能描述：
@@ -419,11 +313,6 @@ async def user_detail(user_ids: list[int]) -> dict:
     error_message="查询用户钱包失败",
     timely_message="用户钱包正在持续处理中",
 )
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="user_wallet",
-    input_builder=_build_user_ids_cache_input,
-)
 async def user_wallet(user_ids: list[int]) -> dict:
     """
     功能描述：
@@ -459,11 +348,6 @@ async def user_wallet(user_ids: list[int]) -> dict:
     start_message="正在查询用户钱包流水",
     error_message="查询用户钱包流水失败",
     timely_message="用户钱包流水正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="user_wallet_flow",
-    input_builder=_build_user_page_cache_input,
 )
 async def user_wallet_flow(
         user_id: int,
@@ -511,11 +395,6 @@ async def user_wallet_flow(
     start_message="正在查询用户消费信息",
     error_message="查询用户消费信息失败",
     timely_message="用户消费信息正在持续处理中",
-)
-@tool_cacheable(
-    ADMIN_TOOL_CACHE_PROFILE,
-    tool_name="user_consume_info",
-    input_builder=_build_user_page_cache_input,
 )
 async def user_consume_info(
         user_id: int,

@@ -8,7 +8,6 @@
 - 运行时调用与消息提取
 - SSE 事件总线与流式编排
 - 工具调用追踪
-- 工具缓存
 - LangGraph Redis checkpoint
 - 运行事件存储
 - skill 发现、提示词与资源加载
@@ -50,7 +49,6 @@ agent/
 │   └── types/
 │       ├── __init__.py
 │       └── models.py
-└── tool_cache.py
 ```
 
 ## 3. 顶层文件职责
@@ -63,7 +61,6 @@ agent/
 - `agent_tool_trace.py`：从 agent/LLM 响应中提取纯文本结果，供运行时与节点复用。
 - `langgraph_redis_checkpoint.py`：LangGraph checkpoint 的 Redis 落盘与读取实现。
 - `run_event_store.py`：助手运行元数据、事件流、快照与单活锁的 Redis 存储层。
-- `tool_cache.py`：工具缓存协议、缓存 profile、prompt 渲染与 `tool_cacheable` 装饰器实现。
 
 ## 4. `middleware/` 目录职责
 

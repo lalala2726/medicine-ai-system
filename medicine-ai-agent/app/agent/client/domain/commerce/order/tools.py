@@ -10,7 +10,6 @@ from app.agent.client.domain.commerce.order.schemas import (
     OrderNoRequest,
 )
 from app.core.agent.middleware import tool_thinking_redaction
-from app.core.agent.tool_cache import CLIENT_COMMERCE_TOOL_CACHE_PROFILE, tool_cacheable
 from app.schemas.http_response import HttpResponse
 from app.utils.http_client import HttpClient
 
@@ -22,10 +21,6 @@ from app.utils.http_client import HttpClient
     ),
 )
 @tool_thinking_redaction(display_name="获取订单详情")
-@tool_cacheable(
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    tool_name="get_order_detail",
-)
 async def get_order_detail(order_no: str) -> dict:
     """
     功能描述：
@@ -56,10 +51,6 @@ async def get_order_detail(order_no: str) -> dict:
     ),
 )
 @tool_thinking_redaction(display_name="获取订单物流")
-@tool_cacheable(
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    tool_name="get_order_shipping",
-)
 async def get_order_shipping(order_no: str) -> dict:
     """
     功能描述：
@@ -90,10 +81,6 @@ async def get_order_shipping(order_no: str) -> dict:
     ),
 )
 @tool_thinking_redaction(display_name="获取订单时间线")
-@tool_cacheable(
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    tool_name="get_order_timeline",
-)
 async def get_order_timeline(order_no: str) -> dict:
     """
     功能描述：
@@ -124,10 +111,6 @@ async def get_order_timeline(order_no: str) -> dict:
     ),
 )
 @tool_thinking_redaction(display_name="校验订单取消资格")
-@tool_cacheable(
-    CLIENT_COMMERCE_TOOL_CACHE_PROFILE,
-    tool_name="check_order_cancelable",
-)
 async def check_order_cancelable(order_no: str) -> dict:
     """
     功能描述：

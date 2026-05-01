@@ -113,13 +113,35 @@
 }
 
 .thinkingBody {
-  padding: 4px 0 4px 12px;
+  padding: 4px 12px 4px 12px;
   margin: 4px 0 4px 4px;
   color: #6b7280;
   font-size: 13.5px;
   line-height: 1.6;
   border-left: 2px solid #e5e7eb;
   background: transparent;
+  max-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+}
+
+.thinkingBody::-webkit-scrollbar {
+  width: 4px;
+}
+
+.thinkingBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thinkingBody::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.35);
+  border-radius: 2px;
+}
+
+.thinkingBody::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(148, 163, 184, 0.55);
 }
 
 .thinkingActive .thinkingBody {

@@ -190,6 +190,19 @@ def _is_normal_log_record(record: Mapping[str, Any]) -> bool:
     return int(record["level"].no) < ERROR_LEVEL_NO
 
 
+def _is_error_log_record(record: Mapping[str, Any]) -> bool:
+    """判断日志记录是否属于错误日志。
+
+    Args:
+        record: loguru 日志记录字典。
+
+    Returns:
+        bool: 日志级别大于等于 `ERROR` 时返回 `True`。
+    """
+
+    return int(record["level"].no) >= ERROR_LEVEL_NO
+
+
 def _ensure_log_root_directories(settings: LoggingSettings) -> None:
     """确保日志根目录存在。
 
@@ -249,6 +262,9 @@ def _configure_standard_logging_bridge() -> None:
 def _register_console_sink(settings: LoggingSettings) -> None:
     """注册控制台日志 sink。
 
+    正常日志写入 stdout，错误日志写入 stderr。这样 IDE 或终端不会把 INFO/WARNING 等
+    正常日志误染成红色，同时仍保留错误日志走 stderr 的标准语义。
+
     Args:
         settings: 当前日志配置对象。
 
@@ -257,9 +273,19 @@ def _register_console_sink(settings: LoggingSettings) -> None:
     """
 
     logger.add(
+        sys.stdout,
+        level=settings.level,
+        format=LOG_FORMAT,
+        filter=_is_normal_log_record,
+        backtrace=False,
+        diagnose=False,
+        catch=False,
+    )
+    logger.add(
         sys.stderr,
         level=settings.level,
         format=LOG_FORMAT,
+        filter=_is_error_log_record,
         backtrace=False,
         diagnose=False,
         catch=False,

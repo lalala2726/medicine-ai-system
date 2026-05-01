@@ -24,6 +24,7 @@ from app.agent.admin.tools.order import (
     order_detail,
     order_list,
 )
+from app.agent.tools import get_current_time
 from app.agent.tools.rag_query import search_knowledge_context
 from app.agent.admin.tools.product import drug_detail, product_detail, product_list
 from app.agent.admin.tools.user import (
@@ -141,6 +142,7 @@ class AdminToolRegistry(ManagedDynamicToolRegistry):
             extra_base_tools=(
                 search_knowledge_context,
                 get_safe_user_info,
+                get_current_time,
             ),
             text_config=_ADMIN_DYNAMIC_TOOLING_TEXT_CONFIG,
         )

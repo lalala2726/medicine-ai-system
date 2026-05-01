@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, LiteralString
 
-from app.agent import graph_tool as graph_tools_module
+from app.agent.client.domain.diagnosis.tools import graph_tool as graph_tools_module
 
 
 class _FakeNeo4jClient:
@@ -86,17 +86,14 @@ def test_search_symptom_candidates_normalizes_keyword_and_limit(
     monkeypatch.setattr(graph_tools_module, "get_neo4j_client", lambda: fake_client)
 
     result = graph_tools_module.search_symptom_candidates.invoke(
-        {"keyword": "  喉咙疼  ", "limit": 5}
+        {"keywords": ["喉咙疼"], "limit": 5}
     )
 
-    assert result == [{"symptom": "咽痛"}]
+    assert [item.model_dump() for item in result] == [{"symptom": "咽痛"}]
     assert fake_client.query_all_calls == [
         {
             "query": graph_tools_module.SEARCH_SYMPTOM_CANDIDATES_CYPHER,
-            "parameters": {
-                "keyword": "喉咙疼",
-                "limit": 5,
-            },
+            "parameters": {"keywords": ["喉咙疼"], "limit": 5},
             "database": graph_tools_module.MEDICAL_GRAPH_DATABASE,
         }
     ]
@@ -124,7 +121,7 @@ def test_query_disease_candidates_by_symptoms_normalizes_symptoms_and_database(
         }
     )
 
-    assert result == fake_client.query_all_result
+    assert [item.model_dump() for item in result] == fake_client.query_all_result
     assert fake_client.query_all_calls == [
         {
             "query": graph_tools_module.QUERY_DISEASE_CANDIDATES_BY_SYMPTOMS_CYPHER,
@@ -152,7 +149,8 @@ def test_query_disease_detail_returns_detail_when_hit(monkeypatch) -> None:
         {"disease_name": "  上呼吸道感染  "}
     )
 
-    assert result == fake_client.query_one_result
+    assert result is not None
+    assert result.model_dump(exclude_defaults=True) == fake_client.query_one_result
     assert fake_client.query_one_calls == [
         {
             "query": graph_tools_module.QUERY_DISEASE_DETAIL_CYPHER,
@@ -210,7 +208,7 @@ def test_query_followup_symptom_candidates_filters_known_symptoms(
         }
     )
 
-    assert result == fake_client.query_all_result
+    assert [item.model_dump() for item in result] == fake_client.query_all_result
     assert fake_client.query_all_calls == [
         {
             "query": graph_tools_module.QUERY_FOLLOWUP_SYMPTOM_CANDIDATES_CYPHER,

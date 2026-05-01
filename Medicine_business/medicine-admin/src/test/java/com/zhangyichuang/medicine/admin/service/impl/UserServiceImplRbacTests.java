@@ -1,10 +1,18 @@
 package com.zhangyichuang.medicine.admin.service.impl;
 
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zhangyichuang.medicine.admin.mapper.UserMapper;
 import com.zhangyichuang.medicine.admin.service.*;
 import com.zhangyichuang.medicine.common.core.constants.RolesConstant;
 import com.zhangyichuang.medicine.common.core.exception.ServiceException;
+import com.zhangyichuang.medicine.common.security.token.RedisTokenStore;
+import com.zhangyichuang.medicine.model.dto.UserListDto;
+import com.zhangyichuang.medicine.model.entity.Role;
 import com.zhangyichuang.medicine.model.entity.User;
+import com.zhangyichuang.medicine.model.entity.UserRole;
 import com.zhangyichuang.medicine.model.request.UserAddRequest;
+import com.zhangyichuang.medicine.model.request.UserListQueryRequest;
 import com.zhangyichuang.medicine.model.request.UserUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -38,6 +47,12 @@ class UserServiceImplRbacTests {
 
     @Mock
     private UserRoleService userRoleService;
+
+    @Mock
+    private RedisTokenStore redisTokenStore;
+
+    @Mock
+    private UserMapper userMapper;
 
     @Spy
     @InjectMocks
@@ -120,5 +135,73 @@ class UserServiceImplRbacTests {
 
         assertEquals(Set.of("admin"), roles);
         verify(roleService).getUserRoleByUserId(100L);
+    }
+
+    /**
+     * 验证用户列表会按当前页用户批量预取角色，避免逐用户查询角色名称。
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    void listUser_ShouldBatchLoadRoleNamesForCurrentPage() {
+        UserListQueryRequest request = new UserListQueryRequest();
+        Page<User> page = new Page<>(1, 10, 2);
+        User alice = new User();
+        alice.setId(1L);
+        alice.setUsername("alice");
+        User bob = new User();
+        bob.setId(2L);
+        bob.setUsername("bob");
+        page.setRecords(List.of(alice, bob));
+        ReflectionTestUtils.setField(userService, "baseMapper", userMapper);
+        when(userMapper.listUser(any(Page.class), eq(request))).thenReturn(page);
+
+        LambdaQueryChainWrapper<UserRole> userRoleQuery = mock(LambdaQueryChainWrapper.class);
+        when(userRoleService.lambdaQuery()).thenReturn(userRoleQuery);
+        when(userRoleQuery.in(any(), anyCollection())).thenReturn(userRoleQuery);
+        when(userRoleQuery.list()).thenReturn(List.of(
+                createUserRole(1L, 2L),
+                createUserRole(1L, 3L),
+                createUserRole(2L, 3L)
+        ));
+
+        LambdaQueryChainWrapper<Role> roleQuery = mock(LambdaQueryChainWrapper.class);
+        when(roleService.lambdaQuery()).thenReturn(roleQuery);
+        when(roleQuery.in(any(), anyCollection())).thenReturn(roleQuery);
+        when(roleQuery.eq(any(), any())).thenReturn(roleQuery);
+        when(roleQuery.list()).thenReturn(List.of(createRole(2L, "运营"), createRole(3L, "客服")));
+
+        Page<UserListDto> result = userService.listUser(request);
+
+        assertEquals("客服,运营", result.getRecords().get(0).getRoles());
+        assertEquals("客服", result.getRecords().get(1).getRoles());
+        verify(userRoleService, never()).getUserRoleByUserId(anyLong());
+    }
+
+    /**
+     * 构造用户角色关联测试数据。
+     *
+     * @param userId 用户ID
+     * @param roleId 角色ID
+     * @return 用户角色关联实体
+     */
+    private UserRole createUserRole(Long userId, Long roleId) {
+        UserRole userRole = new UserRole();
+        userRole.setUserId(userId);
+        userRole.setRoleId(roleId);
+        return userRole;
+    }
+
+    /**
+     * 构造角色测试数据。
+     *
+     * @param id       角色ID
+     * @param roleName 角色名称
+     * @return 角色实体
+     */
+    private Role createRole(Long id, String roleName) {
+        Role role = new Role();
+        role.setId(id);
+        role.setRoleName(roleName);
+        return role;
     }
 }

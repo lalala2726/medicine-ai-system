@@ -16,23 +16,19 @@ from app.core.agent.agent_runtime import agent_stream
 from app.core.agent.agent_tool_trace import resolve_final_output_text
 from app.core.agent.middleware import (
     BasePromptMiddleware,
+    DashScopeExplicitCacheMiddleware,
     DynamicToolMiddleware,
     SkillMiddleware,
     ToolCallLimitMiddleware,
-    ToolCachePromptMiddleware,
     ToolTracePromptMiddleware,
     build_tool_status_middleware,
     extract_loaded_tool_keys_from_stream_result,
-)
-from app.core.agent.tool_cache import (
-    ADMIN_TOOL_CACHE_PROFILE,
-    bind_tool_cache_conversation,
-    reset_tool_cache_conversation,
 )
 from app.core.agent.tool_trace import (
     bind_tool_trace_context,
     reset_tool_trace_context,
 )
+from app.core.agent.tracing import TraceModelMiddleware, agent_trace, build_trace_tool_middleware
 from app.core.config_sync import (
     AgentChatModelSlot,
     create_agent_chat_llm,
@@ -44,7 +40,7 @@ from app.utils.chat_image_utils import (
     build_multimodal_history_messages,
     normalize_chat_image_urls,
 )
-from app.utils.prompt_utils import append_current_time_to_prompt, load_managed_prompt
+from app.utils.prompt_utils import load_managed_prompt
 
 # 管理端助手系统提示词业务键。
 _ADMIN_AGENT_SYSTEM_PROMPT_KEY = "admin_assistant_system_prompt"
@@ -56,6 +52,7 @@ _ADMIN_AGENT_STATE_SCHEMA = cast(Any, AgentState)
 
 
 @traceable(name="Admin Assistant Agent Node", run_type="chain")
+@agent_trace(name="Admin Assistant Agent Node")
 def admin_agent(state: AgentState) -> dict[str, Any]:
     """
     功能描述：
@@ -101,23 +98,19 @@ def admin_agent(state: AgentState) -> dict[str, Any]:
     agent = create_agent(
         model=llm,
         tools=runtime_tools,
-        system_prompt=SystemMessage(
-            content=append_current_time_to_prompt(system_prompt)
-        ),
+        system_prompt=SystemMessage(content=system_prompt),
         state_schema=_ADMIN_AGENT_STATE_SCHEMA,
         middleware=[
             BasePromptMiddleware(),
-            ToolCachePromptMiddleware(profile=ADMIN_TOOL_CACHE_PROFILE),
             ToolTracePromptMiddleware(),
             SkillMiddleware(),
             DynamicToolMiddleware(registry=ADMIN_TOOL_REGISTRY),
+            DashScopeExplicitCacheMiddleware(),
+            TraceModelMiddleware(slot=AgentChatModelSlot.ADMIN_NODE.value),
+            build_trace_tool_middleware(),
             build_tool_status_middleware(),
             ToolCallLimitMiddleware(thread_limit=20, run_limit=10),
         ],
-    )
-    cache_token = bind_tool_cache_conversation(
-        ADMIN_TOOL_CACHE_PROFILE,
-        conversation_uuid,
     )
     tool_trace_token = bind_tool_trace_context(
         conversation_uuid=conversation_uuid,
@@ -133,10 +126,6 @@ def admin_agent(state: AgentState) -> dict[str, Any]:
         )
     finally:
         reset_tool_trace_context(tool_trace_token)
-        reset_tool_cache_conversation(
-            ADMIN_TOOL_CACHE_PROFILE,
-            cache_token,
-        )
     text = resolve_final_output_text(
         payload=stream_result,
         fallback_text=str(stream_result.get("streamed_text") or ""),

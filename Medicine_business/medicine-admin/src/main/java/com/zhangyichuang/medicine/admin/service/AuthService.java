@@ -72,6 +72,16 @@ public interface AuthService {
     void changeCurrentUserPhone(String phoneNumber, String verificationCode);
 
     /**
+     * 修改当前登录用户密码。
+     *
+     * @param oldPassword           原登录密码
+     * @param newPassword           新登录密码
+     * @param captchaVerificationId 滑动验证码校验凭证
+     * @return 无返回值
+     */
+    void changeCurrentUserPassword(String oldPassword, String newPassword, String captchaVerificationId);
+
+    /**
      * 获取当前登录用户权限
      *
      * @return 权限列表

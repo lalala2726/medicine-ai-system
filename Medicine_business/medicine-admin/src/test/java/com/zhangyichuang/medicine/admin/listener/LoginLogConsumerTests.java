@@ -37,7 +37,7 @@ class LoginLogConsumerTests {
                 .loginSource("admin")
                 .loginStatus(1)
                 .loginType("password")
-                .ipAddress("localhost")
+                .ipAddress("127.0.0.1")
                 .loginTime(now)
                 .build();
 
@@ -51,7 +51,7 @@ class LoginLogConsumerTests {
         assertEquals("admin", log.getLoginSource());
         assertEquals(1, log.getLoginStatus());
         assertEquals("password", log.getLoginType());
-        assertEquals("localhost", log.getIpAddress());
+        assertEquals("127.0.0.1", log.getIpAddress());
         assertEquals(now, log.getLoginTime());
     }
 }

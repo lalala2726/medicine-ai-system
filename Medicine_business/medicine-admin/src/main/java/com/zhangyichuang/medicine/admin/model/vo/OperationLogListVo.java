@@ -24,7 +24,7 @@ public class OperationLogListVo {
     @Schema(description = "操作人账号", example = "admin")
     private String username;
 
-    @Schema(description = "请求IP", example = "localhost")
+    @Schema(description = "请求IP", example = "127.0.0.1")
     private String ip;
 
     @Schema(description = "是否成功：1成功 0失败", example = "1")

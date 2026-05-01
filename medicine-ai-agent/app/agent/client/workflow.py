@@ -9,6 +9,7 @@ from app.agent.client.domain.medical import medical_agent
 from app.agent.client.domain.router import gateway_router
 from app.agent.client.domain.service import service_agent
 from app.agent.client.state import AgentState
+from app.core.agent.tracing import agent_trace
 
 
 def _resolve_routing_target(state: AgentState) -> str | None:
@@ -34,6 +35,7 @@ def _resolve_routing_target(state: AgentState) -> str | None:
     return target
 
 
+@agent_trace(name="Client Assistant Entry Router Node")
 def _entry_router(_: AgentState) -> dict[str, Any]:
     """client assistant 入口占位节点。"""
 
